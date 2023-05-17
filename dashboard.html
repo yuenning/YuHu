@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Add Purchase</title>
+    <link rel="stylesheet" href="styles-dashboard.css" />
+  </head>
+  <body>
+    <div class="container">
+      <img src="logo.png" alt="YuHu logo" />
+      <h1>Welcome to YuHu!</h1>
+    </div>
+    <div class="Purchase">
+      <h2>Add Restock Purchase</h2>
+      <form method="POST">
+        <label>Product ID:</label>
+        <input type="text" name="product_id" required />
+        <br />
+        <label>Batch Number:</label>
+        <input type="text" name="batch_number" required />
+        <br />
+        <label>Cost Price:</label>
+        <input type="number" name="cost_price" required />
+        <br />
+        <label>Selling Price:</label>
+        <input type="number" name="selling_price" required />
+        <br />
+        <label>Quantity Restocked:</label>
+        <input type="number" name="quantity" required />
+        <br />
+        <label>Expiry Date:</label>
+        <input type="date" name="expiry_date" required />
+        <br />
+        <input type="submit" value="Add Purchase" />
+      </form>
+    </div>
+
+    <div class="Sales">
+      <h2>Add Sales</h2>
+      <form method="POST">
+        <label>Product ID:</label>
+        <input type="text" name="product_id" required />
+        <br />
+        <label>Batch Number:</label>
+        <input type="text" name="batch_number" required />
+        <br />
+        <label>Selling Price:</label>
+        <input type="number" name="selling_price" required />
+        <br />
+        <label>Quantity Sold:</label>
+        <input type="number" name="quantity" required />
+        <br />
+        <input type="submit" value="Add Purchase" />
+      </form>
+    </div>
+    <br />
+    <footer>&copy; 2023 My Website. All rights reserved.</footer>
+  </body>
+</html>
