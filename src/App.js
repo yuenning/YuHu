@@ -5,6 +5,7 @@ import "./App.css";
 import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
 import Navbar from "./Components/NavBar";
+import Footer from "./Components/Footer";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Login />
           </Route>
         </Switch>
+        <Footer />
       </BrowserRouter>
     </div>
   );

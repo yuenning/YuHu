@@ -1,7 +1,7 @@
 .login-form {
-  max-width: 360px;
-  margin: 60px auto;
-  padding: 20px;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 30px;
 }
 .login-form label {
   display: block;
@@ -12,8 +12,23 @@
   margin-bottom: 6px;
 }
 .login-form input {
-  padding: 8px 6px;
+  padding: 8px 8px;
   font-size: 1em;
   color: #777;
+  width: 95%;
+}
+.login-form button {
+  display: block;
   width: 100%;
+  padding: 10px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  margin-top: 15px;
+  font-size: 100%;
+}
+
+.login-form button:hover {
+  background-color: #0000003b;
 }
