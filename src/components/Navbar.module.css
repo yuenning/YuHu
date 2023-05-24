@@ -21,6 +21,7 @@
 .logo {
   margin-right: 100%;
   max-width: 25%;
+  vertical-align: middle;
 }
 .navbar button,
 .navbar a {
