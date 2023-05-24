@@ -12,42 +12,30 @@ export default function Navbar() {
 
   return (
     <nav className={styles.navbar}>
-      <ul>
-        {!user && (
-          <>
-            <li className={styles.title}>
-              {/* Rendering a link from the logo to the home page */}
-              <Link to="/">
-                <img src={logo} alt="Logo" className={styles.logo} />
-              </Link>
-            </li>
-            <li>
+      <div className={styles.navbarContainer}>
+        <div className={styles.title}>
+          {/* Rendering a link from the logo to the home page */}
+          <Link to="/">
+            <img src={logo} alt="Logo" className={styles.logo} />
+          </Link>
+        </div>
+        <div className={styles.links}>
+          {!user && (
+            <>
               {/* Rendering a link to the login page */}
               <Link to="/login">Login</Link>
-            </li>
-            <li>
               {/* Rendering a link to the signup page */}
               <Link to="/signup">Sign Up</Link>
-            </li>
-          </>
-        )}
+            </>
+          )}
 
-        {user && (
-          <>
-            <li className={styles.title}>
-              {/* Rendering a link from the logo to the home page */}
-              <Link to="/">
-                <img src={logo} alt="Logo" className={styles.logo} />
-              </Link>
-            </li>
-            <li>
-              <button className="btn" onClick={logout}>
-                Logout
-              </button>
-            </li>
-          </>
-        )}
-      </ul>
+          {user && (
+            <button className="btn" onClick={logout}>
+              Logout
+            </button>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }

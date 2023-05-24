@@ -31,3 +31,17 @@
   color: #ffffff;
   text-decoration: none;
 }
+
+.navbarContainer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.links {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+}
