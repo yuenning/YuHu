@@ -2,12 +2,12 @@
 body {
     margin: 0;
     padding: 0;
-    scroll-behavior: smooth; /* Enable smooth scrolling behavior */
+    scroll-behavior: smooth;
   }
   
   /* Landing Page Animation */
   .animation {
-    height: 100vh; /* Adjust the height as needed */
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -36,19 +36,23 @@ body {
   
   /* About Us Section */
   .about-us {
-    padding: 100px;
+    padding: 100px 30px;
     background-color: #f9f9f9;
-    text-align: center;
   }
 
-  .about-us h2 {
-    border-bottom: 1px ;
-    padding-bottom: 10px;
+  .about-us h1 {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
   }
 
   .about-us p {
-    border-bottom: 1px ;
-    padding-bottom: 10px;
+    text-align: justify;
+    line-height: 24px;
+    margin: 30px 0;
   }
   
   /* Features Section */
@@ -59,14 +63,24 @@ body {
     animation: slideInRight 1s ease-in-out;
   }
 
-  .features h2 {
-    border-bottom: 1px ;
-    padding-bottom: 10px;
+  .features h1 {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
   }
 
   .features li {
     border-bottom: 1px ;
     padding-bottom: 10px;
+  }
+
+  .features p {
+    text-align: justify;
+    line-height: 24px;
+    margin: 30px 0;
   }
   
   .navbar a {
