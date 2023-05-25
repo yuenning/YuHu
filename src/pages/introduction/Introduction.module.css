@@ -1,10 +1,116 @@
-.introduction {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: 32px;
-}
+/* Reset default margin and padding */
+body {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth; /* Enable smooth scrolling behavior */
+  }
+  
+  /* Landing Page Animation */
+  .animation {
+    height: 100vh; /* Adjust the height as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+    animation: fadeIn 1.5s ease-in-out;
+  }
 
-.introduction h1 {
-  text-align: center;
-}
+  .landingText {
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .landingText:hover {
+      transform: scale(1.1);
+  }
+
+
+  .landingText h1 {
+    font-size: 2.5em; 
+  }
+  
+  .landingText p {
+    font-size: 1.5em; 
+  }
+  
+  
+  /* About Us Section */
+  .about-us {
+    padding: 100px;
+    background-color: #f9f9f9;
+    text-align: center;
+    animation: slideInLeft 3s ease-in-out;
+  }
+
+  .about-us h2 {
+    border-bottom: 1px ;
+    padding-bottom: 10px;
+  }
+
+  .about-us p {
+    border-bottom: 1px ;
+    padding-bottom: 10px;
+  }
+  
+  /* Features Section */
+  .features {
+    padding: 100px;
+    background-color: #fff;
+    text-align: center;
+    animation: slideInRight 1s ease-in-out;
+  }
+
+  .features h2 {
+    border-bottom: 1px ;
+    padding-bottom: 10px;
+  }
+
+  .features li {
+    border-bottom: 1px ;
+    padding-bottom: 10px;
+  }
+  
+  .navbar a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+  }
+  
+  /* Smooth scrolling anchor links */
+  a.scroll-link {
+    cursor: pointer;
+  }
+  
+  /* Animation Effects */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInRight {
+    from {
+      transform: translateX(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
