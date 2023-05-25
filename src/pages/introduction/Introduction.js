@@ -1,7 +1,9 @@
 import styles from "./Introduction.module.css";
 import React from 'react';
+// import { useLocation } from 'react-router-dom';
 
 class InventoryApp extends React.Component {
+
   componentDidMount() {
     const scrollLinks = document.querySelectorAll('.scroll-link');
 
@@ -18,7 +20,6 @@ class InventoryApp extends React.Component {
   render() {
     return (
       <div>
-
         {/* Landing Page Animation */}
         <section id="home" className={styles["animation"]}>
           <div className={styles["landingText"]}>

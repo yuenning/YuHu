@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useLogout } from '../hooks/useLogout';
 import logo from './NavbarLogo.png';
@@ -8,11 +8,14 @@ import styles from './Navbar.module.css';
 export default function Navbar() {
   const { logout } = useLogout();
   const { user } = useAuthContext();
+  const location = useLocation();
 
   const smoothScrollTo = (targetId) => {
     const targetElement = document.getElementById(targetId);
     targetElement.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const shouldRenderNavigation = location.pathname === '/introduction';
 
   return (
     <nav className={styles.navbar}>
@@ -24,7 +27,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className={styles.links}>
-          {!user && (
+          {shouldRenderNavigation && (
             <>
               {/* Navigation Bar */}
               <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('home')}>
@@ -36,6 +39,10 @@ export default function Navbar() {
               <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('features')}>
                 Features
               </button>
+            </>
+          )}
+          {!user && (
+            <>
               {/* Rendering a link to the login page */}
               <Link to="/login">Login</Link>
               {/* Rendering a link to the signup page */}
