@@ -1,8 +1,9 @@
 /* navbar styles */
 
 .navbar {
+  position: fixed;
   width: 100%;
-  background: rgb(0, 0, 0);
+  background: black;
   padding: 20px 10px;
   box-sizing: border-box;
 }
