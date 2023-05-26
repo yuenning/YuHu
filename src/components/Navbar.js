@@ -1,53 +1,61 @@
-import logo from ".//NavbarLogo.png";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { Link } from "react-router-dom";
-import { useLogout } from "../hooks/useLogout";
-
-// styles
-import styles from "./Navbar.module.css";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
+import { useLogout } from '../hooks/useLogout';
+import logo from './NavbarLogo.png';
+import styles from './Navbar.module.css';
 
 export default function Navbar() {
   const { logout } = useLogout();
   const { user } = useAuthContext();
+  const location = useLocation();
+
+  const smoothScrollTo = (targetId) => {
+    const targetElement = document.getElementById(targetId);
+    targetElement.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const shouldRenderNavigation = location.pathname === '/introduction';
 
   return (
     <nav className={styles.navbar}>
-      <ul>
-        {!user && (
-          <>
-            <li className={styles.title}>
-              {/* Rendering a link from the logo to the home page */}
-              <Link to="/">
-                <img src={logo} alt="Logo" className={styles.logo} />
-              </Link>
-            </li>
-            <li>
+      <div className={styles.navbarContainer}>
+        <div className={styles.title}>
+          {/* Rendering a link from the logo to the home page */}
+          <Link to="/">
+            <img src={logo} alt="Logo" className={styles.logo} />
+          </Link>
+        </div>
+        <div className={styles.links}>
+          {shouldRenderNavigation && (
+            <>
+              {/* Navigation Bar */}
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('home')}>
+                Home
+              </button>
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('about')}>
+                About Us
+              </button>
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('features')}>
+                Features
+              </button>
+            </>
+          )}
+          {!user && (
+            <>
               {/* Rendering a link to the login page */}
               <Link to="/login">Login</Link>
-            </li>
-            <li>
               {/* Rendering a link to the signup page */}
               <Link to="/signup">Sign Up</Link>
-            </li>
-          </>
-        )}
-
-        {user && (
-          <>
-            <li className={styles.title}>
-              {/* Rendering a link from the logo to the home page */}
-              <Link to="/">
-                <img src={logo} alt="Logo" className={styles.logo} />
-              </Link>
-            </li>
-            <li>
-              <button className="btn" onClick={logout}>
-                Logout
-              </button>
-            </li>
-          </>
-        )}
-      </ul>
+            </>
+          )}
+          {user && (
+            <button className="btn" onClick={logout}>
+              Logout
+            </button>
+          )}
+        </div>
+      </div>
     </nav>
   );
 }

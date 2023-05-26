@@ -18,7 +18,7 @@ export default function Login() {
     <form onSubmit={handleSubmit} className={styles["login-form"]}>
       <h2>Welcome back to YuHu!</h2>
       <label>
-        <span>email:</span>
+        <span>Email:</span>
         <input
           type="email"
           onChange={(e) => setEmail(e.target.value)} // Update email value as the user types
