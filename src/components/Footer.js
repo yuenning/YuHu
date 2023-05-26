@@ -20,10 +20,8 @@ export default function Footer() {
   });  
 
   return (
-    <footer>
-      <footer className={styles["footer"]}>
+    <footer className={styles["footer"]}>
       &copy; {new Date().getFullYear()} YuHu. All rights reserved.
-      </footer>
     </footer>
   );
 }
