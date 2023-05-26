@@ -1,3 +1,14 @@
+.introduction {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 32px;
+}
+
+.introduction h1 {
+  text-align: center;
+}
+
 /* Reset default margin and padding */
 body {
     margin: 0;
@@ -127,4 +138,4 @@ body {
       opacity: 1;
     }
   }
-  
+ 
