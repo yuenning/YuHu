@@ -19,6 +19,14 @@ export default function Signup() {
     <form onSubmit={handleSubmit} className={styles["signup-form"]}>
       <h2>Sign Up Now!</h2>
       <label>
+        <span>Company Name:</span>
+        <input
+          type="text"
+          onChange={(e) => setDisplayName(e.target.value)}
+          value={displayName}
+        />
+      </label>
+      <label>
         <span>Email:</span>
         <input
           type="email"
@@ -32,14 +40,6 @@ export default function Signup() {
           type="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
-        />
-      </label>
-      <label>
-        <span>Company Name:</span>
-        <input
-          type="text"
-          onChange={(e) => setDisplayName(e.target.value)}
-          value={displayName}
         />
       </label>
       {!isPending && <button className="btn">Sign Up</button>}

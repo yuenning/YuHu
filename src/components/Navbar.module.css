@@ -1,9 +1,12 @@
 /* navbar styles */
+
 .navbar {
+  position: fixed;
   width: 100%;
-  background: rgb(0, 0, 0);
+  background: black;
   padding: 20px 10px;
   box-sizing: border-box;
+  z-index: 2;
 }
 
 .navbar ul {
@@ -24,17 +27,55 @@
 .logo {
   width: 120px;
   vertical-align: middle;
+  width: 120px;
+  vertical-align: middle;
+  transition: transform 0.3s;}
+
+.logo:hover {
+  transform: scale(1.1);
 }
 
-
-.navbar button,
 .navbar a {
   margin-left: 16px;
+  border: none;
+  background: none;
+  padding: 6px 12px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 1em;
+  text-decoration: none;
+  transition: transform 0.3s;
 }
 
-.navbar a {
+.navbar a:hover {
+  transform: scale(1.2);
+}
+
+.navbarContainer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.links {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s;
+}
+
+.scroll-link {
+  margin-left: 16px;
+  border: none;
+  background: none;
+  padding: 6px 12px;
   color: #ffffff;
+  cursor: pointer;
+  font-size: 1em;
   text-decoration: none;
+  transition: transform 0.3s;
 }
 
 .navbarContainer {
@@ -45,8 +86,6 @@
   margin: 0 auto;
 }
 
-.links {
-  justify-self: end;
-  display: flex;
-  align-items: center;
+.scroll-link:hover {
+  transform: scale(1.2);
 }
