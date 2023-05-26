@@ -27,6 +27,7 @@
 .logo {
   margin-right: 100%;
   max-width: 25%;
+  vertical-align: middle;
   width: 120px;
   vertical-align: middle;
   transition: transform 0.3s;}
