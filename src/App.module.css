@@ -26,12 +26,16 @@ ul {
   cursor: pointer;
   font-size: 1em;
 }
+
 .btn:hover {
   background: #000000;
   color: #fff;
 }
+
 .App {
-  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-logo {
