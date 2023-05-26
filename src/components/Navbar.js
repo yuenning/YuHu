@@ -27,6 +27,7 @@ export default function Navbar() {
           </Link>
         </div>
         <div className={styles.links}>
+
           {shouldRenderNavigation && (
             <>
               {/* Navigation Bar */}
