@@ -49,6 +49,7 @@ export default function Navbar() {
               <Link to="/signup">Sign Up</Link>
             </>
           )}
+
           {user && (
             <button className="btn" onClick={logout}>
               Logout
