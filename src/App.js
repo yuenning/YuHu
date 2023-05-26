@@ -1,3 +1,5 @@
+import styles from "./App.module.css";
+
 import {
   BrowserRouter as Router,
   Route,
@@ -18,7 +20,7 @@ function App() {
   const { authIsReady, user } = useAuthContext();
 
   return (
-    <div className="App">
+    <div className={styles["App"]}>
       {authIsReady && (
         <Router>
           <Navbar />
