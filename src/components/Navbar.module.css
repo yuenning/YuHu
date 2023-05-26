@@ -25,10 +25,11 @@
 }
 
 .logo {
+  margin-right: 100%;
+  max-width: 25%;
   width: 120px;
   vertical-align: middle;
-  transition: transform 0.3s;
-}
+  transition: transform 0.3s;}
 
 .logo:hover {
   transform: scale(1.1);
