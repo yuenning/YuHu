@@ -1,12 +1,10 @@
 /* navbar styles */
 
 .navbar {
-  position: fixed;
   width: 100%;
   background: black;
   padding: 20px 10px;
   box-sizing: border-box;
-  z-index: 2;
 }
 
 .navbar ul {
