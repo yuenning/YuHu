@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { useLogout } from '../hooks/useLogout';
-import logo from './NavbarLogo.png';
-import styles from './Navbar.module.css';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useLogout } from "../hooks/useLogout";
+import logo from "./NavbarLogo.png";
+import styles from "./Navbar.module.css";
 
 export default function Navbar() {
   const { logout } = useLogout();
@@ -12,10 +12,13 @@ export default function Navbar() {
 
   const smoothScrollTo = (targetId) => {
     const targetElement = document.getElementById(targetId);
-    targetElement.scrollIntoView({ behavior: 'smooth' });
+    if (targetElement) {
+      targetElement.textContent = "targetElement";
+    }
+    targetElement.scrollIntoView({ behavior: "smooth" });
   };
 
-  const shouldRenderNavigation = location.pathname === '/introduction';
+  const shouldRenderNavigation = location.pathname === "/introduction";
 
   return (
     <nav className={styles.navbar}>
@@ -27,17 +30,25 @@ export default function Navbar() {
           </Link>
         </div>
         <div className={styles.links}>
-
           {shouldRenderNavigation && (
             <>
               {/* Navigation Bar */}
-              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('home')}>
+              <button
+                className={styles["scroll-link"]}
+                onClick={() => smoothScrollTo("home")}
+              >
                 Home
               </button>
-              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('about')}>
+              <button
+                className={styles["scroll-link"]}
+                onClick={() => smoothScrollTo("about")}
+              >
                 About Us
               </button>
-              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo('features')}>
+              <button
+                className={styles["scroll-link"]}
+                onClick={() => smoothScrollTo("features")}
+              >
                 Features
               </button>
             </>
