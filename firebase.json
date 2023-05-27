@@ -20,6 +20,17 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
+    "headers": [
+      {
+        "source": "**/*.@(js|jsx)",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/javascript"
+          }
+        ]
+      }
+    ],
     "site": "yuhu",
     "public": "public",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
