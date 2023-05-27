@@ -8,7 +8,7 @@
       name="description"
       content="Web site created using create-react-app"
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
@@ -28,16 +28,46 @@
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/9.22.1/firebase-app-compat.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-remote-config.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-performance.js"></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-remote-config.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-performance.js"
+    ></script>
     <!-- 
       initialize the SDK after all desired features are loaded, set useEmulator to false
       to avoid connecting the SDK to running emulators.
@@ -137,8 +167,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-performance.js"></script>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-      const loadEl = document.querySelector("#loadEl"); // Update the ID to match your HTML code
+      document.addEventListener("DOMContentLoaded", function () {
+        const loadEl = document.querySelector("#loadEl"); // Update the ID to match your HTML code
 
         try {
           let app = firebase.app();
@@ -158,7 +188,7 @@
           )}`;
         } catch (e) {
           console.error(e);
-          loadEl.textContent = "Error loading the Firebase SDK, check the console.";
+          loadEl.textContent = `Error loading the Firebase SDK, check the console.`;
         }
       });
     </script>
