@@ -38,7 +38,7 @@
       <h2>Welcome</h2>
       <h1>Firebase Hosting Setup Complete</h1>
       <p>
-        You're seeing this because you've successfully setup Firebase Hosting.
+        You're seeing this because you've successfully set up Firebase Hosting.
         Now it's time to go build something extraordinary!
       </p>
       <a target="_blank" href="https://firebase.google.com/docs/hosting/"
@@ -105,6 +105,19 @@
         const loadEl = document.querySelector("#loadEl"); // Update the ID to match your HTML code
 
         try {
+          const firebaseConfig = {
+          apiKey: "AIzaSyDLK9QzB0CppEeQOjjyZeY3Kpbdd7-XsAA",
+          authDomain: "yuhu5998.firebaseapp.com",
+          databaseURL: "https://yuhu5998-default-rtdb.firebaseio.com",
+          projectId: "yuhu5998",
+          storageBucket: "yuhu5998.appspot.com",
+          messagingSenderId: "142613113769",
+          appId: "1:142613113769:web:e4566b08a2d60ac782f2b8",
+          measurementId: "G-MPPG5QXYK9",
+          };
+
+          firebase.initializeApp(firebaseConfig);
+
           let app = firebase.app();
           let features = [
             "auth",
