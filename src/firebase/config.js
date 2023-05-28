@@ -5,6 +5,7 @@ import "firebase/compat/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyDLK9QzB0CppEeQOjjyZeY3Kpbdd7-XsAA",
   authDomain: "yuhu5998.firebaseapp.com",
+  databaseURL: "https://yuhu5998-default-rtdb.firebaseio.com",
   projectId: "yuhu5998",
   storageBucket: "yuhu5998.appspot.com",
   messagingSenderId: "142613113769",
@@ -22,4 +23,4 @@ const projectAuth = firebase.auth();
 // timestamp
 const timestamp = firebase.firestore.Timestamp;
 
-export { projectFirestore, projectAuth, timestamp };
+export { firebaseConfig, projectFirestore, projectAuth, timestamp };
