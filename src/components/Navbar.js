@@ -12,9 +12,6 @@ export default function Navbar() {
 
   const smoothScrollTo = (targetId) => {
     const targetElement = document.getElementById(targetId);
-    if (targetElement) {
-      targetElement.textContent = "targetElement";
-    }
     targetElement.scrollIntoView({ behavior: "smooth" });
   };
 
