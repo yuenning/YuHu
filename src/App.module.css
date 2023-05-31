@@ -1,3 +1,16 @@
+@import url("https://www.dafontfree.net/embed/YmF5ZXItdHlwZWFyY2hpdHlwZSZkYXRhLzQ5L2IvMzk2ODYvQmF5ZXItVHlwZUFyY2hpVHlwZS5vdGY");
+@font-face {
+  font-family: "bayer-typearchitype";
+  src: url("./fonts/Bayer-TypeArchiType.otf") format("opentype");
+  /* Update the path and file name accordingly */
+}
+
+/* base styles */
+h1 {
+  font-family: "bayer-typearchitype", serif;
+  margin: 0;
+  font-size: 1.1em;
+}
 body {
   font-family: Montserrat, sans-serif;
   margin: 0;
@@ -6,7 +19,6 @@ body {
 ul,
 li,
 p,
-h1,
 h2,
 h3,
 h4 {
