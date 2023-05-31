@@ -10,9 +10,15 @@ import { useAuthContext } from "./hooks/useAuthContext";
 
 // pages & components
 import Introduction from "./pages/introduction/Introduction";
-import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
+
+// logged-in pages
+import Home from "./pages/home/Home";
+import Restocks from "./pages/restocks/Restocks";
+import Sales from "./pages/sales/Sales";
+
+// components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -43,6 +49,26 @@ function App() {
                   <Navigate to="/" replace />
                 ) : (
                   <Signup />
+                )
+              }
+            />
+            <Route
+              path="/restocks"
+              element={
+                user && user.displayName ? (
+                  <Restocks />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/sales"
+              element={
+                user && user.displayName ? (
+                  <Sales />
+                ) : (
+                  <Navigate to="/login" replace />
                 )
               }
             />
