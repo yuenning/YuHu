@@ -18,48 +18,50 @@ export default function SalesForm({ uid }) {
     });
   };
 
-  // reset the form fields
+  // Reset the form fields
   useEffect(() => {
-    if (response.success) {
+    if (response && response.success) {
       setProductID("");
       setBatchID("");
       setQuantity("");
     }
-  }, [response.success]);
+  }, [response]);
 
   return (
     <>
       <h3>Input Sales</h3>
       <form onSubmit={handleSubmit}>
-        <label>
+        <label htmlFor="productID">
           <span>Product ID:</span>
           <input
             type="text"
             required
+            id="productID"
             onChange={(e) => setProductID(e.target.value)}
             value={productID}
           />
         </label>
-        <label>
+        <label htmlFor="batchID">
           <span>Batch ID:</span>
           <input
             type="text"
             required
+            id="batchID"
             onChange={(e) => setBatchID(e.target.value)}
             value={batchID}
           />
         </label>
-        <label>
+        <label htmlFor="quantity">
           <span>Quantity:</span>
           <input
             type="number"
             required
+            id="quantity"
             onChange={(e) => setQuantity(e.target.value)}
             value={quantity}
           />
         </label>
-
-        <button>Add Sales</button>
+        <button type="submit">Add Sales</button>
       </form>
     </>
   );

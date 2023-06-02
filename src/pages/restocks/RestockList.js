@@ -8,17 +8,16 @@ export default function RestockList({ restocks }) {
 
   return (
     <ul className={styles.restocks}>
-      {restocks.map((restocks) => (
-        <li key={restocks.id}>
-          <p className={styles.productName}>{restocks.productName}</p>
-          <p className={styles.productID}>${restocks.productID}</p>
-          <p className={styles.batchID}>{restocks.batchID}</p>
-          <p className={styles.quantity}>${restocks.quantity}</p>
-          <p className={styles.expiryDate}>{restocks.expiryDate}</p>
-          <p className={styles.sellingPrice}>${restocks.sellingPrice}</p>
-          <p className={styles.costPrice}>{restocks.costPrice}</p>
-
-          <button onClick={() => deleteDocument(restocks.id)}>x</button>
+      {restocks.map((restock) => (
+        <li key={restock.id}>
+          <p className={styles.productName}>{restock.productName}</p>
+          <p className={styles.productID}>{restock.productID}</p>{" "}
+          <p className={styles.batchID}>{restock.batchID}</p>
+          <p className={styles.quantity}>{restock.quantity}</p>{" "}
+          <p className={styles.expiryDate}>{restock.expiryDate}</p>
+          <p className={styles.sellingPrice}>{restock.sellingPrice}</p>{" "}
+          <p className={styles.costPrice}>{restock.costPrice}</p>{" "}
+          <button onClick={() => deleteDocument(restock.id)}>x</button>{" "}
         </li>
       ))}
     </ul>
