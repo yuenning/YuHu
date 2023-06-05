@@ -30,9 +30,78 @@
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <div id="loadEl"></div>
 
+    <!-- include only the Firebase features as you need -->
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-functions.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-remote-config.js"
+    ></script>
+    <script
+      type="module"
+      defer
+      src="https://www.gstatic.com/firebasejs/9.6.1/firebase-performance.js"
+    ></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const loadEl = document.querySelector("#loadEl"); // Update the ID to match your HTML code
+
+        try {
+          const firebaseConfig = {
+            apiKey: "AIzaSyDLK9QzB0CppEeQOjjyZeY3Kpbdd7-XsAA",
+            authDomain: "yuhu5998.firebaseapp.com",
+            databaseURL: "https://yuhu5998-default-rtdb.firebaseio.com",
+            projectId: "yuhu5998",
+            storageBucket: "yuhu5998.appspot.com",
+            messagingSenderId: "142613113769",
+            appId: "1:142613113769:web:e4566b08a2d60ac782f2b8",
+            measurementId: "G-MPPG5QXYK9",
+          };
+
+          firebase.initializeApp(firebaseConfig);
+<--
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
