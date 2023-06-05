@@ -22,34 +22,35 @@ class InventoryApp extends React.Component {
         {/* Landing Page Animation */}
         <section id="home" className={styles["animation"]}>
           <div className={styles["landingText"]}>
-            <h1>Welcome to YUHU!!</h1>
+            <h1>welcome to yuhu!</h1>
             <p>the yoo-hoo to your inventory boo-hoo</p>
           </div>
         </section>
 
         {/* About Us Section */}
         <section id="about" className={styles["about-us"]}>
-          <h1>About Us</h1>
+          <h1>about us</h1>
           <p>
-            At YuHu, our aim is to empower small businesses with a comprehensive
-            digital solution that transforms their stock-taking process and
-            optimizes inventory management. Our user-friendly web application
+            At YuHu, we aim to empower small businesses like you with a
+            comprehensive digital solution to transform your stock-taking
+            process and inventory management. Our user-friendly web application
             streamlines inventory tasks, saving valuable time and effort for
-            small business owners. With advanced analytics and automated alerts,
-            we provide valuable insights into inventory performance, enabling
-            informed decision-making to reduce costs and increase profitability.
-            We understand the challenges faced by small businesses in accessing
-            affordable and intuitive inventory management tools, which is why
-            our solution is specifically designed to cater to their unique needs
-            and budgets. At YuHu, we are committed to helping small businesses
-            thrive and succeed by providing them with the tools they need to
-            optimize their inventory management processes.
+            small business owners like you. With advanced analytics and
+            automated alerts, we provide valuable insights into your inventory
+            performance, enabling informed decision-making to reduce costs and
+            increase profitability for you. We understand the challenges faced
+            by small businesses in accessing affordable and intuitive inventory
+            management tools, which is why our solution is specifically designed
+            to cater to your unique needs and budgets. At YuHu, we are committed
+            to helping small businesses thrive and succeed by providing them
+            with the tools you need to optimize your inventory management
+            processes.
           </p>
         </section>
 
         {/* Features Section */}
         <section id="features" className={styles["features"]}>
-          <h1>Features</h1>
+          <h1>features</h1>
           <ul>
             <li>Analytics Dashboards</li>
             <li>Inventory Tracking</li>

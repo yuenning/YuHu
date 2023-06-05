@@ -5,6 +5,15 @@
   background: black;
   padding: 20px 10px;
   box-sizing: border-box;
+  color: #ffffff;
+}
+
+.navbar p {
+  width: 100%;
+  background: black;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  color: #ffffff;
 }
 
 .navbar ul {
@@ -27,7 +36,8 @@
   vertical-align: middle;
   width: 120px;
   vertical-align: middle;
-  transition: transform 0.3s;}
+  transition: transform 0.3s;
+}
 
 .logo:hover {
   transform: scale(1.1);
