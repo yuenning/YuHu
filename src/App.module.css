@@ -1,15 +1,14 @@
 @import url("https://www.dafontfree.net/embed/YmF5ZXItdHlwZWFyY2hpdHlwZSZkYXRhLzQ5L2IvMzk2ODYvQmF5ZXItVHlwZUFyY2hpVHlwZS5vdGY");
-@font-face {
-  font-family: "bayer-typearchitype";
-  src: url("./fonts/Bayer-TypeArchiType.otf") format("opentype");
-  /* Update the path and file name accordingly */
-}
 
 /* base styles */
 h1 {
-  font-family: "bayer-typearchitype", serif;
-  margin: 0;
-  font-size: 1.1em;
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }
 body {
   font-family: Montserrat, sans-serif;

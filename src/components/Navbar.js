@@ -32,6 +32,12 @@ export default function Navbar() {
               {/* Navigation Bar */}
               <button
                 className={styles["scroll-link"]}
+                onClick={() => smoothScrollTo("home")}
+              >
+                Home
+              </button>
+              <button
+                className={styles["scroll-link"]}
                 onClick={() => smoothScrollTo("about")}
               >
                 About Us

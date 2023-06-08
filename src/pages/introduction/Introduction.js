@@ -22,7 +22,7 @@ class InventoryApp extends React.Component {
         {/* Landing Page Animation */}
         <section id="home" className={styles["animation"]}>
           <div className={styles["landingText"]}>
-            <h1>welcome to yuhu!</h1>
+            <h1>Welcome to Yuhu!!</h1>
             <p>the yoo-hoo to your inventory boo-hoo</p>
           </div>
         </section>
