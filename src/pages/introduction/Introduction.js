@@ -1,6 +1,9 @@
 import styles from "./Introduction.module.css";
 import React from "react";
-// import { useLocation } from 'react-router-dom';
+import dashboardsIcon from "./dashboards_icon.png";
+import trackingIcon from "./tracking_icon.png";
+import orderManagementIcon from "./order_management_icon.png";
+import alertsIcon from "./alerts_icon.png";
 
 class InventoryApp extends React.Component {
   componentDidMount() {
@@ -29,7 +32,7 @@ class InventoryApp extends React.Component {
 
         {/* About Us Section */}
         <section id="about" className={styles["about-us"]}>
-          <h1>about us</h1>
+          <h1>About Us</h1>
           <p>
             At YuHu, we aim to empower small businesses like you with a
             comprehensive digital solution to transform your stock-taking
@@ -50,13 +53,25 @@ class InventoryApp extends React.Component {
 
         {/* Features Section */}
         <section id="features" className={styles["features"]}>
-          <h1>features</h1>
-          <ul>
-            <li>Analytics Dashboards</li>
-            <li>Inventory Tracking</li>
-            <li>Order Management</li>
-            <li>Automated Alerts</li>
-          </ul>
+          <h1>Features</h1>
+          <div className={styles["features-icons"]}>
+            <div className={styles["feature"]}>
+              <img src={dashboardsIcon} alt="Dashboards" />
+              <p>Analytics Dashboards</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={trackingIcon} alt="Tracking" />
+              <p>Inventory Tracking</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={orderManagementIcon} alt="Order Management" />
+              <p>Order Management</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={alertsIcon} alt="Alerts" />
+              <p>Automated Alerts</p>
+            </div>
+          </div>
         </section>
 
         {/* Additional sections and content can be added here */}
