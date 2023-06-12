@@ -13,7 +13,9 @@ export default function Restock() {
   const { documents, error } = useCollection(
     "restocks",
     ["uid", "==", user.uid],
-    ["createdAt", "desc"]
+    // (original) ["createdAt", "desc"]
+    ["date", "desc"], //not sure how to sort them in descending date and time order
+    ["time", "desc"]
   );
 
   return (

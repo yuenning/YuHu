@@ -64,6 +64,7 @@ export default function Navbar() {
             <>
               <Link to="/sales">Sales</Link>
               <Link to="/restocks">Restocks</Link>
+              <Link to="/price">Price Updates</Link>
               <p>Welcome back, {user.displayName}</p>
               <button className="btn" onClick={logout}>
                 Logout

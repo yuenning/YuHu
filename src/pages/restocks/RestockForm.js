@@ -2,14 +2,13 @@ import { useState, useEffect } from "react";
 import { useFirestore } from "../../hooks/useFirestore";
 
 export default function RestockForm({ uid }) {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
   const [productName, setProductName] = useState("");
   const [productID, setProductID] = useState("");
-  const [batchID, setBatchID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
-  const [sellingPrice, setSellingPrice] = useState("");
-  const [costPrice, setCostPrice] = useState("");
-
+  
   const { addDocument, response } = useFirestore("restocks");
 
   const handleSubmit = (e) => {
@@ -17,33 +16,49 @@ export default function RestockForm({ uid }) {
 
     addDocument({
       uid,
+      date,
+      time,
       productName,
       productID,
-      batchID,
       quantity,
       expiryDate,
-      sellingPrice,
-      costPrice,
     });
   };
 
   // reset the form fields
   useEffect(() => {
     if (response.success) {
+      setDate("");
+      setTime("");
       setProductName("");
       setProductID("");
-      setBatchID("");
       setQuantity("");
       setExpiryDate("");
-      setSellingPrice("");
-      setCostPrice("");
     }
   }, [response.success]);
 
   return (
     <>
-      <h3>Input Restocks</h3>
+      <h3>Restock Details</h3>
       <form onSubmit={handleSubmit}>
+      <label>
+          <span>Date:</span>
+          <input
+            type="date"
+            required
+            onChange={(e) => setDate(e.target.value)}
+            value={date}
+          />
+        </label>
+        <label>
+          <span>Time:</span>
+          <input
+            type="time"
+            required
+            onChange={(e) => setTime(e.target.value)}
+            value={time}
+          />
+        </label>
         <label>
           <span>Product Name:</span>
           <input
@@ -63,15 +78,6 @@ export default function RestockForm({ uid }) {
           />
         </label>
         <label>
-          <span>Batch ID:</span>
-          <input
-            type="text"
-            required
-            onChange={(e) => setBatchID(e.target.value)}
-            value={batchID}
-          />
-        </label>
-        <label>
           <span>Quantity:</span>
           <input
             type="number"
@@ -87,30 +93,6 @@ export default function RestockForm({ uid }) {
             required
             onChange={(e) => setExpiryDate(e.target.value)}
             value={expiryDate}
-          />
-        </label>
-        <label>
-          <span>Selling Price:</span>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0.00"
-            required
-            onChange={(e) => setSellingPrice(e.target.value)}
-            value={sellingPrice}
-          />
-        </label>
-        <label>
-          <span>Cost Price:</span>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="0.00"
-            required
-            onChange={(e) => setCostPrice(e.target.value)}
-            value={costPrice}
           />
         </label>
 

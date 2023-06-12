@@ -68,52 +68,14 @@
   overflow: hidden;
   border-left: 4px solid #000000;
 }
-.restocks .productName {
+
+.restocks p {
+  flex: 1;
+  margin: 0;
+  padding: 0;
   color: #777;
-  font-size: 1.4em;
 }
-.restocks .productID {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
-.restocks .batchID {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
-.restocks .quantity {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
-.restocks .expiryDate {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
-.restocks .sellingPrice {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
-.restocks .costPrice {
-  margin-left: auto;
-  margin-right: 40px;
-  color: #777;
-  font-weight: bold;
-  font-size: 1.6em;
-}
+
 .restocks button {
   position: absolute;
   top: 0;
