@@ -38,7 +38,7 @@ export default function SalesForm({ uid }) {
 
   return (
     <>
-      <h3>Price Change Details</h3>
+      <h3>Price Update Details</h3>
       <form onSubmit={handleSubmit}>
       <label>
           <span>Date:</span>
