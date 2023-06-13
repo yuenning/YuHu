@@ -17,6 +17,7 @@ import Signup from "./pages/signup/Signup";
 import Home from "./pages/home/Home";
 import Restocks from "./pages/restocks/Restocks";
 import Sales from "./pages/sales/Sales";
+import Price from "./pages/price/Price"
 
 // components
 import Navbar from "./components/Navbar";
@@ -67,6 +68,16 @@ function App() {
               element={
                 user && user.displayName ? (
                   <Sales />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/price"
+              element={
+                user && user.displayName ? (
+                  <Price />
                 ) : (
                   <Navigate to="/login" replace />
                 )

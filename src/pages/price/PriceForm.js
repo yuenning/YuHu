@@ -6,9 +6,10 @@ export default function SalesForm({ uid }) {
   const [time, setTime] = useState("");
   const [productName, setProductName] = useState("");
   const [productID, setProductID] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [type, setType] = useState("");
+  const [price, setPrice] = useState("");
 
-  const { addDocument, response } = useFirestore("sales");
+  const { addDocument, response } = useFirestore("price");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,7 +19,8 @@ export default function SalesForm({ uid }) {
       time,
       productName,
       productID,
-      quantity,
+      type,
+      price
     });
   };
 
@@ -29,13 +31,14 @@ export default function SalesForm({ uid }) {
       setTime("");
       setProductName("");
       setProductID("");
-      setQuantity("");
+      setType("");
+      setPrice("");
     }
   }, [response]);
 
   return (
     <>
-      <h3>Sales Details</h3>
+      <h3>Price Update Details</h3>
       <form onSubmit={handleSubmit}>
       <label>
           <span>Date:</span>
@@ -74,15 +77,30 @@ export default function SalesForm({ uid }) {
           />
         </label>
         <label>
-          <span>Quantity:</span>
+            <span>Type:</span>
+            <select
+                required
+                onChange={(e) => setType(e.target.value)}
+                value={type}
+            >
+                <option value="">Select an option</option>
+                <option value="product1">Cost Price</option>
+                <option value="product2">Selling Price</option>
+            </select>
+        </label>
+        <label>
+          <span>New Price:</span>
           <input
             type="number"
+            step="0.01"
+            min="0"
+            placeholder="0.00"
             required
-            onChange={(e) => setQuantity(e.target.value)}
-            value={quantity}
+            onChange={(e) => setPrice(e.target.value)}
+            value={price}
           />
         </label>
-        <button type="submit">Add Sales</button>
+        <button type="submit">Add Price</button>
       </form>
     </>
   );

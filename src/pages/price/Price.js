@@ -2,16 +2,16 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
 
 // styles
-import styles from "./Sales.module.css";
+import styles from "./Price.module.css";
 
 // components
-import SalesForm from "./SalesForm";
-import SalesList from "./SalesList";
+import PriceForm from "./PriceForm";
+import PriceList from "./PriceList";
 
-export default function Sales() {
+export default function Price() {
   const { user } = useAuthContext();
   const { documents, error } = useCollection(
-    "sales",
+    "price",
     ["uid", "==", user.uid],
     // (original) ["createdAt", "desc"]
     ["date", "desc"], //not sure how to sort them in descending date and time order
@@ -22,10 +22,10 @@ export default function Sales() {
     <div className={styles.container}>
       <div className={styles.content}>
         {error && <p>{error}</p>}
-        {documents && <SalesList sales={documents} />}
+        {documents && <PriceList Price={documents} />}
       </div>
       <div className={styles.sidebar}>
-        <SalesForm uid={user.uid} />
+        <PriceForm uid={user.uid} />
       </div>
     </div>
   );
