@@ -1,0 +1,119 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.toggleContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 50px;
+}
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggleSwitch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 30px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 24px;
+  width: 24px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #313131;
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+.sliderLabel {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.content {
+  margin-top: 20px;
+}
+
+.toggle-label {
+  display: block;
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.RestockForm,
+.SalesForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.RestockForm h1,
+.SalesForm h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.RestockForm p,
+.SalesForm p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.RestockForm input,
+.SalesForm input {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.RestockForm button,
+.SalesForm button {
+  padding: 10px 20px;
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.RestockForm button:hover,
+.SalesForm button:hover {
+  background-color: #0c7cd5;
+}

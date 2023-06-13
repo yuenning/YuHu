@@ -17,7 +17,7 @@ import Signup from "./pages/signup/Signup";
 import Home from "./pages/home/Home";
 import Restocks from "./pages/restocks/Restocks";
 import Sales from "./pages/sales/Sales";
-import Price from "./pages/price/Price"
+import Forms from "./pages/forms/Forms";
 
 // components
 import Navbar from "./components/Navbar";
@@ -74,15 +74,16 @@ function App() {
               }
             />
             <Route
-              path="/price"
+              path="/forms"
               element={
                 user && user.displayName ? (
-                  <Price />
+                  <Forms />
                 ) : (
                   <Navigate to="/login" replace />
                 )
               }
             />
+
             {/* Add a catch-all route for undefined paths */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
