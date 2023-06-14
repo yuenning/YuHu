@@ -1,8 +1,8 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+  align-items: left;
+  margin: 50px;
 }
 
 .toggleContainer {
@@ -59,9 +59,8 @@ input:checked + .slider:before {
 .sliderLabel {
   display: block;
   text-align: center;
-  margin-top: 8px;
-  font-size: 14px;
-  color: #333;
+  margin-top: 15px;
+  font-size: 24px;
 }
 
 .content {
@@ -76,44 +75,85 @@ input:checked + .slider:before {
   color: #333;
 }
 
-.RestockForm,
-.SalesForm {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+.sidebar {
+  padding-right: 50px;
 }
-
-.RestockForm h1,
-.SalesForm h1 {
-  font-size: 24px;
-  margin-bottom: 10px;
+.sidebar form {
+  padding: 20px;
+  background: #000000;
+  border-radius: 10px;
+  width: 100%;
 }
-
-.RestockForm p,
-.SalesForm p {
-  font-size: 16px;
+.sidebar input,
+.sidebar select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 4px;
   color: #555;
+  font-size: 1em;
+}
+.sidebar label {
+  margin: 0 auto 20px;
+  display: block;
+  color: #fff;
+}
+.sidebar button {
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 6px 12px;
+  background-color: transparent;
+  font-size: 1em;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+.sidebar h3 {
+  color: #000000;
   margin-bottom: 20px;
 }
-
-.RestockForm input,
-.SalesForm input {
-  width: 300px;
-  padding: 10px;
-  margin-bottom: 10px;
+.sidebar aside {
+  margin-top: 40px;
+  color: #555;
+}
+.sidebar aside li {
+  margin: 10px;
 }
 
-.RestockForm button,
-.SalesForm button {
-  padding: 10px 20px;
-  background-color: #2196f3;
-  color: #fff;
+/* restocks */
+.restocks li {
+  margin: 30px auto;
+  border: 1px solid #f2f2f2;
+  box-shadow: 3px 3px 5px rgba(50, 50, 50, 0.1);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid #000000;
+}
+
+.restocks p {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  color: #777;
+}
+
+.restocks button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ddd;
+  color: #777;
   border: none;
+  padding: 12px 8px;
+  text-align: center;
+  line-height: 0;
+  font-size: 0.9em;
   cursor: pointer;
-}
-
-.RestockForm button:hover,
-.SalesForm button:hover {
-  background-color: #0c7cd5;
 }

@@ -8,7 +8,7 @@ export default function RestockForm({ uid }) {
   const [productID, setProductID] = useState("");
   const [quantity, setQuantity] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
-  
+
   const { addDocument, response } = useFirestore("restocks");
 
   const handleSubmit = (e) => {
@@ -41,7 +41,7 @@ export default function RestockForm({ uid }) {
     <>
       <h3>Restock Details</h3>
       <form onSubmit={handleSubmit}>
-      <label>
+        <label>
           <span>Date:</span>
           <input
             type="date"

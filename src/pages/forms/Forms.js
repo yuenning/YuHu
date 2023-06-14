@@ -1,40 +1,33 @@
 import React, { useState } from "react";
 
 // components
-import RestockForm from "./RestockForm";
-import SalesForm from "./SalesForm";
+import RestockProductForm from "./RestockProductForm";
+import SalesProductForm from "./SalesProductForm";
 
 // styles
 import styles from "./Forms.module.css";
 
 export default function Forms() {
   const SwitchButton = () => {
-    const [isPage1Visible, setPage1Visible] = useState(true);
+    const [isSalesForm, setSalesForm] = useState(true);
 
     const handleClick = () => {
-      setPage1Visible(!isPage1Visible);
+      setSalesForm(!isSalesForm);
     };
 
     return (
       <div className={styles.container}>
         <label className={styles.toggleSwitch}>
-          <input
-            type="checkbox"
-            checked={isPage1Visible}
-            onChange={handleClick}
-          />
+          <input type="checkbox" checked={isSalesForm} onChange={handleClick} />
           <span className={styles.slider}></span>
-          <span className={styles.sliderLabel}>
-            {isPage1Visible ? "Restock Form" : "Sales Form"}
-          </span>
+          {/* Labels for debugging purposes */}
+          {/*<span className={styles.sliderLabel}>
+            {isSalesForm ? "Sales Form" : "Restock Form"}
+          </span>*/}
         </label>
         <br></br>
-        <div className={styles.content}>
-          {isPage1Visible ? (
-            <RestockForm className={styles.RestockForm} />
-          ) : (
-            <SalesForm className={styles.SalesForm} />
-          )}
+        <div className={styles.sidebar}>
+          {isSalesForm ? <SalesProductForm /> : <RestockProductForm />}
         </div>
       </div>
     );
