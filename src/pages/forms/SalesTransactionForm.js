@@ -33,6 +33,7 @@ export default function SalesTransactionForm({ uid }) {
   return (
     <>
       <h3>Sales Transaction Details</h3>
+      <div style={{ paddingBottom: "20px" }}>
       <form onSubmit={handleSubmit}>
         <label>
           <span>Date:</span>
@@ -71,6 +72,7 @@ export default function SalesTransactionForm({ uid }) {
           />
         </label>
       </form>
+      </div>
     </>
   );
 }

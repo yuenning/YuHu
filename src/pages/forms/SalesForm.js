@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import SalesTransactionForm from "./SalesTransactionForm";
 import SalesProductForm from "./SalesProductForm";
 
-export default function SalesForms() {
+export default function RestockForms() {
   const [form1Data, setForm1Data] = useState({});
   const [form2Data, setForm2Data] = useState({});
+  const [additionalFormCount, setAdditionalFormCount] = useState(1);
 
   const handleForm1Submit = (data) => {
     setForm1Data(data);
@@ -17,20 +18,57 @@ export default function SalesForms() {
   };
 
   const handleOverallSubmit = () => {
-    // Handle the submission of both form data here
     console.log("Form 1 Data:", form1Data);
     console.log("Form 2 Data:", form2Data);
   };
 
+  const handleAddFormClick = () => {
+    setAdditionalFormCount((prevCount) => prevCount + 1);
+  };
+
+  const handleDeleteFormClick = (index) => {
+    setAdditionalFormCount((prevCount) => prevCount - 1);
+  };
+
   return (
     <div>
-      <h1>Form 1</h1>
       <SalesTransactionForm onSubmit={handleForm1Submit} />
-
-      <h1>Form 2</h1>
-      <SalesProductForm onSubmit={handleForm2Submit} />
-      <br></br>
-      <button onClick={handleOverallSubmit}>Submit</button>
+      <div>
+        {[...Array(additionalFormCount)].map((_, index) => (
+          <div key={index}>
+            <SalesProductForm onSubmit={handleForm2Submit} onDelete={() => handleDeleteFormClick(index)} />
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <button 
+          style= {{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            color: 'black', 
+            border: 'none',
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }} 
+          onClick={handleAddFormClick}>
+            <u>+ Add Another Product</u>
+        </button>
+        <br />
+        <button 
+          style={{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            backgroundColor: '#000000', 
+            color: 'white',
+            border: 'none', 
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }} 
+          onClick={handleOverallSubmit}>Submit</button>
+      </div>
     </div>
   );
 }
+

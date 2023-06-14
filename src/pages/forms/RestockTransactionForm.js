@@ -33,6 +33,7 @@ export default function RestockTransactionForm({ uid }) {
   return (
     <>
       <h3>Restock Transaction Details</h3>
+      <div style={{ paddingBottom: "20px" }}>
       <form onSubmit={handleSubmit}>
         <label>
           <span>Date:</span>
@@ -71,6 +72,7 @@ export default function RestockTransactionForm({ uid }) {
           />
         </label>
       </form>
+      </div>
     </>
   );
 }

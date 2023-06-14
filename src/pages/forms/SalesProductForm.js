@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useFirestore } from "../../hooks/useFirestore";
+import { FaTimes } from "react-icons/fa";
 
-export default function SalesProductForm({ uid }) {
+export default function SalesProductForm({ uid, onSubmit, onDelete }) {
   const [productName, setProductName] = useState("");
   const [productID, setProductID] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -33,9 +34,39 @@ export default function SalesProductForm({ uid }) {
 
   return (
     <>
-      <h3>Sales Product Details</h3>
+      <h3 style={{ display: "flex", alignItems: "center" }}>
+        Sales Product Details
+        <button
+          style={{
+            background: "none",
+            color: "#777",
+            border: '2px solid black',
+            padding: "2px",
+            marginLeft: "10px",
+            textAlign: "center",
+            lineHeight: "1",
+            fontSize: "0.9em",
+            cursor: "pointer",
+            width: "30px",
+            height: "30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onClick={onDelete}
+        >
+          <FaTimes 
+            style={{ 
+              margin: "0",
+              color: "black",
+              fontSize: "1.2em",
+             }} 
+          />
+        </button>
+      </h3>
+      <div style={{ paddingBottom: "20px" }}>
       <form onSubmit={handleSubmit}>
-        <label>
+      <label>
           <span>Product Name:</span>
           <input
             type="text"
@@ -72,6 +103,7 @@ export default function SalesProductForm({ uid }) {
           />
         </label>
       </form>
+      </div>
     </>
   );
 }
