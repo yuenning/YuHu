@@ -62,9 +62,7 @@ export default function Navbar() {
           {/* When users have logged in */}
           {user && (
             <>
-              <Link to="/restocks">Restocks</Link>
-              <Link to="/sales">Sales</Link>
-              <Link to="/price">Price Updates</Link>
+              <Link to="/forms">Forms</Link>
               <p>Welcome back, {user.displayName}</p>
               <button className="btn" onClick={logout}>
                 Logout
