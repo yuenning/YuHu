@@ -1,60 +1,40 @@
 import { useState, useEffect } from "react";
 import { useFirestore } from "../../hooks/useFirestore";
 
-export default function SalesForm({ uid }) {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+export default function SalesProductForm({ uid }) {
   const [productName, setProductName] = useState("");
   const [productID, setProductID] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [sellingPrice, setSellingPrice] = useState("");
 
-  const { addDocument, response } = useFirestore("sales");
+  const { addDocument, response } = useFirestore("SalesItems");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     addDocument({
       uid,
-      date,
-      time,
       productName,
       productID,
       quantity,
+      sellingPrice,
     });
   };
 
-  // Reset the form fields
+  // reset the form fields
   useEffect(() => {
-    if (response && response.success) {
-      setDate("");
-      setTime("");
+    if (response.success) {
       setProductName("");
       setProductID("");
       setQuantity("");
+      setSellingPrice("");
     }
-  }, [response]);
+  }, [response.success]);
 
   return (
     <>
-      <h3>Sales Details</h3>
+      <h3>Sales Product Details</h3>
       <form onSubmit={handleSubmit}>
-      <label>
-          <span>Date:</span>
-          <input
-            type="date"
-            required
-            onChange={(e) => setDate(e.target.value)}
-            value={date}
-          />
-        </label>
-        <label>
-          <span>Time:</span>
-          <input
-            type="time"
-            required
-            onChange={(e) => setTime(e.target.value)}
-            value={time}
-          />
-        </label>
         <label>
           <span>Product Name:</span>
           <input
@@ -82,7 +62,15 @@ export default function SalesForm({ uid }) {
             value={quantity}
           />
         </label>
-        <button type="submit">Add Sales</button>
+        <label>
+          <span>Selling Price:</span>
+          <input
+            type="number"
+            required
+            onChange={(e) => setSellingPrice(e.target.value)}
+            value={sellingPrice}
+          />
+        </label>
       </form>
     </>
   );

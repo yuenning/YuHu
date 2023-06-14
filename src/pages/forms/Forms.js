@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 // components
-import RestockProductForm from "./RestockProductForm";
-import SalesProductForm from "./SalesProductForm";
+import RestockForms from "./RestockForm";
+import SalesForm from "./SalesForm";
 
 // styles
 import styles from "./Forms.module.css";
@@ -27,7 +27,7 @@ export default function Forms() {
         </label>
         <br></br>
         <div className={styles.sidebar}>
-          {isSalesForm ? <SalesProductForm /> : <RestockProductForm />}
+          {isSalesForm ? <SalesForm /> : <RestockForms />}
         </div>
       </div>
     );

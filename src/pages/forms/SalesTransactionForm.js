@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { useFirestore } from "../../hooks/useFirestore";
 
-export default function SalesForm({ uid }) {
+export default function SalesTransactionForm({ uid }) {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [productName, setProductName] = useState("");
-  const [productID, setProductID] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [transactionID, setTransactionID] = useState("");
+  const [transactionamount, setTransactionAmount] = useState("");
 
-  const { addDocument, response } = useFirestore("sales");
+  const { addDocument, response } = useFirestore("Sales");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,9 +15,8 @@ export default function SalesForm({ uid }) {
       uid,
       date,
       time,
-      productName,
-      productID,
-      quantity,
+      transactionID,
+      transactionamount,
     });
   };
 
@@ -27,15 +25,14 @@ export default function SalesForm({ uid }) {
     if (response && response.success) {
       setDate("");
       setTime("");
-      setProductName("");
-      setProductID("");
-      setQuantity("");
+      setTransactionID("");
+      setTransactionAmount("");
     }
   }, [response]);
 
   return (
     <>
-      <h3>Sales Details</h3>
+      <h3>Sales Transaction Details</h3>
       <form onSubmit={handleSubmit}>
         <label>
           <span>Date:</span>
@@ -56,33 +53,23 @@ export default function SalesForm({ uid }) {
           />
         </label>
         <label>
-          <span>Product Name:</span>
+          <span>Transaction/Invoice ID:</span>
           <input
             type="text"
             required
-            onChange={(e) => setProductName(e.target.value)}
-            value={productName}
+            onChange={(e) => setTransactionID(e.target.value)}
+            value={transactionID}
           />
         </label>
         <label>
-          <span>Product ID:</span>
-          <input
-            type="text"
-            required
-            onChange={(e) => setProductID(e.target.value)}
-            value={productID}
-          />
-        </label>
-        <label>
-          <span>Quantity:</span>
+          <span>Total Transaction Amount:</span>
           <input
             type="number"
             required
-            onChange={(e) => setQuantity(e.target.value)}
-            value={quantity}
+            onChange={(e) => setTransactionAmount(e.target.value)}
+            value={transactionamount}
           />
         </label>
-        <button type="submit">Add Sales</button>
       </form>
     </>
   );
