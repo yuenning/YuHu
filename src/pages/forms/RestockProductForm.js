@@ -9,6 +9,7 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
   const [expiryDate, setExpiryDate] = useState("");
   const [costPrice, setCostPrice] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [transactionId, setTransactionId] = useState("");
 
   // Retrieve the user from the authentication context
   const { user } = useAuthContext();
@@ -22,6 +23,7 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
       expiryDate,
       costPrice,
       quantity,
+      transactionId,
     });
 
     const productData = {
@@ -30,6 +32,7 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
       expiryDate: timestamp.fromDate(new Date(expiryDate)),
       costPrice: parseFloat(costPrice),
       quantity: parseInt(quantity),
+      transactionId,
     };
 
     // Save the product data to Firebase
@@ -46,6 +49,7 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
         setExpiryDate("");
         setCostPrice("");
         setQuantity("");
+        setTransactionId("");
       })
       .catch((error) => {
         console.error("Error saving product: ", error);
@@ -92,6 +96,18 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
+                <span>Transaction ID:</span>
+                <input
+                  name="transactionId"
+                  type="number"
+                  required
+                  onChange={(e) => setTransactionId(e.target.value)}
+                  value={transactionId}
+                />
+              </label>
+            </div>
+            <div style={{ width: "45%" }}>
+              <label>
                 <span>Product Name:</span>
                 <input
                   name="productName"
@@ -102,6 +118,8 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
                 />
               </label>
             </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
                 <span>Product ID:</span>
@@ -114,8 +132,6 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
                 />
               </label>
             </div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
                 <span>Quantity:</span>
@@ -128,6 +144,8 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
                 />
               </label>
             </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
                 <span>Expiry Date:</span>
@@ -140,8 +158,6 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
                 />
               </label>
             </div>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
                 <span>Cost Price:</span>

@@ -8,6 +8,7 @@ export default function SalesProductForm({ uid, onSubmit, onDelete }) {
   const [productName, setProductName] = useState("");
   const [sellingPrice, setSellingPrice] = useState("");
   const [quantity, setQuantity] = useState("");
+  const [transactionId, setTransactionId] = useState("");
 
   // Retrieve the user from the authentication context
   const { user } = useAuthContext();
@@ -20,6 +21,7 @@ export default function SalesProductForm({ uid, onSubmit, onDelete }) {
       productName,
       sellingPrice,
       quantity,
+      transactionId,
     });
 
     const productData = {
@@ -27,6 +29,7 @@ export default function SalesProductForm({ uid, onSubmit, onDelete }) {
       productName,
       sellingPrice: parseFloat(sellingPrice),
       quantity: parseInt(quantity),
+      transactionId,
     };
 
     // Save the product data to Firebase
@@ -42,6 +45,7 @@ export default function SalesProductForm({ uid, onSubmit, onDelete }) {
         setProductName("");
         setSellingPrice("");
         setQuantity("");
+        setTransactionId("");
       })
       .catch((error) => {
         console.error("Error saving product: ", error);
@@ -85,6 +89,18 @@ export default function SalesProductForm({ uid, onSubmit, onDelete }) {
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column" }}
         >
+          <div style={{ width: "45%" }}>
+            <label>
+              <span>Transaction ID:</span>
+              <input
+                name="transactionId"
+                type="number"
+                required
+                onChange={(e) => setTransactionId(e.target.value)}
+                value={transactionId}
+              />
+            </label>
+          </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ width: "45%" }}>
               <label>
