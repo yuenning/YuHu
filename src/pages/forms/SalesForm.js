@@ -94,7 +94,7 @@ export default function SalesForm() {
           <u>+ Add Another Product</u>
         </button>
         <br />
-        <button
+        {/*<button
           style={{
             display: "block",
             width: "315px",
@@ -108,7 +108,7 @@ export default function SalesForm() {
           onClick={handleFormSubmit}
         >
           Submit
-        </button>
+        </button> */}
       </div>
     </div>
   );
