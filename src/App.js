@@ -16,6 +16,8 @@ import Signup from "./pages/signup/Signup";
 // logged-in pages
 import Home from "./pages/home/Home";
 import Forms from "./pages/forms/Forms";
+import History from "./pages/history/History";
+import Inventory from "./pages/inventory/Inventory";
 
 // components
 import Navbar from "./components/Navbar";
@@ -56,6 +58,26 @@ function App() {
               element={
                 user && user.displayName ? (
                   <Forms />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                user && user.displayName ? (
+                  <History />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                user && user.displayName ? (
+                  <Inventory />
                 ) : (
                   <Navigate to="/login" replace />
                 )
