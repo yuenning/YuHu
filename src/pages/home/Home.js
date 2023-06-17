@@ -1,5 +1,3 @@
-// Home.jsx
-
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 // import components
