@@ -15,8 +15,6 @@ import Signup from "./pages/signup/Signup";
 
 // logged-in pages
 import Home from "./pages/home/Home";
-import Restocks from "./pages/restocks/Restocks";
-import Sales from "./pages/sales/Sales";
 import Forms from "./pages/forms/Forms";
 
 // components
@@ -50,26 +48,6 @@ function App() {
                   <Navigate to="/" replace />
                 ) : (
                   <Signup />
-                )
-              }
-            />
-            <Route
-              path="/restocks"
-              element={
-                user && user.displayName ? (
-                  <Restocks />
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
-            <Route
-              path="/sales"
-              element={
-                user && user.displayName ? (
-                  <Sales />
-                ) : (
-                  <Navigate to="/login" replace />
                 )
               }
             />
