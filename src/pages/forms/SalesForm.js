@@ -176,7 +176,7 @@ export default function SalesForm() {
     const totalAmount = parseFloat(transactionForms.transactionAmount);
     if (!isNaN(totalAmount)) {
       alert(
-        `Successfully recorded!\nSales Transaction ID: ${transactionId}\nSales Amount: ${totalAmount}`
+        `Successfully recorded!\nSales Transaction ID: ${transactionId}\nTotal Amount: ${totalAmount}`
       );
     }
   };

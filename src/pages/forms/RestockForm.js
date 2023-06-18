@@ -129,7 +129,7 @@ export default function RestockForm() {
 
     // Display success message
     alert(
-      `Successfully recorded!\nRestock ID: ${restockId}\nRestock Amount: ${restockForms.totalAmount}`
+      `Successfully recorded!\nRestock Transaction ID: ${restockId}\nTotal Amount: ${restockForms.totalAmount}`
     );
   };
 
