@@ -30,7 +30,7 @@ export default function SalesTransactionForm({ uid, onSubmit }) {
 
     // Save the transaction data to Firebase
     projectFirestore
-      .collection(`users/${user.uid}/restocks`)
+      .collection(`users/${user.uid}/sales`)
       .add(transactionData)
       .then((docRef) => {
         console.log("Transaction saved successfully with ID:", docRef.id);
