@@ -196,6 +196,7 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
 }
 
 /* PREVIOUS FORM HANDLING
+
 import { useState, useEffect } from "react";
 import { useFirestore } from "../../hooks/useFirestore";
 import { FaTimes } from "react-icons/fa";
@@ -237,7 +238,6 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
       setCostPrice("");
     }
   }, [response.success]);
-  */
 
   return (
     <>
@@ -323,3 +323,4 @@ export default function RestockProductForm({ uid, onSubmit, onDelete }) {
     </>
   );
 }
+*/

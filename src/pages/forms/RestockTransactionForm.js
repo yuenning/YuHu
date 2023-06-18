@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { projectFirestore } from "../../firebase/config";
-import { useState, useEffect } from "react";
-import { useFirestore } from "../../hooks/useFirestore";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function RestockTransactionForm({ uid, onSubmit }) {
@@ -13,6 +11,7 @@ export default function RestockTransactionForm({ uid, onSubmit }) {
   // to add the input into user-segregated firestore
   const { user } = useAuthContext();
   const { addDocument, response } = useFirestore(`users/${user.uid}/restocks`);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
