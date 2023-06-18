@@ -1,4 +1,5 @@
 import { useState } from "react";
+// import { useFirestore } from "../../hooks/useFirestore";
 import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
@@ -10,7 +11,6 @@ export default function RestockTransactionForm({ uid, onSubmit }) {
 
   // to add the input into user-segregated firestore
   const { user } = useAuthContext();
-  const { addDocument, response } = useFirestore(`users/${user.uid}/restocks`);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -167,53 +167,4 @@ export default function RestockTransactionForm({ uid, onSubmit }) {
       setTransactionAmount("");
     }
   }, [response.success]);
-
-  }, [response]);
-
-  return (
-    <>
-      <h3>Restock Transaction Details</h3>
-      <div style={{ paddingBottom: "20px" }}>
-        <form onSubmit={handleSubmit}>
-          <label>
-            <span>Date:</span>
-            <input
-              type="date"
-              required
-              onChange={(e) => setDate(e.target.value)}
-              value={date}
-            />
-          </label>
-          <label>
-            <span>Time:</span>
-            <input
-              type="time"
-              required
-              onChange={(e) => setTime(e.target.value)}
-              value={time}
-            />
-          </label>
-          <label>
-            <span>Transaction/Invoice ID:</span>
-            <input
-              type="text"
-              required
-              onChange={(e) => setTransactionID(e.target.value)}
-              value={transactionID}
-            />
-          </label>
-          <label>
-            <span>Total Transaction Amount:</span>
-            <input
-              type="number"
-              required
-              onChange={(e) => setTransactionAmount(e.target.value)}
-              value={transactionamount}
-            />
-          </label>
-        </form>
-      </div>
-    </>
-  );
-}
 */
