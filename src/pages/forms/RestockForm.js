@@ -1,6 +1,8 @@
+
 import { useState } from "react";
 import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import React, { useState } from "react";
 import RestockTransactionForm from "./RestockTransactionForm";
 import RestockProductForm from "./RestockProductForm";
 
@@ -190,6 +192,37 @@ export default function RestockForm() {
         >
           Submit
         </button>
+            <RestockProductForm onSubmit={handleForm2Submit} onDelete={() => handleDeleteFormClick(index)} />
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <button 
+          style= {{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            color: 'black', 
+            border: 'none',
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }} 
+          onClick={handleAddFormClick}>
+            <u>+ Add Another Product</u>
+        </button>
+        <br />
+        <button 
+          style={{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            backgroundColor: '#000000', 
+            color: 'white',
+            border: 'none', 
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }} 
+          onClick={handleOverallSubmit}>Submit</button>
       </div>
     </div>
   );
