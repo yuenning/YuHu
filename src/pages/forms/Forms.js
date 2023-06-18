@@ -40,9 +40,7 @@ export default function Forms() {
           </div>
         </div>
         <br />
-        <div className={styles.sidebar}>
-          {isRestockForm ? <RestockForm /> : <SalesForm />}
-        </div>
+        <div>{isRestockForm ? <RestockForm /> : <SalesForm />}</div>
       </div>
     );
   };
