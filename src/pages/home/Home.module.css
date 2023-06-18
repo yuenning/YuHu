@@ -1,5 +1,8 @@
 /* Home.module.css */
+
 .home {
+  background-color: black;
+  color: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -8,4 +11,61 @@
 
 .home h1 {
   text-align: center;
+}
+
+/* Expiring and Quantity Low Lists */
+.listContainer {
+  background-color: black;
+  color: white;
+  padding: 20px;
+}
+
+.carousel {
+  text-align: center;
+}
+
+.carouselContainer {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.carousel ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.carouselItem {
+  background-color: red;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  flex: 0 0 calc(20% - 10px);
+}
+
+/* Overall Sales Metrics */
+.metricsContainer {
+  background-color: cream;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.metrics {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.metrics p {
+  background-color: #333;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px;
+  font-size: 16px;
 }

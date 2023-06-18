@@ -96,6 +96,7 @@ export default function RestockForm() {
           <u>+ Add Another Product</u>
         </button>
         <br />
+        {/* 
         <button
           style={{
             display: "block",
@@ -110,7 +111,7 @@ export default function RestockForm() {
           onClick={handleFormSubmit}
         >
           Submit
-        </button>
+        </button> */}
       </div>
     </div>
   );

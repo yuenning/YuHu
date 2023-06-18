@@ -21,22 +21,25 @@ export default function RestockList() {
   }
 
   return (
-    <ul className={styles.transactions}>
-      {error && <p>{error}</p>}
-      {documents.map((document) => {
-        const date = new Date(document.date);
-        const formattedDate = date.toLocaleDateString();
+    <>
+      <h3>Past Restock Transactions</h3>
+      <ul className={styles.transactions}>
+        {error && <p>{error}</p>}
+        {documents.map((document) => {
+          const date = new Date(document.date);
+          const formattedDate = date.toLocaleDateString();
 
-        return (
-          <li key={document.id}>
-            <p className={styles.name}>{document.transactionID}</p>
-            <p className={styles.datetime}>
-              {formattedDate} {document.time}
-            </p>
-            <p className={styles.amount}>${document.transactionAmount}</p>
-          </li>
-        );
-      })}
-    </ul>
+          return (
+            <li key={document.id}>
+              <p className={styles.name}>{document.transactionID}</p>
+              <p className={styles.datetime}>
+                {formattedDate} {document.time}
+              </p>
+              <p className={styles.amount}>${document.transactionAmount}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
