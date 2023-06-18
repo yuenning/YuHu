@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
-import { projectFirestore } from "../../firebase/config";
+import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
+
+// Styling
+import { FaTimes } from "react-icons/fa";
 
 export default function RestockForm() {
   const { user } = useAuthContext();
@@ -71,11 +74,12 @@ export default function RestockForm() {
     productForms.forEach(async (form) => {
       const { productId, productName, quantity, expiryDate, costPrice } = form;
       const restockItemData = {
+        restockId,
         productId,
         productName,
-        quantity,
-        expiryDate,
-        restockId,
+        quantity: parseInt(quantity),
+        expiryDate: timestamp.fromDate(new Date(expiryDate)),
+        costPrice: parseFloat(costPrice),
       };
 
       await projectFirestore
@@ -96,16 +100,19 @@ export default function RestockForm() {
         batchDetails.push({ quantity, expiryDate, costPrice });
 
         await productDocRef.update({
-          totalQuantity: updatedQuantity,
+          totalQuantity: parseInt(updatedQuantity),
           batchDetails,
         });
       } else {
         // Product does not exist, create a new entry
+        const wrappedED = timestamp.fromDate(new Date(expiryDate));
+        const wrappedCP = parseFloat(costPrice);
+        const wrappedQty = parseInt(quantity);
         await productDocRef.set({
           productId,
           productName,
-          batchDetails: [{ quantity, expiryDate, costPrice }],
-          totalQuantity: quantity,
+          batchDetails: [{ wrappedQty, wrappedED, wrappedCP }],
+          totalQuantity: wrappedQty,
         });
       }
     });
@@ -176,6 +183,37 @@ export default function RestockForm() {
         <div key={index}>
           <br></br>
           <h3>Restock Product {index + 1} Details</h3>
+          {/* Remove Product Form Button */}
+          {index > 0 && (
+            <button
+              type="button"
+              onClick={() => removeProductForm(index)}
+              style={{
+                background: "none",
+                color: "#777",
+                border: "2px solid black",
+                padding: "2px",
+                marginLeft: "10px",
+                textAlign: "center",
+                lineHeight: "1",
+                fontSize: "0.9em",
+                cursor: "pointer",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FaTimes
+                style={{
+                  margin: "0",
+                  color: "black",
+                  fontSize: "1.2em",
+                }}
+              />
+            </button>
+          )}
           <div>
             <label htmlFor={`productId${index}`}>Product ID:</label>
             <input
@@ -231,12 +269,6 @@ export default function RestockForm() {
               }
             />
           </div>
-          {/* Remove Product Form Button */}
-          {index > 0 && (
-            <button type="button" onClick={() => removeProductForm(index)}>
-              Remove Product Form
-            </button>
-          )}
         </div>
       ))}
       {/* Add Product Form Button */}
