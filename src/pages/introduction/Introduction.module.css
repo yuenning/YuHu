@@ -11,129 +11,148 @@
 
 /* Reset default margin and padding */
 body {
-    margin: 0;
-    padding: 0;
-    scroll-behavior: smooth;
-  }
-  
-  /* Landing Page Animation */
-  .animation {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #000;
-    color: #fff;
-    animation: fadeIn 1.5s ease-in-out;
-  }
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
 
-  .landingText {
-    text-align: center;
-    transition: transform 0.3s ease;
-  }
+/* Landing Page Animation */
+.animation {
+  height: 85vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000;
+  color: #fff;
+  animation: fadeIn 1.5s ease-in-out;
+}
 
-  .animation:hover .landingText {
-      transform: scale(1.1);
-  }
+.landingText {
+  text-align: center;
+  transition: transform 0.3s ease;
+}
 
-  .landingText h1 {
-    font-size: 2.5em; 
-  }
-  
-  .landingText p {
-    font-size: 1.5em; 
-  }
-  
-  
-  /* About Us Section */
-  .about-us {
-    padding: 100px 30px;
-    background-color: #f9f9f9;
-  }
+.animation:hover .landingText {
+  transform: scale(1.1);
+}
 
-  .about-us h1 {
-    text-align: center;
-    font-size: 36px;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-  }
+.landingText h1 {
+  font-size: 3.5em;
+}
 
-  .about-us p {
-    text-align: justify;
-    line-height: 24px;
-    margin: 30px 0;
-  }
-  
-  /* Features Section */
-  .features {
-    padding: 100px;
-    background-color: #fff;
-    text-align: center;
-    animation: slideInRight 1s ease-in-out;
-  }
+.landingText p {
+  font-size: 1.5em;
+}
 
-  .features h1 {
-    text-align: center;
-    font-size: 36px;
-    font-weight: 800;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-  }
+/* About Us Section */
+.about-us {
+  padding: 100px 400px;
+  background-color: #f9f9f9;
+  animation: slideInRight 1s ease-in-out;
+}
 
-  .features li {
-    border-bottom: 1px ;
-    padding-bottom: 10px;
-  }
+.about-us h1 {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
 
-  .features p {
-    text-align: justify;
-    line-height: 24px;
-    margin: 30px 0;
+.about-us p {
+  text-align: center;
+  line-height: 24px;
+  margin: 30px 0;
+}
+
+/* Features Section */
+.features {
+  padding: 100px;
+  background-color: #fff;
+  text-align: center;
+  animation: slideInRight 1s ease-in-out;
+}
+
+.features h1 {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+}
+
+.features li {
+  border-bottom: 1px;
+  padding-bottom: 10px;
+}
+
+.features p {
+  text-align: justify;
+  line-height: 24px;
+  margin: 30px 0;
+}
+
+.features-icons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%; 
+  flex-wrap: wrap;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  padding: 0 10px;
+  box-sizing: border-box; 
+}
+
+.feature img {
+  max-width: 100%; 
+  width: 120px;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+/* Smooth scrolling anchor links */
+a.scroll-link {
+  cursor: pointer;
+}
+
+/* Animation Effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .navbar a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 10px;
+  to {
+    opacity: 1;
   }
-  
-  /* Smooth scrolling anchor links */
-  a.scroll-link {
-    cursor: pointer;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-50px);
+    opacity: 0;
   }
-  
-  /* Animation Effects */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
-  
-  @keyframes slideInLeft {
-    from {
-      transform: translateX(-50px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(50px);
+    opacity: 0;
   }
-  
-  @keyframes slideInRight {
-    from {
-      transform: translateX(50px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
- 
+}

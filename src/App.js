@@ -10,9 +10,16 @@ import { useAuthContext } from "./hooks/useAuthContext";
 
 // pages & components
 import Introduction from "./pages/introduction/Introduction";
-import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
+
+// logged-in pages
+import Home from "./pages/home/Home";
+import Forms from "./pages/forms/Forms";
+import History from "./pages/history/History";
+import Inventory from "./pages/inventory/Inventory";
+
+// components
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -46,6 +53,37 @@ function App() {
                 )
               }
             />
+            <Route
+              path="/forms"
+              element={
+                user && user.displayName ? (
+                  <Forms />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                user && user.displayName ? (
+                  <History />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                user && user.displayName ? (
+                  <Inventory />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
             {/* Add a catch-all route for undefined paths */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

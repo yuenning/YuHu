@@ -50,6 +50,7 @@ export default function Navbar() {
               </button>
             </>
           )}
+          {/* When users have not logged in */}
           {!user && (
             <>
               {/* Rendering a link to the login page */}
@@ -58,11 +59,16 @@ export default function Navbar() {
               <Link to="/signup">Sign Up</Link>
             </>
           )}
-
+          {/* When users have logged in */}
           {user && (
-            <button className="btn" onClick={logout}>
-              Logout
-            </button>
+            <>
+              <Link to="/inventory">Inventory</Link>
+              <Link to="/history">History</Link>
+              <Link to="/forms">Forms</Link>
+              <button className="btn" onClick={logout}>
+                Logout
+              </button>
+            </>
           )}
         </div>
       </div>

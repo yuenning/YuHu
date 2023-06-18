@@ -1,6 +1,9 @@
 import styles from "./Introduction.module.css";
 import React from "react";
-// import { useLocation } from 'react-router-dom';
+import dashboardsIcon from "./dashboards_icon.png";
+import trackingIcon from "./tracking_icon.png";
+import orderManagementIcon from "./order_management_icon.png";
+import alertsIcon from "./alerts_icon.png";
 
 class InventoryApp extends React.Component {
   componentDidMount() {
@@ -22,7 +25,7 @@ class InventoryApp extends React.Component {
         {/* Landing Page Animation */}
         <section id="home" className={styles["animation"]}>
           <div className={styles["landingText"]}>
-            <h1>Welcome to YUHU!!</h1>
+            <h1>Welcome to Yuhu!!</h1>
             <p>the yoo-hoo to your inventory boo-hoo</p>
           </div>
         </section>
@@ -31,31 +34,44 @@ class InventoryApp extends React.Component {
         <section id="about" className={styles["about-us"]}>
           <h1>About Us</h1>
           <p>
-            At YuHu, our aim is to empower small businesses with a comprehensive
-            digital solution that transforms their stock-taking process and
-            optimizes inventory management. Our user-friendly web application
+            At YuHu, we aim to empower small businesses like you with a
+            comprehensive digital solution to transform your stock-taking
+            process and inventory management. Our user-friendly web application
             streamlines inventory tasks, saving valuable time and effort for
-            small business owners. With advanced analytics and automated alerts,
-            we provide valuable insights into inventory performance, enabling
-            informed decision-making to reduce costs and increase profitability.
-            We understand the challenges faced by small businesses in accessing
-            affordable and intuitive inventory management tools, which is why
-            our solution is specifically designed to cater to their unique needs
-            and budgets. At YuHu, we are committed to helping small businesses
-            thrive and succeed by providing them with the tools they need to
-            optimize their inventory management processes.
+            small business owners like you. With advanced analytics and
+            automated alerts, we provide valuable insights into your inventory
+            performance, enabling informed decision-making to reduce costs and
+            increase profitability for you. We understand the challenges faced
+            by small businesses in accessing affordable and intuitive inventory
+            management tools, which is why our solution is specifically designed
+            to cater to your unique needs and budgets. At YuHu, we are committed
+            to helping small businesses thrive and succeed by providing them
+            with the tools you need to optimize your inventory management
+            processes.
           </p>
         </section>
 
         {/* Features Section */}
         <section id="features" className={styles["features"]}>
           <h1>Features</h1>
-          <ul>
-            <li>Analytics Dashboards</li>
-            <li>Inventory Tracking</li>
-            <li>Order Management</li>
-            <li>Automated Alerts</li>
-          </ul>
+          <div className={styles["features-icons"]}>
+            <div className={styles["feature"]}>
+              <img src={dashboardsIcon} alt="Dashboards" />
+              <p>Analytics Dashboards</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={trackingIcon} alt="Tracking" />
+              <p>Inventory Tracking</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={orderManagementIcon} alt="Order Management" />
+              <p>Order Management</p>
+            </div>
+            <div className={styles["feature"]}>
+              <img src={alertsIcon} alt="Alerts" />
+              <p>Automated Alerts</p>
+            </div>
+          </div>
         </section>
 
         {/* Additional sections and content can be added here */}
