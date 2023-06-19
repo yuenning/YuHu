@@ -12,7 +12,7 @@ export default function ExpiringList() {
 
   const { user } = useAuthContext();
   const { documents: restocksData, error: restocksDataError } = useCollection(
-    `users/${user?.uid}/restockitems`
+    `users/${user?.uid}/products`
   );
 
   useEffect(() => {

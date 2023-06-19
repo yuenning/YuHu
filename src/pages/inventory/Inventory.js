@@ -6,87 +6,67 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import styles from "./Inventory.module.css";
 
 export default function Inventory() {
-  const [mergedQuantities, setMergedQuantities] = useState({});
+  const [products, setProducts] = useState([]);
+  const [productsError, setProductsError] = useState(null);
+  const [expandedProductIndex, setExpandedProductIndex] = useState(null);
 
-  // Fetch restocks collection
+  // Fetch products in products collection
   const { user } = useAuthContext();
-  const { documents: restocks, error: restocksError } = useCollection(
-    `users/${user.uid}/restockitems`
-  );
-
-  // Fetch sales collection
-  const { documents: sales, error: salesError } = useCollection(
-    `users/${user.uid}/salesitems`
+  const { documents: productData, error: productDataError } = useCollection(
+    `users/${user.uid}/products`
   );
 
   useEffect(() => {
-    // Calculate product quantities based on restocks and sales
-    if (restocksError || salesError) {
-      console.log("Error retrieving data");
-    } else if (restocks && sales) {
-      const restockQuantities = calculateQuantities(
-        restocks,
-        "productId",
-        "quantity"
-      );
-      const salesQuantities = calculateQuantities(
-        sales,
-        "productId",
-        "quantity"
-      );
-      const mergedQuantities = mergeQuantities(
-        restockQuantities,
-        salesQuantities
-      );
-      setMergedQuantities(mergedQuantities);
+    if (productDataError) {
+      setProductsError(productDataError);
+    } else {
+      setProducts(productData || []);
     }
-  }, [restocks, sales, restocksError, salesError]);
+  }, [productData, productDataError]);
 
-  const calculateQuantities = (collection, idField, quantityField) => {
-    return collection.reduce((quantities, item) => {
-      const itemId = item[idField];
-      const itemQuantity = item[quantityField];
-
-      if (itemId && itemQuantity) {
-        quantities[itemId] = (quantities[itemId] || 0) + itemQuantity;
-      }
-
-      return quantities;
-    }, {});
+  const handleToggleBatch = (productIndex) => {
+    if (expandedProductIndex === productIndex) {
+      setExpandedProductIndex(null);
+    } else {
+      setExpandedProductIndex(productIndex);
+    }
   };
 
-  const mergeQuantities = (restockQuantities, salesQuantities) => {
-    const mergedQuantities = { ...restockQuantities };
-
-    for (const itemId in salesQuantities) {
-      if (mergedQuantities.hasOwnProperty(itemId)) {
-        mergedQuantities[itemId] -= salesQuantities[itemId];
-      } else {
-        mergedQuantities[itemId] = -salesQuantities[itemId];
-      }
-    }
-
-    return mergedQuantities;
-  };
-
-  const products = Object.keys(mergedQuantities).map((productId) => {
-    return {
-      productId: productId,
-      quantity: mergedQuantities[productId] || 0,
-    };
-  });
+  if (productsError) {
+    return <p>Error: {productsError}</p>;
+  }
 
   return (
-    <div className={styles.container}>
-      <h3>Products List</h3>
-      <ul className={styles.transactions}>
-        {products.map((product) => (
-          <li key={product.productId}>
-            <p className={styles.name}>{product.productId}</p>
-            <p className={styles.amount}>{product.quantity}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className={styles.container}>
+        <h3>Products List</h3>
+        <ul className={styles.transactions}>
+          {products.map((product, productIndex) => (
+            <li key={product.productId}>
+              <div>
+                <p>Product ID: {product.productId}</p>
+                <p>Product Name: {product.productName}</p>
+                <p>Total Quantity: {product.totalQuantity}</p>
+              </div>
+              {expandedProductIndex === productIndex &&
+                product.batchDetails.map((batch, batchIndex) => (
+                  <div key={batchIndex}>
+                    <p>{`Batch ${batchIndex + 1}`}</p>
+                    <p>{batch.batchId ? `Batch ID: ${batch.batchId}` : ""}</p>
+                    <p>Quantity: {batch.quantity}</p>
+                    <p>Expiry Date: {batch.expiryDate}</p>
+                    <p>Cost Price: {batch.costPrice}</p>
+                  </div>
+                ))}
+              <button onClick={() => handleToggleBatch(productIndex)}>
+                {expandedProductIndex === productIndex
+                  ? "Hide Details"
+                  : "Show More"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
