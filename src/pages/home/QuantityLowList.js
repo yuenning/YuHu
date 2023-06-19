@@ -44,7 +44,7 @@ export default function QuantityLowList() {
     <div className={styles.carousel}>
       <h3>Low Quantity Products</h3>
       {lowQuantityProducts.length > 0 ? (
-        <ul>
+        <ul className={styles.carouselContainer}>
           {lowQuantityProducts.map((product) => (
             <li key={product.productId} className={styles.carouselItem}>
               <div>
