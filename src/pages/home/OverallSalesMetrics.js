@@ -18,19 +18,6 @@ export default function OverallSalesMetrics() {
     `users/${user?.uid}/sales`
   );
 
-  useEffect(() => {
-    if (restocksError || salesError) {
-      console.log("Error retrieving data");
-    } else if (restocks && sales) {
-      const revenue = calculateTotalRevenue(sales);
-      const profit = calculateTotalProfit(sales, restocks);
-      const costs = calculateTotalCosts(restocks);
-      setTotalRevenue(revenue);
-      setTotalProfit(profit);
-      setTotalCosts(costs);
-    }
-  }, [restocks, sales, restocksError, salesError]);
-
   const calculateTotalRevenue = (sales) => {
     return sales.reduce(
       (total, sale) => total + (sale.transactionAmount || 0),
@@ -50,6 +37,19 @@ export default function OverallSalesMetrics() {
       0
     );
   };
+
+  useEffect(() => {
+    if (restocksError || salesError) {
+      console.log("Error retrieving data");
+    } else if (restocks && sales) {
+      const revenue = calculateTotalRevenue(sales);
+      const profit = calculateTotalProfit(sales, restocks);
+      const costs = calculateTotalCosts(restocks);
+      setTotalRevenue(revenue);
+      setTotalProfit(profit);
+      setTotalCosts(costs);
+    }
+  }, [restocks, sales, restocksError, salesError]);
 
   return (
     <div className={styles.metricsContainer}>

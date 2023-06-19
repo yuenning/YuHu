@@ -2,7 +2,7 @@
 
 .home {
   background-color: black;
-  color: white;
+  color: white; /* Add white color for the text */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@
 /* Expiring and Quantity Low Lists */
 .listContainer {
   background-color: black;
-  color: white;
+  color: white; /* Add white color for the text */
   padding: 20px;
 }
 
@@ -26,7 +26,6 @@
 
 .carouselContainer {
   flex: 1;
-  margin-right: 20px;
 }
 
 .carousel ul {
@@ -34,16 +33,19 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center; /* Center the items horizontally */
   gap: 10px;
 }
 
 .carouselItem {
-  background-color: red;
+  background-color: rgb(146, 0, 0);
   color: white;
   border-radius: 5px;
   padding: 10px;
-  flex: 0 0 calc(20% - 10px);
+  /* Add any additional styles for the carousel item here */
+  flex: 0 0 calc(20% - 10px); /* Fix the size of each item */
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 /* Overall Sales Metrics */
@@ -51,7 +53,7 @@
   background-color: cream;
   padding: 20px;
   text-align: center;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .metrics {
@@ -68,4 +70,5 @@
   padding: 10px;
   margin: 10px;
   font-size: 16px;
+  /* Add any additional styles for the metrics here */
 }
