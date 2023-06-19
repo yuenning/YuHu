@@ -26,6 +26,7 @@
 
 .carouselContainer {
   flex: 1;
+  margin-right: 20px;
 }
 
 .carousel ul {
@@ -42,10 +43,7 @@
   color: white;
   border-radius: 5px;
   padding: 10px;
-  /* Add any additional styles for the carousel item here */
-  flex: 0 0 calc(20% - 10px); /* Fix the size of each item */
-  margin-top: 10px;
-  margin-bottom: 10px;
+  flex: 0 0 calc(20% - 10px);
 }
 
 /* Overall Sales Metrics */
