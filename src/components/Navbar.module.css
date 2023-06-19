@@ -8,13 +8,6 @@
   color: #ffffff;
 }
 
-.navbar button {
-  border: white solid;
-  border-radius: 999px;
-  padding: 10px 20px;
-  font-size: 16px;
-}
-
 .navbar p {
   width: 100%;
   background: black;
