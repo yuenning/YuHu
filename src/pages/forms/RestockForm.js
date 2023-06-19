@@ -64,10 +64,7 @@ export default function RestockForm() {
     }
     return null;
   };
-<<<<<<< HEAD
 
-=======
->>>>>>> c738e2b800267885ab5537efa8ea3127de3a3648
   useEffect(() => {
     // Calculate and update the total transaction amount
     const totalAmount = productForms.reduce(
