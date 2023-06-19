@@ -54,10 +54,14 @@ export default function Inventory() {
                     <p>{`Batch ${batchIndex + 1}`}</p>
                     <p>{batch.batchId ? `Batch ID: ${batch.batchId}` : ""}</p>
                     <p>Quantity: {batch.quantity}</p>
+<<<<<<< HEAD
                     <p>
                       Expiry Date:{" "}
                       {batch.expiryDate.toDate().toLocaleDateString()}
                     </p>
+=======
+                    <p>Expiry Date: {batch.expiryDate}</p>
+>>>>>>> c738e2b800267885ab5537efa8ea3127de3a3648
                     <p>Cost Price: {batch.costPrice}</p>
                   </div>
                 ))}
