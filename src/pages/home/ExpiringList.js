@@ -6,22 +6,22 @@ import { useCollection } from "../../hooks/useCollection";
 import styles from "./Home.module.css";
 
 export default function ExpiringList() {
-  const [restocks, setRestocks] = useState([]);
-  const [restocksError, setRestocksError] = useState(null);
-  const [nearExpiryItems, setNearExpiryItems] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [productsError, setProductsError] = useState(null);
+  const [nearExpiryBatches, setNearExpiryBatches] = useState([]);
 
   const { user } = useAuthContext();
-  const { documents: restocksData, error: restocksDataError } = useCollection(
+  const { documents: productData, error: productDataError } = useCollection(
     `users/${user?.uid}/products`
   );
 
   useEffect(() => {
-    if (restocksDataError) {
-      setRestocksError(restocksDataError);
+    if (productDataError) {
+      setProductsError(productDataError);
     } else {
-      setRestocks(restocksData || []);
+      setProducts(productData || []);
     }
-  }, [restocksData, restocksDataError]);
+  }, [productData, productDataError]);
 
   useEffect(() => {
     // Check for expiry date < 5 days
@@ -30,55 +30,75 @@ export default function ExpiringList() {
       const fiveDaysFromNow = new Date();
       fiveDaysFromNow.setDate(today.getDate() + 5);
 
-      if (restocks) {
-        const nearExpiry = restocks.filter((item) => {
-          const expiryDate = new Date(item.expiryDate.toDate()); // Convert Firestore timestamp to JavaScript Date
-          if (isNaN(expiryDate)) {
-            // Skip items with invalid date format
+      if (products) {
+        const expiringBatches = products.reduce((acc, product) => {
+          const batchDetails = product.batchDetails || [];
+          const expiringBatchDetails = batchDetails.filter((batch) => {
+            const expiryDate =
+              batch.expiryDate && batch.expiryDate.toDate
+                ? batch.expiryDate.toDate() // Convert to Date object
+                : null;
+            if (expiryDate && !isNaN(expiryDate)) {
+              const differenceInTime = expiryDate.getTime() - today.getTime();
+              const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+              return differenceInDays < 5;
+            }
             return false;
-          }
-          const differenceInTime = expiryDate.getTime() - today.getTime();
-          const differenceInDays = differenceInTime / (1000 * 3600 * 24);
-          return differenceInDays < 5;
-        });
+          });
 
-        setNearExpiryItems(nearExpiry);
+          if (expiringBatchDetails.length > 0) {
+            const expiringProduct = {
+              ...product,
+              batchDetails: expiringBatchDetails,
+            };
+            acc.push(expiringProduct);
+          }
+
+          return acc;
+        }, []);
+
+        setNearExpiryBatches(expiringBatches);
       }
     };
 
     checkNearExpiryItems();
-  }, [restocks]);
+  }, [products]);
 
-  if (restocksError) {
-    return <p>Error: {restocksError}</p>;
+  if (productsError) {
+    return <p>Error: {productsError}</p>;
   }
+
+  // ...
 
   return (
     <div className={styles.carousel}>
-      <h3>Near Expiry Items</h3>
-      {nearExpiryItems.length > 0 ? (
-        <ul>
-          {nearExpiryItems.map((item) => (
-            <li key={item.productId} className={styles.carouselItem}>
-              <div>
-                <strong>{item.productName}</strong>
-              </div>
-              <div>
-                Expiry Date: {item.expiryDate.toDate().toLocaleDateString()}
-              </div>
-              <div>
-                Expiring in{" "}
-                {Math.ceil(
-                  (item.expiryDate.toDate().getTime() - Date.now()) /
-                    (1000 * 3600 * 24)
-                )}{" "}
-                days
-              </div>
-            </li>
+      <h3>Expiring Products</h3>
+      {nearExpiryBatches.length > 0 ? (
+        <div>
+          {nearExpiryBatches.map((product) => (
+            <ul key={product.productId} className={styles.carouselContainer}>
+              {product.batchDetails.map((batch, batchIndex) => (
+                <div key={batchIndex} className={styles.carouselItem}>
+                  <strong>
+                    {product.productId} | {product.productName}
+                  </strong>
+                  <p>
+                    {batch.batchId
+                      ? `Batch ID: ${batch.batchId}`
+                      : `Batch Index: ${batchIndex + 1}`}
+                  </p>
+                  <p>Quantity: {batch.quantity}</p>
+                  <p>
+                    Expiry Date:{" "}
+                    {batch.expiryDate.toDate().toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </ul>
           ))}
-        </ul>
+        </div>
       ) : (
-        <p>No items near expiry.</p>
+        <p>No batches near expiry.</p>
       )}
     </div>
   );

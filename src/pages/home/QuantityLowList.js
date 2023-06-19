@@ -6,6 +6,64 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import styles from "./Home.module.css";
 
 export default function QuantityLowList() {
+  const [products, setProducts] = useState([]);
+  const [productsError, setProductsError] = useState(null);
+  const [lowQuantityProducts, setLowQuantityProducts] = useState([]);
+
+  const { user } = useAuthContext();
+  const { documents: productData, error: productDataError } = useCollection(
+    `users/${user?.uid}/products`
+  );
+
+  useEffect(() => {
+    if (productDataError) {
+      setProductsError(productDataError);
+    } else {
+      setProducts(productData || []);
+    }
+  }, [productData, productDataError]);
+
+  useEffect(() => {
+    // Filter products with total quantity < 10
+    const filterLowQuantityProducts = () => {
+      const lowQuantity = products.filter((product) => {
+        const totalQuantity = product.totalQuantity || 0;
+        return totalQuantity < 10;
+      });
+      setLowQuantityProducts(lowQuantity);
+    };
+
+    filterLowQuantityProducts();
+  }, [products]);
+
+  if (productsError) {
+    return <p>Error: {productsError}</p>;
+  }
+
+  return (
+    <div className={styles.carousel}>
+      <h3>Low Quantity Products</h3>
+      {lowQuantityProducts.length > 0 ? (
+        <ul className={styles.carouselContainer}>
+          {lowQuantityProducts.map((product) => (
+            <li key={product.productId} className={styles.carouselItem}>
+              <div>
+                <strong>
+                  {product.productId} | {product.productName}
+                </strong>
+              </div>
+              <div>Quantity Left: {product.totalQuantity}</div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No low quantity products found.</p>
+      )}
+    </div>
+  );
+}
+
+/*
   const [lowQuantityItems, setLowQuantityItems] = useState([]);
 
   // Fetch restocks collection
@@ -81,4 +139,4 @@ export default function QuantityLowList() {
       )}
     </div>
   );
-}
+*/
