@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
-// Styling
+// Styles
 import { FaTimes } from "react-icons/fa";
 
 export default function RestockForm() {
@@ -17,6 +17,7 @@ export default function RestockForm() {
     {
       productId: "",
       productName: "",
+      batchId: "",
       quantity: "",
       expiryDate: "",
       costPrice: "",
@@ -39,6 +40,7 @@ export default function RestockForm() {
       {
         productId: "",
         productName: "",
+        batchId: "",
         quantity: "",
         expiryDate: "",
         costPrice: "",
@@ -72,7 +74,14 @@ export default function RestockForm() {
 
     // Update restock items in the restockitems collection
     productForms.forEach(async (form) => {
-      const { productId, productName, quantity, expiryDate, costPrice } = form;
+      const {
+        productId,
+        productName,
+        quantity,
+        batchId,
+        expiryDate,
+        costPrice,
+      } = form;
       const restockItemData = {
         restockId,
         productId,
@@ -80,6 +89,7 @@ export default function RestockForm() {
         quantity: parseInt(quantity),
         expiryDate: timestamp.fromDate(new Date(expiryDate)),
         costPrice: parseFloat(costPrice),
+        ...(batchId && { batchId }),
       };
 
       await projectFirestore
@@ -97,7 +107,11 @@ export default function RestockForm() {
         const currentQuantity = productData.totalQuantity || 0;
         const updatedQuantity = parseInt(currentQuantity) + parseInt(quantity);
         const batchDetails = productData.batchDetails || [];
-        batchDetails.push({ quantity, expiryDate, costPrice });
+        const currentBatchData = { quantity, expiryDate, costPrice };
+        if (batchId) {
+          currentBatchData.batchId = batchId;
+        }
+        batchDetails.push(currentBatchData);
 
         await productDocRef.update({
           totalQuantity: parseInt(updatedQuantity),
@@ -128,6 +142,7 @@ export default function RestockForm() {
       {
         productId: "",
         productName: "",
+        batchId: "",
         quantity: "",
         expiryDate: "",
         costPrice: "",
@@ -233,6 +248,17 @@ export default function RestockForm() {
               value={form.productName}
               onChange={(e) =>
                 handleProductChange(index, "productName", e.target.value)
+              }
+            />
+          </div>
+          <div>
+            <label htmlFor={`batchId${index}`}>Batch ID (Optional):</label>
+            <input
+              type="text"
+              id={`batchId${index}`}
+              value={form.batchId}
+              onChange={(e) =>
+                handleProductChange(index, "batchId", e.target.value)
               }
             />
           </div>

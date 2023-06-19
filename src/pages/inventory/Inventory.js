@@ -6,75 +6,26 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import styles from "./Inventory.module.css";
 
 export default function Inventory() {
-  const [mergedQuantities, setMergedQuantities] = useState({});
+  const [products, setProducts] = useState([]);
+  const [productsError, setProductsError] = useState(null);
 
-  // Fetch restocks collection
+  // Fetch products in products collection
   const { user } = useAuthContext();
-  const { documents: restocks, error: restocksError } = useCollection(
-    `users/${user.uid}/restockitems`
-  );
-
-  // Fetch sales collection
-  const { documents: sales, error: salesError } = useCollection(
-    `users/${user.uid}/salesitems`
+  const { documents: productData, error: productDataError } = useCollection(
+    `users/${user.uid}/products`
   );
 
   useEffect(() => {
-    // Calculate product quantities based on restocks and sales
-    if (restocksError || salesError) {
-      console.log("Error retrieving data");
-    } else if (restocks && sales) {
-      const restockQuantities = calculateQuantities(
-        restocks,
-        "productId",
-        "quantity"
-      );
-      const salesQuantities = calculateQuantities(
-        sales,
-        "productId",
-        "quantity"
-      );
-      const mergedQuantities = mergeQuantities(
-        restockQuantities,
-        salesQuantities
-      );
-      setMergedQuantities(mergedQuantities);
+    if (productDataError) {
+      setProductsError(productDataError);
+    } else {
+      setProducts(productData || []);
     }
-  }, [restocks, sales, restocksError, salesError]);
+  }, [productData, productDataError]);
 
-  const calculateQuantities = (collection, idField, quantityField) => {
-    return collection.reduce((quantities, item) => {
-      const itemId = item[idField];
-      const itemQuantity = item[quantityField];
-
-      if (itemId && itemQuantity) {
-        quantities[itemId] = (quantities[itemId] || 0) + itemQuantity;
-      }
-
-      return quantities;
-    }, {});
-  };
-
-  const mergeQuantities = (restockQuantities, salesQuantities) => {
-    const mergedQuantities = { ...restockQuantities };
-
-    for (const itemId in salesQuantities) {
-      if (mergedQuantities.hasOwnProperty(itemId)) {
-        mergedQuantities[itemId] -= salesQuantities[itemId];
-      } else {
-        mergedQuantities[itemId] = -salesQuantities[itemId];
-      }
-    }
-
-    return mergedQuantities;
-  };
-
-  const products = Object.keys(mergedQuantities).map((productId) => {
-    return {
-      productId: productId,
-      quantity: mergedQuantities[productId] || 0,
-    };
-  });
+  if (productsError) {
+    return <p>Error: {productsError}</p>;
+  }
 
   return (
     <div className={styles.container}>
@@ -82,8 +33,17 @@ export default function Inventory() {
       <ul className={styles.transactions}>
         {products.map((product) => (
           <li key={product.productId}>
-            <p className={styles.name}>{product.productId}</p>
-            <p className={styles.amount}>{product.quantity}</p>
+            <p>{product.productId} ||</p>
+            <p>{product.productName} ||</p>
+            <p>{product.totalQuantity} ||</p>
+            {product.batchDetails.map((batch, index) => (
+              <div key={index}>
+                <p>Batch {index + 1}:</p>
+                <p>Quantity: {batch.quantity}</p>
+                <p>Expiry Date: {batch.expiryDate}</p>
+                <p>Cost Price: {batch.costPrice}</p>
+              </div>
+            ))}
           </li>
         ))}
       </ul>
