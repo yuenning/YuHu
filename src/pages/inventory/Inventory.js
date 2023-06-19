@@ -8,6 +8,7 @@ import styles from "./Inventory.module.css";
 export default function Inventory() {
   const [products, setProducts] = useState([]);
   const [productsError, setProductsError] = useState(null);
+  const [expandedProductIndex, setExpandedProductIndex] = useState(null);
 
   // Fetch products in products collection
   const { user } = useAuthContext();
@@ -23,30 +24,49 @@ export default function Inventory() {
     }
   }, [productData, productDataError]);
 
+  const handleToggleBatch = (productIndex) => {
+    if (expandedProductIndex === productIndex) {
+      setExpandedProductIndex(null);
+    } else {
+      setExpandedProductIndex(productIndex);
+    }
+  };
+
   if (productsError) {
     return <p>Error: {productsError}</p>;
   }
 
   return (
-    <div className={styles.container}>
-      <h3>Products List</h3>
-      <ul className={styles.transactions}>
-        {products.map((product) => (
-          <li key={product.productId}>
-            <p>{product.productId} ||</p>
-            <p>{product.productName} ||</p>
-            <p>{product.totalQuantity} ||</p>
-            {product.batchDetails.map((batch, index) => (
-              <div key={index}>
-                <p>Batch {index + 1}:</p>
-                <p>Quantity: {batch.quantity}</p>
-                <p>Expiry Date: {batch.expiryDate}</p>
-                <p>Cost Price: {batch.costPrice}</p>
+    <>
+      <div className={styles.container}>
+        <h3>Products List</h3>
+        <ul className={styles.transactions}>
+          {products.map((product, productIndex) => (
+            <li key={product.productId}>
+              <div>
+                <p>Product ID: {product.productId}</p>
+                <p>Product Name: {product.productName}</p>
+                <p>Total Quantity: {product.totalQuantity}</p>
               </div>
-            ))}
-          </li>
-        ))}
-      </ul>
-    </div>
+              {expandedProductIndex === productIndex &&
+                product.batchDetails.map((batch, batchIndex) => (
+                  <div key={batchIndex}>
+                    <p>{`Batch ${batchIndex + 1}`}</p>
+                    <p>{batch.batchId ? `Batch ID: ${batch.batchId}` : ""}</p>
+                    <p>Quantity: {batch.quantity}</p>
+                    <p>Expiry Date: {batch.expiryDate}</p>
+                    <p>Cost Price: {batch.costPrice}</p>
+                  </div>
+                ))}
+              <button onClick={() => handleToggleBatch(productIndex)}>
+                {expandedProductIndex === productIndex
+                  ? "Hide Details"
+                  : "Show More"}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
   );
 }
