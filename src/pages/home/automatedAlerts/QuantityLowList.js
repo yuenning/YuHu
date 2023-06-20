@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useCollection } from "../../hooks/useCollection";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import { useCollection } from "../../../hooks/useCollection";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 
 // styles
-import styles from "./Home.module.css";
+import styles from "../Home.module.css";
 
 export default function QuantityLowList() {
   const [products, setProducts] = useState([]);
