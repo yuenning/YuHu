@@ -1,26 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 // components for the pie chart
 import "chart.js/auto";
 import { Pie } from "react-chartjs-2";
 
-export default function OverallProductAnalysis() {
+export default function MonthlyProductAnalysis() {
   const { user } = useAuthContext();
-  const { documents, error } = useCollection(`users/${user.uid}/salesitems`);
+  const { documents: salesItems, error: salesItemsError } = useCollection(
+    `users/${user.uid}/salesitems`
+  );
+  const { documents: sales, error: salesError } = useCollection(
+    `users/${user.uid}/sales`
+  );
 
   const [topSellingProducts, setTopSellingProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (documents) {
-      const salesByProduct = documents.reduce((acc, item) => {
-        const { productId, productName, quantity } = item;
-        if (!acc[productId]) {
-          acc[productId] = { productId, productName, totalQuantity: 0 };
+    if (salesItems && sales) {
+      const currentDate = new Date();
+      const currentMonthStart = startOfMonth(currentDate);
+      const currentMonthEnd = endOfMonth(currentDate);
+
+      const salesByProduct = salesItems.reduce((acc, item) => {
+        const { productId, productName, quantity, transactionId } = item;
+        const matchingSale = sales.find(
+          (sale) => sale.transactionID === transactionId
+        );
+        if (
+          matchingSale &&
+          matchingSale.date >= currentMonthStart.toISOString() &&
+          matchingSale.date <= currentMonthEnd.toISOString() &&
+          !isNaN(quantity)
+        ) {
+          if (!acc[productId]) {
+            acc[productId] = {
+              productId,
+              productName,
+              totalQuantity: 0,
+            };
+          }
+          acc[productId].totalQuantity += quantity;
         }
-        acc[productId].totalQuantity += quantity;
         return acc;
       }, {});
 
@@ -32,14 +56,16 @@ export default function OverallProductAnalysis() {
       setTopSellingProducts(top5Products);
       setIsLoading(false);
     }
-  }, [documents]);
+  }, [salesItems, sales]);
 
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
-  if (error) {
-    return <p>Error occurred: {error.message}</p>;
+  if (salesItemsError || salesError) {
+    return (
+      <p>Error occurred: {salesItemsError?.message || salesError?.message}</p>
+    );
   }
 
   const chartData = {
@@ -89,7 +115,7 @@ export default function OverallProductAnalysis() {
     >
       <div style={{ width: "25%" }}>
         <h3 style={{ textAlign: "center" }}>
-          Top 5 All-Time Best Selling Products
+          Top 5 Best Selling Products of the Month
         </h3>
         {topSellingProducts.length > 0 ? (
           <Pie data={chartData} options={chartOptions} />

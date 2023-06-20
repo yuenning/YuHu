@@ -39,12 +39,59 @@ export default function SalesForm() {
     setTransactionForms({ ...transactionForms, [field]: value });
   };
 
-  const handleProductChange = (index, field, value) => {
+  const handleProductChange = async (index, field, value) => {
     const updatedForms = [...productForms];
     updatedForms[index] = {
       ...updatedForms[index],
       [field]: value,
     };
+
+    if (field === "productId") {
+      const productId = value;
+
+      // Fetch the selling price and transaction ID from salesitems collection
+      const salesItemsSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/salesitems`)
+        .where("productId", "==", productId)
+        .orderBy("transactionId", "desc")
+        .limit(1)
+        .get();
+
+      if (!salesItemsSnapshot.empty) {
+        const salesItemData = salesItemsSnapshot.docs[0].data();
+        const sellingPrice = salesItemData.sellingPrice || "";
+        const productName = salesItemData.productName || "";
+
+        const transactionId = salesItemData.transactionId;
+        const salesSnapshot = await projectFirestore
+          .collection(`users/${user.uid}/sales`)
+          .where("transactionID", "==", transactionId)
+          .limit(1)
+          .get();
+
+        if (!salesSnapshot.empty) {
+          const salesData = salesSnapshot.docs[0].data();
+          const latestTransactionId = salesData.transactionID;
+
+          const latestSalesItemsSnapshot = await projectFirestore
+            .collection(`users/${user.uid}/salesitems`)
+            .where("transactionId", "==", latestTransactionId)
+            .where("productId", "==", productId)
+            .limit(1)
+            .get();
+
+          if (!latestSalesItemsSnapshot.empty) {
+            const latestSalesItemData = latestSalesItemsSnapshot.docs[0].data();
+            const latestSellingPrice = latestSalesItemData.sellingPrice || "";
+            updatedForms[index].sellingPrice = latestSellingPrice;
+          }
+        }
+
+        updatedForms[index].sellingPrice = sellingPrice;
+        updatedForms[index].productName = productName;
+      }
+    }
+
     setProductForms(updatedForms);
   };
 
