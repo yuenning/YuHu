@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../../hooks/useAuthContext";
-import { useCollection } from "../../hooks/useCollection";
+import { useAuthContext } from "../../../hooks/useAuthContext";
+import { useCollection } from "../../../hooks/useCollection";
 
 // styles
-import styles from "./Home.module.css";
+import styles from "../Home.module.css";
 
 export default function ExpiringList() {
   const [products, setProducts] = useState([]);

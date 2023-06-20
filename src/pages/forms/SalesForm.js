@@ -41,7 +41,10 @@ export default function SalesForm() {
 
   const handleProductChange = (index, field, value) => {
     const updatedForms = [...productForms];
-    updatedForms[index][field] = value;
+    updatedForms[index] = {
+      ...updatedForms[index],
+      [field]: value,
+    };
     setProductForms(updatedForms);
   };
 
@@ -67,9 +70,15 @@ export default function SalesForm() {
     // Check if all products exist and have sufficient quantity
     const productsExist = await Promise.all(
       productForms.map(async (form) => {
+        console.log("Product Forms:", productForms);
+        console.log("Query Parameters:", {
+          collection: `users/${user.uid}/products`,
+          productId: form.productId,
+        });
+
         const querySnapshot = await projectFirestore
           .collection(`users/${user.uid}/products`)
-          .where("productId", "==", form.productId)
+          .where("productId", "==", `${form.productId}`)
           .get();
 
         if (querySnapshot.empty) {
@@ -102,7 +111,7 @@ export default function SalesForm() {
       .add(transactionForms);
 
     // Get the transaction ID
-    const transactionId = transactionForms.transactionId;
+    const transactionId = transactionForms.transactionID;
 
     // Update the products collection
     productForms.forEach(async (form) => {
@@ -110,7 +119,7 @@ export default function SalesForm() {
 
       const querySnapshot = await projectFirestore
         .collection(`users/${user.uid}/products`)
-        .where("productId", "==", productId)
+        .where("productId", "==", `${productId}`)
         .get();
 
       const productDocRef = querySnapshot.docs[0].ref;

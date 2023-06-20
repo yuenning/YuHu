@@ -10,8 +10,8 @@ export default function RestockForm() {
   const [restockForms, setRestockForms] = useState({
     date: "",
     time: "",
-    restockID: "",
-    totalAmount: 0, // New field for total transaction amount
+    transactionID: "",
+    transactionAmount: 0, // New field for total transaction amount
   });
   const [productForms, setProductForms] = useState([
     {
@@ -71,18 +71,22 @@ export default function RestockForm() {
       (total, form) => total + form.quantity * form.costPrice,
       0
     );
-    setRestockForms({ ...restockForms, totalAmount });
+    setRestockForms((prevForms) => ({
+      ...prevForms,
+      transactionAmount: totalAmount,
+    }));
   }, [productForms]);
 
   const handleSubmit = async () => {
     // Save restock forms to Firebase
     await projectFirestore.collection(`users/${user.uid}/restocks`).add({
       ...restockForms,
-      totalAmount: parseFloat(restockForms.totalAmount),
+      transactionAmount: parseFloat(restockForms.transactionAmount),
     });
+    console.log(restockForms);
 
     // Get the restock ID
-    const restockId = restockForms.restockID;
+    const transactionID = restockForms.transactionID;
 
     // Update restock items in the restockitems collection
     await Promise.all(
@@ -97,7 +101,7 @@ export default function RestockForm() {
         } = form;
 
         const restockItemData = {
-          restockId,
+          transactionID,
           productId,
           productName,
           quantity: parseInt(quantity, 10),
@@ -117,6 +121,7 @@ export default function RestockForm() {
         await projectFirestore
           .collection(`users/${user.uid}/restockitems`)
           .add(restockItemData);
+        console.log(restockItemData);
 
         // Update the product collection
         const productDocRef = projectFirestore
@@ -166,8 +171,8 @@ export default function RestockForm() {
     setRestockForms({
       date: "",
       time: "",
-      restockID: "",
-      totalAmount: 0,
+      transactionID: "",
+      transactionAmount: 0,
     });
     setProductForms([
       {
@@ -182,7 +187,7 @@ export default function RestockForm() {
 
     // Display success message
     alert(
-      `Successfully recorded!\nRestock Transaction ID: ${restockId}\nTotal Amount: ${restockForms.totalAmount}`
+      `Successfully recorded!\nRestock Transaction ID: ${transactionID}\nTotal Amount: $${restockForms.transactionAmount}`
     );
   };
 
@@ -209,18 +214,18 @@ export default function RestockForm() {
         />
       </div>
       <div>
-        <label htmlFor="restockId">Restock ID:</label>
+        <label htmlFor="transactionID">Restock ID:</label>
         <input
           type="text"
-          id="restockId"
-          value={restockForms.restockID}
-          onChange={(e) => handleRestockChange("restockID", e.target.value)}
+          id="transactionID"
+          value={restockForms.transactionID}
+          onChange={(e) => handleRestockChange("transactionID", e.target.value)}
         />
       </div>
       {/* Total Transaction Amount */}
       <div>
-        <label htmlFor="totalAmount">
-          Total Transaction Amount: ${restockForms.totalAmount}
+        <label htmlFor="transactionAmount">
+          Total Transaction Amount: ${restockForms.transactionAmount}
         </label>
       </div>
 
