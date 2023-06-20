@@ -39,12 +39,44 @@ export default function SalesForm() {
     setTransactionForms({ ...transactionForms, [field]: value });
   };
 
-  const handleProductChange = (index, field, value) => {
+  const handleProductChange = async (index, field, value) => {
     const updatedForms = [...productForms];
     updatedForms[index] = {
       ...updatedForms[index],
       [field]: value,
     };
+
+    if (field === "productId") {
+      const productId = value;
+
+      // Fetch the selling price from salesitems collection
+      const salesItemsSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/salesitems`)
+        .where("productId", "==", productId)
+        .limit(1)
+        .get();
+
+      if (!salesItemsSnapshot.empty) {
+        const salesItemData = salesItemsSnapshot.docs[0].data();
+        const sellingPrice = salesItemData.sellingPrice || "";
+        const transactionId = salesItemData.transactionId || "";
+
+        // Fetch the latest selling price from sales collection
+        const salesSnapshot = await projectFirestore
+          .collection(`users/${user.uid}/sales`)
+          .where("transactionID", "==", transactionId)
+          .orderBy("date", "desc")
+          .limit(1)
+          .get();
+
+        if (!salesSnapshot.empty) {
+          const salesData = salesSnapshot.docs[0].data();
+          const latestSellingPrice = salesData.transactionAmount || 0;
+          updatedForms[index].sellingPrice = latestSellingPrice;
+        }
+      }
+    }
+
     setProductForms(updatedForms);
   };
 

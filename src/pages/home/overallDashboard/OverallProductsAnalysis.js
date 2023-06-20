@@ -1,88 +1,102 @@
-import React, { useState, useEffect } from "react";
-import { projectFirestore } from "../../../firebase/config";
+import React, { useEffect, useState } from "react";
+import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 
-import { PieChart } from "react-minimal-pie-chart";
+// components for the pie chart
+import "chart.js/auto";
+import { Pie } from "react-chartjs-2";
 
 export default function OverallProductAnalysis() {
   const { user } = useAuthContext();
-  const [topSellingProducts, setTopSellingProducts] = useState([]);
+  const { documents, error } = useCollection(`users/${user.uid}/salesitems`);
 
-  function getRandomColor() {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
+  const [topSellingProducts, setTopSellingProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const getTopSellingProducts = async () => {
-      try {
-        const salesSnapshot = await projectFirestore
-          .collection(`users/${user?.uid}/sales`)
-          .get();
+    if (documents) {
+      const salesByProduct = documents.reduce((acc, item) => {
+        const { productId, productName, quantity } = item;
+        if (!acc[productId]) {
+          acc[productId] = { productId, productName, totalQuantity: 0 };
+        }
+        acc[productId].totalQuantity += quantity;
+        return acc;
+      }, {});
 
-        const productSales = {};
+      const sortedProducts = Object.values(salesByProduct).sort(
+        (a, b) => b.totalQuantity - a.totalQuantity
+      );
 
-        salesSnapshot.forEach(async (saleDoc) => {
-          const saleItemsSnapshot = await projectFirestore
-            .collection(`users/${user?.uid}/saleitems`)
-            .where("restockId", "==", saleDoc.data().restockID)
-            .get();
+      const top5Products = sortedProducts.slice(0, 5);
+      setTopSellingProducts(top5Products);
+      setIsLoading(false);
+    }
+  }, [documents]);
 
-          saleItemsSnapshot.forEach((saleItemDoc) => {
-            const saleItemData = saleItemDoc.data();
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
-            if (productSales[saleItemData.productId]) {
-              productSales[saleItemData.productId] += saleItemData.quantity;
-            } else {
-              productSales[saleItemData.productId] = saleItemData.quantity;
-            }
-          });
-        });
+  if (error) {
+    return <p>Error occurred: {error.message}</p>;
+  }
 
-        const sortedProducts = Object.entries(productSales).sort(
-          (a, b) => b[1] - a[1]
-        );
+  const chartData = {
+    labels: topSellingProducts?.map((product) => product.productName) ?? [],
+    datasets: [
+      {
+        data: topSellingProducts?.map((product) => product.totalQuantity) ?? [],
+        backgroundColor: [
+          "#888888",
+          "#CCCCCC",
+          "#DDDDDD",
+          "#EEEEEE",
+          "#F5F5F5",
+        ],
+        hoverBackgroundColor: [
+          "#888888",
+          "#CCCCCC",
+          "#DDDDDD",
+          "#EEEEEE",
+          "#F5F5F5",
+        ],
+      },
+    ],
+  };
 
-        const topSelling = sortedProducts
-          .slice(0, 5)
-          .map(async ([productId, quantity]) => {
-            const productSnapshot = await projectFirestore
-              .collection(`users/${user?.uid}/products`)
-              .where("productId", "==", productId)
-              .get();
-
-            const productData = productSnapshot.docs[0].data();
-            return { name: productData.productName, quantity };
-          });
-
-        const resolvedTopSelling = await Promise.all(topSelling);
-        setTopSellingProducts(resolvedTopSelling);
-      } catch (error) {
-        console.error("Error retrieving data:", error);
-      }
-    };
-
-    getTopSellingProducts();
-  }, [user]);
+  const chartOptions = {
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom",
+      },
+    },
+    responsive: true,
+    animation: {
+      animateRotate: true,
+      animateScale: true,
+    },
+  };
 
   return (
-    <div>
-      <h4>Top Selling Products</h4>
-      <ul>
-        <p></p>
-      </ul>
-      {/*
-      <PieChart
-        data={topSellingProducts.map((product) => ({
-          title: product.name,
-          value: product.quantity,
-        }))}
-      />
-    */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div style={{ width: "25%" }}>
+        <h3 style={{ textAlign: "center" }}>
+          Top 5 All-Time Best Selling Products
+        </h3>
+        {topSellingProducts.length > 0 ? (
+          <Pie data={chartData} options={chartOptions} />
+        ) : (
+          <p>No data available.</p>
+        )}
+      </div>
     </div>
   );
 }

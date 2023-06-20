@@ -10,6 +10,10 @@ import QuantityLowList from "./automatedAlerts/QuantityLowList";
 import OverallSalesMetrics from "./overallDashboard/OverallSalesMetrics";
 import OverallProductAnalysis from "./overallDashboard/OverallProductsAnalysis";
 
+// import monthly dashboard
+import MonthlySalesMetrics from "./monthlyDashboard/MonthlySalesMetrics";
+import MonthlyProductAnalysis from "./monthlyDashboard/MonthlyProductsAnalysis";
+
 // styles
 import styles from "./Home.module.css";
 
@@ -32,6 +36,12 @@ export default function Home() {
       <div className={styles.metricsContainer}>
         <OverallSalesMetrics />
         <OverallProductAnalysis />
+      </div>
+      <div className={styles.listContainer}>
+        <MonthlySalesMetrics />
+        <MonthlyProductAnalysis />
+        <br></br>
+        <br></br>
       </div>
     </>
   );
