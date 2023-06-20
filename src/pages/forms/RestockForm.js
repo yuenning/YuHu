@@ -11,7 +11,7 @@ export default function RestockForm() {
     date: "",
     time: "",
     transactionID: "",
-    transactionAmount: 0, // New field for total transaction amount
+    transactionAmount: 0,
   });
   const [productForms, setProductForms] = useState([
     {
@@ -21,6 +21,7 @@ export default function RestockForm() {
       quantity: "",
       expiryDate: "",
       costPrice: "",
+      sellingPrice: "",
     },
   ]);
 
@@ -28,12 +29,60 @@ export default function RestockForm() {
     setRestockForms({ ...restockForms, [field]: value });
   };
 
-  const handleProductChange = (index, field, value) => {
+  const handleProductChange = async (index, field, value) => {
     const updatedForms = [...productForms];
     updatedForms[index] = {
       ...updatedForms[index],
       [field]: value,
     };
+
+    if (field === "productId") {
+      const productId = value;
+
+      // Fetch the selling price and transaction ID from restockitems collection
+      const restockItemsSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/restockitems`)
+        .where("productId", "==", productId)
+        .orderBy("transactionID", "desc")
+        .limit(1)
+        .get();
+
+      if (!restockItemsSnapshot.empty) {
+        const restockItemData = restockItemsSnapshot.docs[0].data();
+        const costPrice = restockItemData.costPrice || "";
+        const productName = restockItemData.productName || "";
+
+        const transactionId = restockItemData.transactionID;
+        const restocksSnapshot = await projectFirestore
+          .collection(`users/${user.uid}/restocks`)
+          .where("transactionID", "==", transactionId)
+          .limit(1)
+          .get();
+
+        if (!restocksSnapshot.empty) {
+          const restocksData = restocksSnapshot.docs[0].data();
+          const latestTransactionId = restocksData.transactionID;
+
+          const latestRestockItemsSnapshot = await projectFirestore
+            .collection(`users/${user.uid}/restockitems`)
+            .where("transactionID", "==", latestTransactionId)
+            .where("productId", "==", productId)
+            .limit(1)
+            .get();
+
+          if (!latestRestockItemsSnapshot.empty) {
+            const latestRestockItemData =
+              latestRestockItemsSnapshot.docs[0].data();
+            const latestCostPrice = latestRestockItemData.costPrice || "";
+            updatedForms[index].costPrice = latestCostPrice;
+          }
+        }
+
+        updatedForms[index].costPrice = costPrice;
+        updatedForms[index].productName = productName;
+      }
+    }
+
     setProductForms(updatedForms);
   };
 
