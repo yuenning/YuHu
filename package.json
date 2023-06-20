@@ -7,6 +7,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "chart.js": "^4.3.0",
+    "date-fns": "^2.30.0",
     "firebase": "^9.22.2",
     "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1",
@@ -18,9 +20,9 @@
     "p-wait-for": "^4.0.0",
     "qs": "^6.9.6",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
-    "react-minimal-pie-chart": "^8.4.0",
     "react-router-dom": "^6.11.2",
     "react-scripts": "5.0.0",
     "react-slick": "^0.29.0",
@@ -52,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.14.2",
     "ava": "^4.0.0",
