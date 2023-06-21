@@ -53,7 +53,7 @@ export default function SalesForm() {
       const salesItemsSnapshot = await projectFirestore
         .collection(`users/${user.uid}/salesitems`)
         .where("productId", "==", productId)
-        .orderBy("transactionId", "desc")
+        .orderBy("transactionID", "desc")
         .limit(1)
         .get();
 
@@ -62,20 +62,20 @@ export default function SalesForm() {
         const sellingPrice = salesItemData.sellingPrice || "";
         const productName = salesItemData.productName || "";
 
-        const transactionId = salesItemData.transactionId;
+        const transactionID = salesItemData.transactionID;
         const salesSnapshot = await projectFirestore
           .collection(`users/${user.uid}/sales`)
-          .where("transactionID", "==", transactionId)
+          .where("transactionID", "==", transactionID)
           .limit(1)
           .get();
 
         if (!salesSnapshot.empty) {
           const salesData = salesSnapshot.docs[0].data();
-          const latestTransactionId = salesData.transactionID;
+          const latestTransactionID = salesData.transactionID;
 
           const latestSalesItemsSnapshot = await projectFirestore
             .collection(`users/${user.uid}/salesitems`)
-            .where("transactionId", "==", latestTransactionId)
+            .where("transactionID", "==", latestTransactionID)
             .where("productId", "==", productId)
             .limit(1)
             .get();
@@ -158,7 +158,7 @@ export default function SalesForm() {
       .add(transactionForms);
 
     // Get the transaction ID
-    const transactionId = transactionForms.transactionID;
+    const transactionID = transactionForms.transactionID;
 
     // Update the products collection
     productForms.forEach(async (form) => {
@@ -208,7 +208,7 @@ export default function SalesForm() {
         ),
       });
 
-      form.transactionId = transactionId;
+      form.transactionID = transactionID;
       projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
     });
 
@@ -232,7 +232,7 @@ export default function SalesForm() {
     const totalAmount = parseFloat(transactionForms.transactionAmount);
     if (!isNaN(totalAmount)) {
       alert(
-        `Successfully recorded!\nSales Transaction ID: ${transactionId}\nTotal Amount: ${totalAmount}`
+        `Successfully recorded!\nSales Transaction ID: ${transactionID}\nTotal Amount: ${totalAmount}`
       );
     }
   };
