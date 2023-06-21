@@ -21,29 +21,20 @@ export default function MonthlyProductAnalysis() {
 
   useEffect(() => {
     if (salesItems && sales) {
-      const currentDate = new Date();
-      const currentMonthStart = startOfMonth(currentDate);
-      const currentMonthEnd = endOfMonth(currentDate);
+      const currentMonthStart = startOfMonth(new Date());
+      const currentMonthEnd = endOfMonth(new Date());
 
       const salesByProduct = salesItems.reduce((acc, item) => {
-        const { productId, productName, quantity, transactionId } = item;
-        const matchingSale = sales.find(
-          (sale) => sale.transactionId === transactionId
-        );
-        if (
-          matchingSale &&
-          matchingSale.date >= currentMonthStart.toISOString() &&
-          matchingSale.date <= currentMonthEnd.toISOString() &&
-          !isNaN(quantity)
-        ) {
-          if (!acc[productId]) {
-            acc[productId] = {
-              productId,
-              productName,
-              totalQuantity: 0,
-            };
+        const { productId, productName, quantity, transactionID } = item;
+        const sale = sales.find((sale) => sale.transactionID === transactionID);
+        if (sale) {
+          const saleDate = new Date(sale.date);
+          if (saleDate >= currentMonthStart && saleDate <= currentMonthEnd) {
+            if (!acc[productId]) {
+              acc[productId] = { productId, productName, totalQuantity: 0 };
+            }
+            acc[productId].totalQuantity += parseInt(quantity);
           }
-          acc[productId].totalQuantity += quantity;
         }
         return acc;
       }, {});
@@ -115,7 +106,7 @@ export default function MonthlyProductAnalysis() {
     >
       <div style={{ width: "25%" }}>
         <h3 style={{ textAlign: "center" }}>
-          Top 5 Best Selling Products of the Month
+          Top 5 Best Selling Products This Month
         </h3>
         {topSellingProducts.length > 0 ? (
           <Pie data={chartData} options={chartOptions} />

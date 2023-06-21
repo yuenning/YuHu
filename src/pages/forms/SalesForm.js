@@ -176,7 +176,7 @@ export default function SalesForm() {
 
       // Sort the batchDetails array based on expiryDate in ascending order
       batchDetails.sort(
-        (a, b) => new Date(a.expiryDate) - new Date(b.expiryDate)
+        (a, b) => new Date(b.expiryDate) - new Date(a.expiryDate)
       );
 
       let remainingQuantity = quantity;

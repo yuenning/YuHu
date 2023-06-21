@@ -20,7 +20,7 @@ export default function OverallProductAnalysis() {
         if (!acc[productId]) {
           acc[productId] = { productId, productName, totalQuantity: 0 };
         }
-        acc[productId].totalQuantity += quantity;
+        acc[productId].totalQuantity += parseInt(quantity);
         return acc;
       }, {});
 

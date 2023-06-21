@@ -73,9 +73,5 @@ export default function OverallInventoryTurnover() {
     );
   }
 
-  return (
-    <div>
-      <p>Inventory Turnover: {inventoryTurnover.toFixed(2)}</p>
-    </div>
-  );
+  return inventoryTurnover.toFixed(2);
 }
