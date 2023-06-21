@@ -4,7 +4,7 @@ import { useAuthContext } from "../../../hooks/useAuthContext";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { Line } from "react-chartjs-2";
 
-// monthly turnover
+// import components
 import MonthlyInventoryTurnover from "./MonthlyInventoryTurnover";
 
 // styles
@@ -150,7 +150,7 @@ export default function MonthlySalesMetrics() {
         <p>Current Month Costs: ${totalCosts}</p>
         <p>Current Month Profit: ${totalProfit}</p>
         <p>
-          <MonthlyInventoryTurnover />
+          Inventory Turnover: <MonthlyInventoryTurnover />
         </p>
       </div>
       <div className={styles.metrics}>
@@ -158,6 +158,7 @@ export default function MonthlySalesMetrics() {
           <Line data={chartData} />
         </div>
       </div>
+      <div></div>
     </div>
   );
 }

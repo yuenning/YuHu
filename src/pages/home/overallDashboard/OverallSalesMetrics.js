@@ -6,6 +6,7 @@ import { format } from "date-fns";
 
 // relevant components
 import OverallInventoryTurnover from "./OverallInventoryTurnover";
+import SalesPrediction from "./SalesTrendPrediction";
 
 // styles
 import styles from "../Home.module.css";
@@ -126,7 +127,7 @@ export default function OverallSalesMetrics() {
         <p>Lifetime Costs: ${totalCosts}</p>
         <p>Lifetime Profit: ${totalProfit}</p>
         <p>
-          <OverallInventoryTurnover />
+          Inventory Turnover: <OverallInventoryTurnover />
         </p>
       </div>
       <br></br>
@@ -139,6 +140,9 @@ export default function OverallSalesMetrics() {
         ) : (
           <p>No data available for chart.</p>
         )}
+      </div>
+      <div>
+        <SalesPrediction />
       </div>
     </div>
   );
