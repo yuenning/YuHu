@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
+// Styles
+import { FaTimes } from "react-icons/fa";
+
 export default function SalesForm() {
   const { user } = useAuthContext();
   const [transactionForms, setTransactionForms] = useState({
@@ -240,8 +243,14 @@ export default function SalesForm() {
   return (
     <div>
       {/* Transaction Form */}
-      <h3>Sales Transaction Details</h3>
-      <div>
+      <h3 style={{ display: "flex", alignItems: "center" }}>Sales Transaction Details</h3>
+      <div style={{ paddingBottom: "20px" }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ width: "45%" }}>
         <label htmlFor="date">Date:</label>
         <input
           type="date"
@@ -250,7 +259,7 @@ export default function SalesForm() {
           onChange={(e) => handleTransactionChange("date", e.target.value)}
         />
       </div>
-      <div>
+      <div style={{ width: "45%" }}>
         <label htmlFor="time">Time:</label>
         <input
           type="time"
@@ -259,7 +268,9 @@ export default function SalesForm() {
           onChange={(e) => handleTransactionChange("time", e.target.value)}
         />
       </div>
-      <div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ width: "45%" }}>
         <label htmlFor="transactionId">Transaction ID:</label>
         <input
           type="text"
@@ -271,17 +282,59 @@ export default function SalesForm() {
         />
       </div>
       {/* Transaction Amount */}
-      <div>
-        <label>Transaction Amount: $</label>
-        <span>{transactionForms.transactionAmount}</span>
+      <div style={{ width: "45%" }}>
+        <label htmlFor="transactionAmount">
+          Total Transaction Amount: ${transactionForms.transactionAmount}
+        </label>
+      </div>
+      </div>
+      </form>
       </div>
 
       {/* Product Forms */}
       {productForms.map((form, index) => (
         <div key={index}>
           <br></br>
-          <h3>Sales Product {index + 1} Details</h3>
-          <div>
+          <h3 style={{ display: "flex", alignItems: "center" }}>Sales Product {index + 1} Details
+          {/* Remove Product Form Button */}
+          {index > 0 && (
+            <button
+              type="button"
+              onClick={() => removeProductForm(index)}
+              style={{
+                background: "none",
+                color: "#777",
+                border: "2px solid black",
+                padding: "2px",
+                marginLeft: "10px",
+                textAlign: "center",
+                lineHeight: "1",
+                fontSize: "0.9em",
+                cursor: "pointer",
+                width: "30px",
+                height: "30px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <FaTimes
+                style={{
+                  margin: "0",
+                  color: "black",
+                  fontSize: "1.2em",
+                }}
+              />
+            </button>
+          )}
+          </h3>
+          <div style={{ paddingBottom: "20px" }}>
+          <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+          >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`productId${index}`}>Product ID:</label>
             <input
               type="text"
@@ -292,7 +345,7 @@ export default function SalesForm() {
               }
             />
           </div>
-          <div>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`productName${index}`}>Product Name:</label>
             <input
               type="text"
@@ -303,7 +356,9 @@ export default function SalesForm() {
               }
             />
           </div>
-          <div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`sellingPrice${index}`}>Selling Price:</label>
             <input
               type="number"
@@ -314,7 +369,7 @@ export default function SalesForm() {
               }
             />
           </div>
-          <div>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`quantity${index}`}>Quantity:</label>
             <input
               type="number"
@@ -325,21 +380,38 @@ export default function SalesForm() {
               }
             />
           </div>
-          {index > 0 && (
-            <button type="button" onClick={() => removeProductForm(index)}>
-              Remove Product Form
-            </button>
-          )}
+          </div>
+          </form>
+          </div>
         </div>
       ))}
-      <button type="button" onClick={addProductForm}>
-        Add Product Form
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <button style= {{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            color: 'black', 
+            border: 'none',
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }} type="button" onClick={addProductForm}>
+        <u>+ Add Another Product</u>
       </button>
 
       {/* Submit Button */}
-      <button type="button" onClick={handleSubmit}>
+      <button style={{
+            display: "block",
+            width: "315px",
+            padding: "10px",
+            backgroundColor: "#000000",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "100%",
+          }} type="button" onClick={handleSubmit}>
         Submit
       </button>
+    </div>
     </div>
   );
 }

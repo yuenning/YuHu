@@ -46,6 +46,7 @@
   width: 100%;
   padding: 10px;
   margin-top: 8px;
+  margin-bottom: 20px;
   box-sizing: border-box;
   border: 0;
   border-radius: 4px;
@@ -54,14 +55,14 @@
 }
 
 .sidebar label {
-  margin: 0 auto 20px;
+  margin: 0 auto;
   display: block;
   color: #fff;
 }
 
 .sidebar button {
-  color: #ffffff;
-  border: 2px solid #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
   background-color: transparent;
   font-size: 1em;
   border-radius: 4px;

@@ -243,8 +243,14 @@ export default function RestockForm() {
   return (
     <div>
       {/* Restock Form */}
-      <h3>Restock Transaction Details</h3>
-      <div>
+      <h3 style={{ display: "flex", alignItems: "center" }}> Restock Transaction Details</h3>
+      <div style={{ paddingBottom: "20px" }}>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+        >
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ width: "45%" }}>
         <label htmlFor="date">Date:</label>
         <input
           type="date"
@@ -253,7 +259,7 @@ export default function RestockForm() {
           onChange={(e) => handleRestockChange("date", e.target.value)}
         />
       </div>
-      <div>
+      <div style={{ width: "45%" }}>
         <label htmlFor="time">Time:</label>
         <input
           type="time"
@@ -262,7 +268,9 @@ export default function RestockForm() {
           onChange={(e) => handleRestockChange("time", e.target.value)}
         />
       </div>
-      <div>
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div style={{ width: "45%" }}>
         <label htmlFor="transactionID">Restock ID:</label>
         <input
           type="text"
@@ -272,17 +280,20 @@ export default function RestockForm() {
         />
       </div>
       {/* Total Transaction Amount */}
-      <div>
+      <div style={{ width: "45%" }}>
         <label htmlFor="transactionAmount">
           Total Transaction Amount: ${restockForms.transactionAmount}
         </label>
+      </div>
+      </div>
+      </form>
       </div>
 
       {/* Product Forms */}
       {productForms.map((form, index) => (
         <div key={index}>
           <br></br>
-          <h3>Restock Product {index + 1} Details</h3>
+          <h3 style={{ display: "flex", alignItems: "center" }}> Restock Product {index + 1} Details
           {/* Remove Product Form Button */}
           {index > 0 && (
             <button
@@ -314,7 +325,14 @@ export default function RestockForm() {
               />
             </button>
           )}
-          <div>
+          </h3>
+          <div style={{ paddingBottom: "20px" }}>
+          <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column" }}
+          >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`productId${index}`}>Product ID:</label>
             <input
               type="text"
@@ -325,7 +343,7 @@ export default function RestockForm() {
               }
             />
           </div>
-          <div>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`productName${index}`}>Product Name:</label>
             <input
               type="text"
@@ -336,7 +354,9 @@ export default function RestockForm() {
               }
             />
           </div>
-          <div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`batchId${index}`}>Batch ID (Optional):</label>
             <input
               type="text"
@@ -347,7 +367,7 @@ export default function RestockForm() {
               }
             />
           </div>
-          <div>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`quantity${index}`}>Quantity:</label>
             <input
               type="number"
@@ -358,7 +378,9 @@ export default function RestockForm() {
               }
             />
           </div>
-          <div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`costPrice${index}`}>Cost Price:</label>
             <input
               type="number"
@@ -369,7 +391,7 @@ export default function RestockForm() {
               }
             />
           </div>
-          <div>
+          <div style={{ width: "45%" }}>
             <label htmlFor={`expiryDate${index}`}>Expiry Date:</label>
             <input
               type="date"
@@ -380,17 +402,40 @@ export default function RestockForm() {
               }
             />
           </div>
+          </div>
+          </form>
+          </div>
         </div>
       ))}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       {/* Add Product Form Button */}
-      <button type="button" onClick={addProductForm}>
-        Add Product Form
+      <button 
+          style= {{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px', 
+            color: 'black', 
+            border: 'none',
+            borderRadius: '5px', 
+            fontSize: '100%' 
+          }}  type="button" onClick={addProductForm}>
+        <u>+ Add Another Product</u>
       </button>
 
       {/* Submit Button */}
-      <button type="button" onClick={handleSubmit}>
+      <button style={{
+            display: "block",
+            width: "315px",
+            padding: "10px",
+            backgroundColor: "#000000",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "100%",
+          }} type="button" onClick={handleSubmit}>
         Submit
       </button>
+      </div>
     </div>
   );
 }
