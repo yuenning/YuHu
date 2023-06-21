@@ -37,7 +37,6 @@ export default function Home() {
       <div className={styles.metricsContainer}>
         <OverallSalesMetrics />
         <OverallProductAnalysis />
-        <OverallInventoryTurnover />
       </div>
       <div className={styles.listContainer}>
         <MonthlySalesMetrics />
