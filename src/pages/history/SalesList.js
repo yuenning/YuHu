@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useCollection } from "../../hooks/useCollection";
 
@@ -5,36 +6,76 @@ import { useCollection } from "../../hooks/useCollection";
 import styles from "./History.module.css";
 
 export default function SalesList() {
-  // to add the input into user-segregated firestore
   const { user } = useAuthContext();
-  const { documents, error } = useCollection(`users/${user.uid}/sales`);
-  // handle errors
-  if (!documents || !Array.isArray(documents)) {
-    // to verify if documents is either falsy or not an array
-    console.log("Error retrieving documents");
-    return <p className={styles.transactions}>Please wait!</p>;
-  } else if (documents === null) {
-    // when there are no transactions
-    console.log("There are no transactions");
-    return <p className={styles.transactions}>There are no transactions</p>;
-  }
+  const { documents: salesData, error: salesDataError } = useCollection(
+    `users/${user.uid}/sales`
+  );
+
+  const { documents: salesItemsData, error: salesItemsDataError } =
+    useCollection(`users/${user.uid}/salesitems`);
+
+  const [sales, setSales] = useState([]);
+
+  useEffect(() => {
+    if (salesDataError || salesItemsDataError) {
+      console.log("Error retrieving sales data:", salesDataError);
+      console.log("Error retrieving sales items data:", salesItemsDataError);
+    } else {
+      setSales(
+        salesData?.map((sales) => ({
+          ...sales,
+          salesItems: salesItemsData.filter(
+            (item) => item.transactionID === sales.transactionID
+          ),
+        })) || []
+      );
+    }
+  }, [salesData, salesDataError, salesItemsData, salesItemsDataError]);
+
+  // Add state variable for tracking expanded sales item
+  const [expandedItemIndex, setExpandedItemIndex] = useState(null);
+
+  // Function to toggle expanded sales item
+  const handleToggleItem = (itemIndex) => {
+    if (expandedItemIndex === itemIndex) {
+      setExpandedItemIndex(null);
+    } else {
+      setExpandedItemIndex(itemIndex);
+    }
+  };
 
   return (
     <>
       <h3>Past Sales Transactions</h3>
       <ul className={styles.transactions}>
-        {error && <p>{error}</p>}
-        {documents.map((document) => {
-          const date = new Date(document.date);
-          const formattedDate = date.toLocaleDateString();
-
+        {sales.map((sales, itemIndex) => {
+          const { transactionID, date, time, transactionAmount } = sales;
           return (
-            <li key={document.id}>
-              <p className={styles.name}>{document.transactionID}</p>
-              <p className={styles.datetime}>
-                {formattedDate} {document.time}
-              </p>
-              <p className={styles.amount}>${document.transactionAmount}</p>
+            <li key={transactionID}>
+              <div>
+                <p>Transaction ID: {transactionID}</p>
+                <p>Date: {date}</p>
+                <p>Time: {time}</p>
+                <p>Transaction Amount: ${transactionAmount}</p>
+              </div>
+              {/* Additional details for expanded sales item */}
+              {expandedItemIndex === itemIndex && (
+                <div className={styles.details}>
+                  {sales.salesItems.map((item, index) => (
+                    <div key={index}>
+                      <p>Product ID: {item.productId}</p>
+                      <p>Product Name: {item.productName}</p>
+                      <p>Quantity: {item.quantity}</p>
+                      <p>Selling Price: {item.sellingPrice}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Toggle button */}
+              <button onClick={() => handleToggleItem(itemIndex)}>
+                {expandedItemIndex === itemIndex ? "Hide Details" : "Show More"}
+              </button>
             </li>
           );
         })}
