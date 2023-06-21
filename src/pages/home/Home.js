@@ -9,6 +9,7 @@ import QuantityLowList from "./automatedAlerts/QuantityLowList";
 // import overall dashboard
 import OverallSalesMetrics from "./overallDashboard/OverallSalesMetrics";
 import OverallProductAnalysis from "./overallDashboard/OverallProductsAnalysis";
+import OverallInventoryTurnover from "./overallDashboard/OverallInventoryTurnover";
 
 // import monthly dashboard
 import MonthlySalesMetrics from "./monthlyDashboard/MonthlySalesMetrics";
