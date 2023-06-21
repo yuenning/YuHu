@@ -66,7 +66,7 @@ export default function SalesList() {
                       <p>Product ID: {item.productId}</p>
                       <p>Product Name: {item.productName}</p>
                       <p>Quantity: {item.quantity}</p>
-                      <p>Selling Price: {item.sellingPrice}</p>
+                      <p>Selling Price: ${item.sellingPrice}</p>
                     </div>
                   ))}
                 </div>

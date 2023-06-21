@@ -69,7 +69,7 @@ export default function RestockList() {
                       <p>Product ID: {item.productId}</p>
                       <p>Quantity: {item.quantity}</p>
                       <p>Batch ID: {item.batchId}</p>
-                      <p>Cost Price: {item.costPrice}</p>
+                      <p>Cost Price: ${item.costPrice}</p>
                       <p>
                         Expiry Date:{" "}
                         {item.expiryDate.toDate().toLocaleDateString()}
