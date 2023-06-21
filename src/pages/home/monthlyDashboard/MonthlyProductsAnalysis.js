@@ -28,7 +28,7 @@ export default function MonthlyProductAnalysis() {
       const salesByProduct = salesItems.reduce((acc, item) => {
         const { productId, productName, quantity, transactionId } = item;
         const matchingSale = sales.find(
-          (sale) => sale.transactionID === transactionId
+          (sale) => sale.transactionId === transactionId
         );
         if (
           matchingSale &&

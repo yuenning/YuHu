@@ -4,6 +4,9 @@ import { useAuthContext } from "../../../hooks/useAuthContext";
 import { Line } from "react-chartjs-2";
 import { format } from "date-fns";
 
+// relevant components
+import OverallInventoryTurnover from "./OverallInventoryTurnover";
+
 // styles
 import styles from "../Home.module.css";
 
@@ -122,6 +125,9 @@ export default function OverallSalesMetrics() {
         <p>Lifetime Revenue: ${totalRevenue}</p>
         <p>Lifetime Costs: ${totalCosts}</p>
         <p>Lifetime Profit: ${totalProfit}</p>
+        <p>
+          <OverallInventoryTurnover />
+        </p>
       </div>
       <br></br>
       <h3>Revenue, Profit and Costs across Months</h3>

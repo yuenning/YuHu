@@ -49,31 +49,46 @@ export default function SalesForm() {
     if (field === "productId") {
       const productId = value;
 
-      // Fetch the selling price from salesitems collection
+      // Fetch the selling price and transaction ID from salesitems collection
       const salesItemsSnapshot = await projectFirestore
         .collection(`users/${user.uid}/salesitems`)
         .where("productId", "==", productId)
+        .orderBy("transactionID", "desc")
         .limit(1)
         .get();
 
       if (!salesItemsSnapshot.empty) {
         const salesItemData = salesItemsSnapshot.docs[0].data();
         const sellingPrice = salesItemData.sellingPrice || "";
-        const transactionId = salesItemData.transactionId || "";
+        const productName = salesItemData.productName || "";
 
-        // Fetch the latest selling price from sales collection
+        const transactionID = salesItemData.transactionID;
         const salesSnapshot = await projectFirestore
           .collection(`users/${user.uid}/sales`)
-          .where("transactionID", "==", transactionId)
-          .orderBy("date", "desc")
+          .where("transactionID", "==", transactionID)
           .limit(1)
           .get();
 
         if (!salesSnapshot.empty) {
           const salesData = salesSnapshot.docs[0].data();
-          const latestSellingPrice = salesData.transactionAmount || 0;
-          updatedForms[index].sellingPrice = latestSellingPrice;
+          const latestTransactionID = salesData.transactionID;
+
+          const latestSalesItemsSnapshot = await projectFirestore
+            .collection(`users/${user.uid}/salesitems`)
+            .where("transactionID", "==", latestTransactionID)
+            .where("productId", "==", productId)
+            .limit(1)
+            .get();
+
+          if (!latestSalesItemsSnapshot.empty) {
+            const latestSalesItemData = latestSalesItemsSnapshot.docs[0].data();
+            const latestSellingPrice = latestSalesItemData.sellingPrice || "";
+            updatedForms[index].sellingPrice = latestSellingPrice;
+          }
         }
+
+        updatedForms[index].sellingPrice = sellingPrice;
+        updatedForms[index].productName = productName;
       }
     }
 
@@ -143,7 +158,7 @@ export default function SalesForm() {
       .add(transactionForms);
 
     // Get the transaction ID
-    const transactionId = transactionForms.transactionID;
+    const transactionID = transactionForms.transactionID;
 
     // Update the products collection
     productForms.forEach(async (form) => {
@@ -193,7 +208,7 @@ export default function SalesForm() {
         ),
       });
 
-      form.transactionId = transactionId;
+      form.transactionID = transactionID;
       projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
     });
 
@@ -217,7 +232,7 @@ export default function SalesForm() {
     const totalAmount = parseFloat(transactionForms.transactionAmount);
     if (!isNaN(totalAmount)) {
       alert(
-        `Successfully recorded!\nSales Transaction ID: ${transactionId}\nTotal Amount: ${totalAmount}`
+        `Successfully recorded!\nSales Transaction ID: ${transactionID}\nTotal Amount: ${totalAmount}`
       );
     }
   };

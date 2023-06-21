@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 import { startOfMonth, endOfMonth } from "date-fns";
+import { Line } from "react-chartjs-2";
+
+// monthly turnover
+import MonthlyInventoryTurnover from "./MonthlyInventoryTurnover";
 
 // styles
 import styles from "../Home.module.css";
@@ -10,6 +14,7 @@ export default function MonthlySalesMetrics() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalCosts, setTotalCosts] = useState(0);
+  const [dailyData, setDailyData] = useState([]);
 
   const { user } = useAuthContext();
   const { documents: restocks, error: restocksError } = useCollection(
@@ -67,8 +72,75 @@ export default function MonthlySalesMetrics() {
       setTotalRevenue(revenue);
       setTotalProfit(profit);
       setTotalCosts(costs);
+
+      const dailyData = calculateDailyData(
+        currentMonthSales,
+        currentMonthRestocks
+      );
+      setDailyData(dailyData);
     }
   }, [restocks, sales, restocksError, salesError]);
+
+  const calculateDailyData = (sales, restocks) => {
+    const currentDate = new Date();
+    const daysInMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    ).getDate();
+
+    const dailyData = Array.from({ length: daysInMonth }, (_, i) => ({
+      date: i + 1,
+      revenue: 0,
+      costs: 0,
+      profit: 0,
+    }));
+
+    sales.forEach((sale) => {
+      const saleDate = new Date(sale.date);
+      const dayOfMonth = saleDate.getDate();
+      const saleAmount = sale.transactionAmount || 0;
+      const saleProfit = saleAmount - calculateTotalCosts(restocks);
+      dailyData[dayOfMonth - 1].revenue += saleAmount;
+      dailyData[dayOfMonth - 1].profit += saleProfit;
+    });
+
+    restocks.forEach((restock) => {
+      const restockDate = new Date(restock.date);
+      const dayOfMonth = restockDate.getDate();
+      const restockCost = restock.transactionAmount || 0;
+      dailyData[dayOfMonth - 1].costs += restockCost;
+    });
+
+    return dailyData;
+  };
+
+  const chartData = {
+    labels: dailyData.map((data) => data.date),
+    datasets: [
+      {
+        label: "Revenue",
+        data: dailyData.map((data) => data.revenue),
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+      {
+        label: "Costs",
+        data: dailyData.map((data) => data.costs),
+        fill: false,
+        borderColor: "rgb(255, 99, 132)",
+        tension: 0.1,
+      },
+      {
+        label: "Profit",
+        data: dailyData.map((data) => data.profit),
+        fill: false,
+        borderColor: "rgb(54, 162, 235)",
+        tension: 0.1,
+      },
+    ],
+  };
 
   return (
     <div className={styles.metricsContainer}>
@@ -77,6 +149,14 @@ export default function MonthlySalesMetrics() {
         <p>Current Month Revenue: ${totalRevenue}</p>
         <p>Current Month Costs: ${totalCosts}</p>
         <p>Current Month Profit: ${totalProfit}</p>
+        <p>
+          <MonthlyInventoryTurnover />
+        </p>
+      </div>
+      <div className={styles.metrics}>
+        <div className={styles.chartContainer}>
+          <Line data={chartData} />
+        </div>
       </div>
     </div>
   );
