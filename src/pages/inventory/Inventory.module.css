@@ -5,6 +5,11 @@
   margin: 50px;
 }
 
+.container p {
+  color: white;
+}
+
+
 .toggleButton {
   display: flex;
   height: 40px;
@@ -114,16 +119,25 @@
   font-weight: bold;
   font-size: 1.6em;
 }
+
 .transactions button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  background: #ddd;
-  color: #777;
-  border: none;
-  padding: 12px 8px;
-  text-align: center;
-  line-height: 0;
-  font-size: 0.9em;
+  color: #000000;
+  background-color: transparent;
+  font-size: 1em;
+  border-radius: 2px;
   cursor: pointer;
+  display: block;
+  width: 103%;
 }
+
+.productListItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: #000000;
+  border-radius: 20px;
+}
+

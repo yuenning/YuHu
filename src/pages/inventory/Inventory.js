@@ -42,30 +42,45 @@ export default function Inventory() {
         <h3>Products List</h3>
         <ul className={styles.transactions}>
           {products.map((product, productIndex) => (
-            <li key={product.productId}>
-              <div>
+            <li className={styles.productListItem} key={product.productId}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
+              <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}}>
                 <p>Product ID: {product.productId}</p>
                 <p>Product Name: {product.productName}</p>
                 <p>Total Quantity: {product.totalQuantity}</p>
               </div>
               {expandedProductIndex === productIndex &&
                 product.batchDetails.map((batch, batchIndex) => (
-                  <div key={batchIndex}>
-                    <p>{`Batch ${batchIndex + 1}`}</p>
+                  <div style={{ width: "100%", margin: "20px 0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}} key={batchIndex}>
+                    <p style={{ flex: "1" }}>{`Batch ${batchIndex + 1}`}</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
                     <p>{batch.batchId ? `Batch ID: ${batch.batchId}` : ""}</p>
-                    <p>Quantity: {batch.quantity}</p>
                     <p>
                       Expiry Date:{" "}
                       {batch.expiryDate.toDate().toLocaleDateString()}
                     </p>
-                    <p>Cost Price: {batch.costPrice}</p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
+                    <p style = {{ textAlign: "right" }}>Quantity: {batch.quantity}</p>
+                    <p style = {{ textAlign: "right" }}>Cost Price: ${batch.costPrice}</p>
+                    </div>
+                  </div>
                   </div>
                 ))}
-              <button onClick={() => handleToggleBatch(productIndex)}>
+              <button style= {{ 
+            display: 'block', 
+            width: '315px', 
+            padding: '10px 10px 0', 
+            color: 'white', 
+            border: 'none',
+            borderRadius: '5px', 
+            fontSize: '100%' }} className={styles.showMoreButton} onClick={() => handleToggleBatch(productIndex)}>
                 {expandedProductIndex === productIndex
-                  ? "Hide Details"
-                  : "Show More"}
+                  ? <u>Hide Details</u>
+                  : <u>+ Show More</u>}
               </button>
+              </div>
             </li>
           ))}
         </ul>
