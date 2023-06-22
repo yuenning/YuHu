@@ -6,6 +6,7 @@ import { Line } from "react-chartjs-2";
 
 // import components
 import MonthlyInventoryTurnover from "./MonthlyInventoryTurnover";
+import MonthlyProductAnalysis from "./MonthlyProductsAnalysis";
 
 // styles
 import styles from "../Home.module.css";
@@ -72,6 +73,39 @@ export default function MonthlySalesMetrics() {
       setTotalRevenue(revenue);
       setTotalProfit(profit);
       setTotalCosts(costs);
+      const calculateDailyData = (sales, restocks) => {
+        const currentDate = new Date();
+        const daysInMonth = new Date(
+          currentDate.getFullYear(),
+          currentDate.getMonth() + 1,
+          0
+        ).getDate();
+
+        const dailyData = Array.from({ length: daysInMonth }, (_, i) => ({
+          date: i + 1,
+          revenue: 0,
+          costs: 0,
+          profit: 0,
+        }));
+
+        sales.forEach((sale) => {
+          const saleDate = new Date(sale.date);
+          const dayOfMonth = saleDate.getDate();
+          const saleAmount = sale.transactionAmount || 0;
+          const saleProfit = saleAmount - calculateTotalCosts(restocks);
+          dailyData[dayOfMonth - 1].revenue += saleAmount;
+          dailyData[dayOfMonth - 1].profit += saleProfit;
+        });
+
+        restocks.forEach((restock) => {
+          const restockDate = new Date(restock.date);
+          const dayOfMonth = restockDate.getDate();
+          const restockCost = restock.transactionAmount || 0;
+          dailyData[dayOfMonth - 1].costs += restockCost;
+        });
+
+        return dailyData;
+      };
 
       const dailyData = calculateDailyData(
         currentMonthSales,
@@ -80,40 +114,6 @@ export default function MonthlySalesMetrics() {
       setDailyData(dailyData);
     }
   }, [restocks, sales, restocksError, salesError]);
-
-  const calculateDailyData = (sales, restocks) => {
-    const currentDate = new Date();
-    const daysInMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    ).getDate();
-
-    const dailyData = Array.from({ length: daysInMonth }, (_, i) => ({
-      date: i + 1,
-      revenue: 0,
-      costs: 0,
-      profit: 0,
-    }));
-
-    sales.forEach((sale) => {
-      const saleDate = new Date(sale.date);
-      const dayOfMonth = saleDate.getDate();
-      const saleAmount = sale.transactionAmount || 0;
-      const saleProfit = saleAmount - calculateTotalCosts(restocks);
-      dailyData[dayOfMonth - 1].revenue += saleAmount;
-      dailyData[dayOfMonth - 1].profit += saleProfit;
-    });
-
-    restocks.forEach((restock) => {
-      const restockDate = new Date(restock.date);
-      const dayOfMonth = restockDate.getDate();
-      const restockCost = restock.transactionAmount || 0;
-      dailyData[dayOfMonth - 1].costs += restockCost;
-    });
-
-    return dailyData;
-  };
 
   const chartData = {
     labels: dailyData.map((data) => data.date),
@@ -159,6 +159,9 @@ export default function MonthlySalesMetrics() {
         <div className={styles.centered}>
           <Line data={chartData} />
         </div>
+      </div>
+      <div className={styles.metricsContainer}>
+        <MonthlyProductAnalysis />
       </div>
     </>
   );

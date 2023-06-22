@@ -7,6 +7,7 @@ import { format } from "date-fns";
 // relevant components
 import OverallInventoryTurnover from "./OverallInventoryTurnover";
 import SalesPrediction from "./SalesTrendPrediction";
+import OverallProductAnalysis from "./OverallProductsAnalysis";
 
 // styles
 import styles from "../Home.module.css";
@@ -25,26 +26,6 @@ export default function OverallSalesMetrics() {
   const { documents: sales, error: salesError } = useCollection(
     `users/${user?.uid}/sales`
   );
-
-  const calculateTotalRevenue = (sales) => {
-    return sales.reduce(
-      (total, sale) => total + (sale.transactionAmount || 0),
-      0
-    );
-  };
-
-  const calculateTotalCosts = (restocks) => {
-    return restocks.reduce(
-      (total, restock) => total + (restock.transactionAmount || 0),
-      0
-    );
-  };
-
-  const calculateTotalProfit = (sales, restocks) => {
-    const salesAmount = calculateTotalRevenue(sales);
-    const restocksCost = calculateTotalCosts(restocks);
-    return salesAmount - restocksCost;
-  };
 
   useEffect(() => {
     if (restocksError || salesError) {
@@ -76,6 +57,26 @@ export default function OverallSalesMetrics() {
       });
 
       setMonthlyData(Object.entries(monthlySales));
+
+      const calculateTotalRevenue = (sales) => {
+        return sales.reduce(
+          (total, sale) => total + (sale.transactionAmount || 0),
+          0
+        );
+      };
+
+      const calculateTotalCosts = (restocks) => {
+        return restocks.reduce(
+          (total, restock) => total + (restock.transactionAmount || 0),
+          0
+        );
+      };
+
+      const calculateTotalProfit = (sales, restocks) => {
+        const salesAmount = calculateTotalRevenue(sales);
+        const restocksCost = calculateTotalCosts(restocks);
+        return salesAmount - restocksCost;
+      };
 
       const revenue = calculateTotalRevenue(sales);
       const profit = calculateTotalProfit(sales, restocks);
@@ -142,6 +143,9 @@ export default function OverallSalesMetrics() {
       </div>
       <div>
         <SalesPrediction />
+      </div>
+      <div>
+        <OverallProductAnalysis />
       </div>
     </div>
   );
