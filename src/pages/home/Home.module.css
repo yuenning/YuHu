@@ -71,3 +71,13 @@
   font-size: 16px;
   /* Add any additional styles for the metrics here */
 }
+
+/* Chart */
+.chartContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.centered {
+  width: 50%;
+}

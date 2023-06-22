@@ -24,14 +24,20 @@ export default function RestockList() {
         restockItemsDataError
       );
     } else {
-      setRestocks(
-        restockData?.map((restock) => ({
+      const sortedRestocks = restockData
+        ?.map((restock) => ({
           ...restock,
           restockItems: restockItemsData.filter(
             (item) => item.transactionID === restock.transactionID
           ),
-        })) || []
-      );
+        }))
+        .sort((a, b) => {
+          const dateA = new Date(a.date + " " + a.time);
+          const dateB = new Date(b.date + " " + b.time);
+          return dateB - dateA; // Sort in descending order (latest first)
+        });
+
+      setRestocks(sortedRestocks || []);
     }
   }, [restockData, restockDataError, restockItemsData, restockItemsDataError]);
 
@@ -55,50 +61,95 @@ export default function RestockList() {
           const { transactionID, date, time, transactionAmount } = restock;
           return (
             <li className={styles.productListItem} key={transactionID}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
-              <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}}>
-                <p>Transaction ID: {transactionID}</p>
-                <p>Date: {date}</p>
-                <p>Time: {time}</p>
-                <p>Transaction Amount: ${transactionAmount}</p>
-              </div>
-              {/* Additional details for expanded restock item */}
-              <div style={{ width: "100%"}}>
-              {expandedItemIndex === itemIndex && (
-                <div className={styles.details}>
-                  {restock.restockItems.map((item, index) => (
-                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", margin: "20px 0" }} key={index}>
-                      <p style={{ flex: "1" }}>Product ID: {item.productId}</p>
-                      <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
-                      <p>Batch ID: {item.batchId}</p>
-                      <p>
-                        Expiry Date:{" "}
-                        {item.expiryDate.toDate().toLocaleDateString()}
-                      </p>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
-                      <p style = {{ textAlign: "right" }}>Quantity: {item.quantity}</p>
-                      <p style = {{ textAlign: "right" }}>Cost Price: ${item.costPrice}</p>
-                    </div>
-                    </div>
-                  ))}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                  }}
+                >
+                  <p>Transaction ID: {transactionID}</p>
+                  <p>Date: {date}</p>
+                  <p>Time: {time}</p>
+                  <p>Transaction Amount: ${transactionAmount}</p>
                 </div>
-              )}
-              </div>
+                {/* Additional details for expanded restock item */}
+                <div style={{ width: "100%" }}>
+                  {expandedItemIndex === itemIndex && (
+                    <div className={styles.details}>
+                      {restock.restockItems.map((item, index) => (
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
+                            margin: "20px 0",
+                          }}
+                          key={index}
+                        >
+                          <p style={{ flex: "1" }}>
+                            Product ID: {item.productId}
+                          </p>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              flex: "1",
+                            }}
+                          >
+                            <p>Batch ID: {item.batchId}</p>
+                            <p>
+                              Expiry Date:{" "}
+                              {item.expiryDate.toDate().toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              flex: "1",
+                            }}
+                          >
+                            <p style={{ textAlign: "right" }}>
+                              Quantity: {item.quantity}
+                            </p>
+                            <p style={{ textAlign: "right" }}>
+                              Cost Price: ${item.costPrice}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              {/* Toggle button */}
-              <button style={{
-                display: 'block', 
-                width: '315px', 
-                padding: '10px 10px 0', 
-                color: 'white', 
-                border: 'none',
-                borderRadius: '5px', 
-                fontSize: '100%' }} onClick={() => handleToggleItem(itemIndex)}>
-                {expandedItemIndex === itemIndex 
-                  ? <u>Hide Details</u>
-                  : <u>+ Show More</u>}
-              </button>
+                {/* Toggle button */}
+                <button
+                  style={{
+                    display: "block",
+                    width: "315px",
+                    padding: "10px 10px 0",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    fontSize: "100%",
+                  }}
+                  onClick={() => handleToggleItem(itemIndex)}
+                >
+                  {expandedItemIndex === itemIndex ? (
+                    <u>Hide Details</u>
+                  ) : (
+                    <u>+ Show More</u>
+                  )}
+                </button>
               </div>
             </li>
           );

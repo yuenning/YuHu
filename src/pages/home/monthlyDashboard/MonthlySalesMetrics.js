@@ -122,43 +122,44 @@ export default function MonthlySalesMetrics() {
         label: "Revenue",
         data: dailyData.map((data) => data.revenue),
         fill: false,
-        borderColor: "rgb(75, 192, 192)",
+        borderColor: "#333333",
         tension: 0.1,
       },
       {
         label: "Costs",
         data: dailyData.map((data) => data.costs),
         fill: false,
-        borderColor: "rgb(255, 99, 132)",
+        borderColor: "#ffffff",
         tension: 0.1,
       },
       {
         label: "Profit",
         data: dailyData.map((data) => data.profit),
         fill: false,
-        borderColor: "rgb(54, 162, 235)",
+        borderColor: "#858585",
         tension: 0.1,
       },
     ],
   };
 
   return (
-    <div className={styles.metricsContainer}>
-      <h3>Monthly Sales Metrics</h3>
-      <div className={styles.metrics}>
-        <p>Current Month Revenue: ${totalRevenue}</p>
-        <p>Current Month Costs: ${totalCosts}</p>
-        <p>Current Month Profit: ${totalProfit}</p>
-        <p>
-          Inventory Turnover: <MonthlyInventoryTurnover />
-        </p>
+    <>
+      <div className={styles.metricsContainer}>
+        <h3>Monthly Sales Metrics</h3>
+        <div className={styles.metrics}>
+          <p>Current Month Revenue: ${totalRevenue}</p>
+          <p>Current Month Costs: ${totalCosts}</p>
+          <p>Current Month Profit: ${totalProfit}</p>
+          <p>
+            Inventory Turnover: <MonthlyInventoryTurnover />
+          </p>
+        </div>
       </div>
-      <div className={styles.metrics}>
-        <div className={styles.chartContainer}>
+      <div className={styles.chartContainer}>
+        <div className={styles.centered}>
           <Line data={chartData} />
         </div>
       </div>
-      <div></div>
-    </div>
+    </>
   );
 }
