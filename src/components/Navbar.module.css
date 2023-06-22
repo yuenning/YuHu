@@ -4,6 +4,7 @@
   padding: 20px 10px;
   box-sizing: border-box;
   color: #ffffff;
+  z-index: 999;
 }
 
 .navbar p {
