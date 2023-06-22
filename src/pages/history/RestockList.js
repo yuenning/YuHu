@@ -94,7 +94,7 @@ export default function RestockList() {
                 color: 'white', 
                 border: 'none',
                 borderRadius: '5px', 
-                fontSize: '100%'  }} onClick={() => handleToggleItem(itemIndex)}>
+                fontSize: '100%' }} onClick={() => handleToggleItem(itemIndex)}>
                 {expandedItemIndex === itemIndex 
                   ? <u>Hide Details</u>
                   : <u>+ Show More</u>}
