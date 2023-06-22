@@ -7,12 +7,10 @@ import ExpiringList from "./automatedAlerts/ExpiringList";
 import QuantityLowList from "./automatedAlerts/QuantityLowList";
 
 // import overall dashboard
-import OverallSalesMetrics from "./overallDashboard/OverallSalesMetrics";
-import OverallProductAnalysis from "./overallDashboard/OverallProductsAnalysis";
+import OverallDashboard from "./overallDashboard/OverallDashboard";
 
 // import monthly dashboard
-import MonthlySalesMetrics from "./monthlyDashboard/MonthlySalesMetrics";
-import MonthlyProductAnalysis from "./monthlyDashboard/MonthlyProductsAnalysis";
+import MonthlyDashboard from "./monthlyDashboard/MonthlyDashboard";
 
 // styles
 import styles from "./Home.module.css";
@@ -34,12 +32,11 @@ export default function Home() {
         <br></br>
       </div>
       <div className={styles.metricsContainer}>
-        <OverallSalesMetrics />
-        <OverallProductAnalysis />
+        <OverallDashboard />
       </div>
       <div className={styles.listContainer}>
-        <MonthlySalesMetrics />
-        <MonthlyProductAnalysis />
+        <MonthlyDashboard />
+        <br></br>
         <br></br>
         <br></br>
       </div>
