@@ -51,31 +51,44 @@ export default function SalesList() {
         {sales.map((sales, itemIndex) => {
           const { transactionID, date, time, transactionAmount } = sales;
           return (
-            <li key={transactionID}>
-              <div>
+            <li className={styles.productListItem} key={transactionID}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
+              <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}}>
                 <p>Transaction ID: {transactionID}</p>
                 <p>Date: {date}</p>
                 <p>Time: {time}</p>
                 <p>Transaction Amount: ${transactionAmount}</p>
               </div>
               {/* Additional details for expanded sales item */}
+              <div style={{ width: "100%"}}>
               {expandedItemIndex === itemIndex && (
                 <div className={styles.details}>
                   {sales.salesItems.map((item, index) => (
-                    <div key={index}>
+                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", margin: "20px 0" }} key={index}>
                       <p>Product ID: {item.productId}</p>
                       <p>Product Name: {item.productName}</p>
-                      <p>Quantity: {item.quantity}</p>
                       <p>Selling Price: ${item.sellingPrice}</p>
+                      <p>Quantity: {item.quantity}</p>
                     </div>
                   ))}
                 </div>
               )}
+              </div>
 
               {/* Toggle button */}
-              <button onClick={() => handleToggleItem(itemIndex)}>
-                {expandedItemIndex === itemIndex ? "Hide Details" : "Show More"}
+              <button style={{
+                display: 'block', 
+                width: '315px', 
+                padding: '10px 10px 0', 
+                color: 'white', 
+                border: 'none',
+                borderRadius: '5px', 
+                fontSize: '100%' }} onClick={() => handleToggleItem(itemIndex)}>
+                {expandedItemIndex === itemIndex 
+                  ? <u>Hide Details</u>
+                  : <u>+ Show More</u>}
               </button>
+              </div>
             </li>
           );
         })}

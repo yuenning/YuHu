@@ -119,6 +119,7 @@
   font-weight: bold;
   font-size: 1.6em;
 }
+
 .transactions button {
   color: #000000;
   background-color: transparent;
@@ -138,6 +139,5 @@
   padding: 20px;
   background: #000000;
   border-radius: 20px;
-  width: 100%;
 }
 

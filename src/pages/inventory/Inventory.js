@@ -45,9 +45,9 @@ export default function Inventory() {
             <li className={styles.productListItem} key={product.productId}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
               <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}}>
-                <p style={{ flex: "1" }}>Product ID: {product.productId}</p>
-                <p style={{ flex: "1" }}>Product Name: {product.productName}</p>
-                <p style={{ flex: "1", textAlign: "right" }}>Total Quantity: {product.totalQuantity}</p>
+                <p>Product ID: {product.productId}</p>
+                <p>Product Name: {product.productName}</p>
+                <p>Total Quantity: {product.totalQuantity}</p>
               </div>
               {expandedProductIndex === productIndex &&
                 product.batchDetails.map((batch, batchIndex) => (
@@ -75,8 +75,7 @@ export default function Inventory() {
             color: 'white', 
             border: 'none',
             borderRadius: '5px', 
-            fontSize: '100%' 
-          }} className={styles.showMoreButton} onClick={() => handleToggleBatch(productIndex)}>
+            fontSize: '100%' }} className={styles.showMoreButton} onClick={() => handleToggleBatch(productIndex)}>
                 {expandedProductIndex === productIndex
                   ? <u>Hide Details</u>
                   : <u>+ Show More</u>}

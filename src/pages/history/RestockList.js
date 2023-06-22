@@ -54,35 +54,52 @@ export default function RestockList() {
         {restocks.map((restock, itemIndex) => {
           const { transactionID, date, time, transactionAmount } = restock;
           return (
-            <li key={transactionID}>
-              <div>
+            <li className={styles.productListItem} key={transactionID}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: "100%"}}>
+              <div style={{ display: "flex", justifyContent: "space-between", width: "100%"}}>
                 <p>Transaction ID: {transactionID}</p>
                 <p>Date: {date}</p>
                 <p>Time: {time}</p>
                 <p>Transaction Amount: ${transactionAmount}</p>
               </div>
               {/* Additional details for expanded restock item */}
+              <div style={{ width: "100%"}}>
               {expandedItemIndex === itemIndex && (
                 <div className={styles.details}>
                   {restock.restockItems.map((item, index) => (
-                    <div key={index}>
-                      <p>Product ID: {item.productId}</p>
-                      <p>Quantity: {item.quantity}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%", margin: "20px 0" }} key={index}>
+                      <p style={{ flex: "1" }}>Product ID: {item.productId}</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
                       <p>Batch ID: {item.batchId}</p>
-                      <p>Cost Price: ${item.costPrice}</p>
                       <p>
                         Expiry Date:{" "}
                         {item.expiryDate.toDate().toLocaleDateString()}
                       </p>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: "1" }}>
+                      <p style = {{ textAlign: "right" }}>Quantity: {item.quantity}</p>
+                      <p style = {{ textAlign: "right" }}>Cost Price: ${item.costPrice}</p>
+                    </div>
                     </div>
                   ))}
                 </div>
               )}
+              </div>
 
               {/* Toggle button */}
-              <button onClick={() => handleToggleItem(itemIndex)}>
-                {expandedItemIndex === itemIndex ? "Hide Details" : "Show More"}
+              <button style={{
+                display: 'block', 
+                width: '315px', 
+                padding: '10px 10px 0', 
+                color: 'white', 
+                border: 'none',
+                borderRadius: '5px', 
+                fontSize: '100%' }} onClick={() => handleToggleItem(itemIndex)}>
+                {expandedItemIndex === itemIndex 
+                  ? <u>Hide Details</u>
+                  : <u>+ Show More</u>}
               </button>
+              </div>
             </li>
           );
         })}
