@@ -99,20 +99,17 @@ export default function OverallSalesMetrics() {
           {
             label: "Revenue",
             data: revenueData,
-            borderColor: "rgba(75, 192, 192, 1)",
-            backgroundColor: "rgba(75, 192, 192, 0.2)",
+            borderColor: "#",
           },
           {
             label: "Profit",
             data: profitData,
-            borderColor: "rgb(54, 162, 235)",
-            backgroundColor: "rgba(54, 162, 235, 0.2)",
+            borderColor: "#858585",
           },
           {
             label: "Costs",
             data: costsData,
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.2)",
+            borderColor: "#CCCCCC",
           },
         ],
       });
@@ -132,14 +129,16 @@ export default function OverallSalesMetrics() {
       </div>
       <br></br>
       <h3>Revenue, Profit and Costs across Months</h3>
-      <div className={styles.metrics}>
-        {chartData ? (
-          <div>
-            <Line data={chartData} />
-          </div>
-        ) : (
-          <p>No data available for chart.</p>
-        )}
+      <div className={styles.chartContainer}>
+        <div className={styles.centered}>
+          {chartData ? (
+            <div>
+              <Line data={chartData} />
+            </div>
+          ) : (
+            <p>No data available for chart.</p>
+          )}
+        </div>
       </div>
       <div>
         <SalesPrediction />

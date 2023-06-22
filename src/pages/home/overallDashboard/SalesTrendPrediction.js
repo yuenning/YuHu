@@ -75,7 +75,7 @@ export default function SalesPrediction() {
         label: "Revenue",
         data: predictedData.map((data) => data.amount),
         fill: false,
-        borderColor: "rgb(75, 192, 192)",
+        borderColor: "#888888",
         tension: 0.1,
       },
     ],
@@ -85,7 +85,9 @@ export default function SalesPrediction() {
     <div className={styles.metricsContainer}>
       <h3>Sales Prediction</h3>
       <div className={styles.chartContainer}>
-        <Line data={chartData} />
+        <div className={styles.centered}>
+          <Line data={chartData} />
+        </div>
       </div>
     </div>
   );
