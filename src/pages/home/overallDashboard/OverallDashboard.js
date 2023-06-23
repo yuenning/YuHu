@@ -131,9 +131,9 @@ export default function OverallSalesMetrics() {
     <div className={styles.metricsContainer}>
       <h3>Overall Sales Metrics</h3>
       <div className={styles.metrics}>
-        <p>Lifetime Revenue: ${totalRevenue}</p>
-        <p>Lifetime Costs: ${totalCosts}</p>
-        <p>Lifetime Profit: ${totalProfit}</p>
+        <p>Lifetime Revenue: ${totalRevenue.toFixed(2)}</p>
+        <p>Lifetime Costs: ${totalCosts.toFixed(2)}</p>
+        <p>Lifetime Profit: ${totalProfit.toFixed(2)}</p>
         <p>
           Inventory Turnover: <OverallInventoryTurnover />
         </p>
