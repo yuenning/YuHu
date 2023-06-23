@@ -1,10 +1,56 @@
-import { useState, useContext } from "react";
-import { projectAuth } from "../../firebase/config";
-import { AuthContext } from "../../context/AuthContext";
+import { useLogin } from "../../hooks/useLogin";
 
 // styles
 import styles from "./Login.module.css";
 
+export default function Login() {
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    error,
+    formError,
+    handleSubmit,
+  } = useLogin();
+
+  return (
+    <form onSubmit={handleSubmit} className={styles["login-form"]}>
+      <h2>Welcome back to YuHu!</h2>
+      {formError && (
+        <div>
+          <br></br>
+          <p>{formError}</p>
+        </div>
+      )}
+      {error && (
+        <div>
+          <br></br>
+          <p>Invalid email or password. Please try again.</p>
+        </div>
+      )}
+      <label>
+        <span>Email:</span>
+        <input
+          type="email"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+        />
+      </label>
+      <label>
+        <span>Password:</span>
+        <input
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+        />
+      </label>
+      <button className="btn">Login</button>
+    </form>
+  );
+}
+
+/* PREVIOUS CODE WITHOUT HOOK
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -70,6 +116,7 @@ export default function Login() {
     </form>
   );
 }
+*/
 
 /* PREVIOUS CODE WITH HOOK
 import { useState } from "react";

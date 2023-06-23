@@ -9,15 +9,44 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const { signup, isPending, error } = useSignup();
+  const [formError, setFormError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Validate form inputs
+    if (
+      email.trim() === "" ||
+      password.trim() === "" ||
+      displayName.trim() === ""
+    ) {
+      setFormError("Please enter all the required information.");
+      return;
+    }
+
+    // Proceed with signup
     signup(email, password, displayName);
+    if (
+      error ===
+      "Firebase: The email address is already in use by another account. (auth/email-already-in-use)."
+    ) {
+      setFormError("The email address is already in use by another account.");
+    } else if (error) {
+      setFormError(
+        "Sign up was not successful. Please verify your details and try again or contact our support staff."
+      );
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles["signup-form"]}>
       <h2>Sign Up Now!</h2>
+      {formError && (
+        <div>
+          <br></br>
+          <p>{formError}</p>
+        </div>
+      )}
       <label>
         <span>Company Name:</span>
         <input
@@ -48,7 +77,6 @@ export default function Signup() {
           Loading
         </button>
       )}
-      {error && <p>{error}</p>}
     </form>
   );
 }

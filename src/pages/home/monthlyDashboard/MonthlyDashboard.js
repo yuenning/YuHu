@@ -147,9 +147,9 @@ export default function MonthlySalesMetrics() {
       <div className={styles.metricsContainer}>
         <h3>Monthly Sales Metrics</h3>
         <div className={styles.metrics}>
-          <p>Current Month Revenue: ${totalRevenue}</p>
-          <p>Current Month Costs: ${totalCosts}</p>
-          <p>Current Month Profit: ${totalProfit}</p>
+          <p>Current Month Revenue: ${totalRevenue.toFixed(2)}</p>
+          <p>Current Month Costs: ${totalCosts.toFixed(2)}</p>
+          <p>Current Month Profit: ${totalProfit.toFixed(2)}</p>
           <p>
             Inventory Turnover: <MonthlyInventoryTurnover />
           </p>
