@@ -27,7 +27,7 @@ export default function Signup() {
     // Proceed with signup
     signup(email, password, displayName);
     if (
-      error ==
+      error ===
       "Firebase: The email address is already in use by another account. (auth/email-already-in-use)."
     ) {
       setFormError("The email address is already in use by another account.");
