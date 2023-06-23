@@ -33,7 +33,7 @@ export default function Signup() {
       setFormError("The email address is already in use by another account.");
     } else if (error) {
       setFormError(
-        "Sign up was not successful. Please try again or contact our support staff."
+        "Sign up was not successful. Please verify your details and try again or contact our support staff."
       );
     }
   };
