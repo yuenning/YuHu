@@ -83,7 +83,7 @@ export default function MonthlyInventoryTurnover() {
   }
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return "Loading...";
   }
 
   if (productsError || restockItemsError || salesItemsError || salesError) {

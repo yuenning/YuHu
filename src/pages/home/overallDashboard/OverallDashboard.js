@@ -33,21 +33,31 @@ export default function OverallSalesMetrics() {
     } else if (restocks && sales) {
       const monthlySales = {};
       sales.forEach((sale) => {
-        const month = format(new Date(sale.date), "yyyy-MM");
-        if (!monthlySales[month]) {
-          monthlySales[month] = {
-            revenue: 0,
-            costs: 0,
-            profit: 0,
-          };
+        try {
+          const month = format(new Date(sale.date), "yyyy-MM");
+          if (!monthlySales[month]) {
+            monthlySales[month] = {
+              revenue: 0,
+              costs: 0,
+              profit: 0,
+            };
+          }
+          monthlySales[month].revenue += sale.transactionAmount || 0;
+        } catch (error) {
+          console.log(sale);
+          console.log("Error formatting date:", error);
         }
-        monthlySales[month].revenue += sale.transactionAmount || 0;
       });
 
       restocks.forEach((restock) => {
-        const month = format(new Date(restock.date), "yyyy-MM");
-        if (monthlySales[month]) {
-          monthlySales[month].costs += restock.transactionAmount || 0;
+        try {
+          const month = format(new Date(restock.date), "yyyy-MM");
+          if (monthlySales[month]) {
+            monthlySales[month].costs += restock.transactionAmount || 0;
+          }
+        } catch (error) {
+          console.log(restock);
+          console.log("Error formatting date:", error);
         }
       });
 
