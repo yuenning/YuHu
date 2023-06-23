@@ -121,7 +121,7 @@ export default function RestockForm() {
     );
     setRestockForms((prevForms) => ({
       ...prevForms,
-      transactionAmount: totalAmount,
+      transactionAmount: totalAmount.toFixed(2),
     }));
   }, [productForms]);
 
