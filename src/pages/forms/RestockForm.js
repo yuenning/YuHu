@@ -4,6 +4,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
+
 export default function RestockForm() {
   const { user } = useAuthContext();
   const [restockForms, setRestockForms] = useState({
@@ -24,7 +25,7 @@ export default function RestockForm() {
   ]);
 
   const handleRestockChange = (field, value) => {
-    setRestockForms((prevForms) => ({ ...prevForms, [field]: value }));
+    setRestockForms({ ...restockForms, [field]: value });
   };
 
   const handleProductChange = async (index, field, value) => {
@@ -113,11 +114,16 @@ export default function RestockForm() {
   };
 
   useEffect(() => {
-    const date = convertToTimestamp(restockForms.date);
-    if (date) {
-      setRestockForms((prevForms) => ({ ...prevForms, date }));
-    }
-  }, [restockForms.date]);
+    // Calculate and update the total transaction amount
+    const totalAmount = productForms.reduce(
+      (total, form) => total + form.quantity * form.costPrice,
+      0
+    );
+    setRestockForms((prevForms) => ({
+      ...prevForms,
+      transactionAmount: totalAmount,
+    }));
+  }, [productForms]);
 
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -166,38 +172,99 @@ export default function RestockForm() {
     if (errors.length === 0) {
       setIsSubmitting(true);
 
-      // Save data to Firebase
-      const restockData = {
+      // Save restock forms to Firebase
+      await projectFirestore.collection(`users/${user.uid}/restocks`).add({
         ...restockForms,
-        userID: user.uid,
-      };
-
-      const batch = projectFirestore.batch();
-
-      // Create a new restock document
-      const restockRef = projectFirestore
-        .collection(`users/${user.uid}/restocks`)
-        .doc();
-      batch.set(restockRef, restockData);
-
-      // Create restock items documents
-      productForms.forEach((form) => {
-        const restockItemData = {
-          ...form,
-          transactionID: restockForms.transactionID,
-          userID: user.uid,
-          timestamp: timestamp.now(),
-        };
-        const restockItemRef = projectFirestore
-          .collection(`users/${user.uid}/restockitems`)
-          .doc();
-        batch.set(restockItemRef, restockItemData);
+        transactionAmount: parseFloat(restockForms.transactionAmount),
       });
+      console.log(restockForms);
 
-      // Commit the batch write
-      await batch.commit();
+      // Get the restock ID
+      const transactionID = restockForms.transactionID;
 
-      // Reset the forms
+      // Update restock items in the restockitems collection
+      await Promise.all(
+        productForms.map(async (form) => {
+          const {
+            productId,
+            productName,
+            quantity,
+            batchId,
+            expiryDate,
+            costPrice,
+          } = form;
+
+          const restockItemData = {
+            transactionID,
+            productId,
+            productName,
+            quantity: parseInt(quantity, 10),
+            expiryDate: timestamp.fromDate(new Date(expiryDate)),
+            costPrice: parseFloat(costPrice),
+            ...(batchId && { batchId }),
+          };
+          const expiryDateTimestamp = convertToTimestamp(expiryDate);
+
+          if (expiryDateTimestamp) {
+            restockItemData.expiryDate = expiryDateTimestamp;
+          } else {
+            // Handle the case where expiryDate is invalid or empty
+            console.error("Invalid expiry date:", expiryDate);
+            return;
+          }
+          await projectFirestore
+            .collection(`users/${user.uid}/restockitems`)
+            .add(restockItemData);
+          console.log(restockItemData);
+
+          // Update the product collection
+          const productDocRef = projectFirestore
+            .collection(`users/${user.uid}/products`)
+            .doc(productId);
+
+          const productDoc = await productDocRef.get();
+          if (productDoc.exists) {
+            const productData = productDoc.data();
+            const currentQuantity = productData.totalQuantity || 0;
+            const updatedQuantity =
+              parseInt(currentQuantity, 10) + parseInt(quantity, 10);
+            const batchDetails = productData.batchDetails || [];
+            const currentBatchData = {
+              quantity: parseInt(quantity, 10),
+              expiryDate: timestamp.fromDate(new Date(expiryDate)),
+              costPrice: parseFloat(costPrice),
+            };
+            if (batchId) {
+              currentBatchData.batchId = batchId;
+            }
+            batchDetails.push(currentBatchData);
+
+            await productDocRef.update({
+              totalQuantity: parseInt(updatedQuantity, 10),
+              batchDetails,
+            });
+          } else {
+            // Product does not exist, create a new entry
+            await projectFirestore
+              .collection(`users/${user.uid}/products`)
+              .doc(productId)
+              .set({
+                productId,
+                productName,
+                batchDetails: [
+                  {
+                    quantity: parseInt(quantity, 10),
+                    expiryDate: timestamp.fromDate(new Date(expiryDate)),
+                    costPrice: parseFloat(costPrice),
+                  },
+                ],
+                totalQuantity: parseInt(quantity, 10),
+              });
+          }
+        })
+      );
+
+      // Reset forms after submission
       setRestockForms({
         date: "",
         time: "",
@@ -214,6 +281,11 @@ export default function RestockForm() {
           costPrice: "",
         },
       ]);
+
+      // Display success message
+      alert(
+        `Successfully recorded!\nRestock Transaction ID: ${transactionID}\nTotal Amount: $${restockForms.transactionAmount}`
+      );
 
       setIsSubmitting(false);
     } else {

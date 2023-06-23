@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { projectFirestore, timestamp } from "../../firebase/config";
+import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 // Styles
@@ -116,20 +116,21 @@ export default function SalesForm() {
     setProductForms(updatedForms);
   };
 
-  const convertToTimestamp = (dateString) => {
-    const date = new Date(dateString);
-    if (!isNaN(date)) {
-      return timestamp.fromDate(date);
-    }
-    return null;
-  };
-
   useEffect(() => {
-    const date = convertToTimestamp(transactionForms.date);
-    if (date) {
-      setTransactionForms((prevForms) => ({ ...prevForms, date }));
-    }
-  }, [transactionForms.date]);
+    // Calculate and update the transaction amount when product forms change
+    let totalAmount = 0;
+    productForms.forEach((form) => {
+      const quantity = parseFloat(form.quantity);
+      const sellingPrice = parseFloat(form.sellingPrice);
+      if (!isNaN(quantity) && !isNaN(sellingPrice)) {
+        totalAmount += quantity * sellingPrice;
+      }
+    });
+    setTransactionForms((prevTransactionForms) => ({
+      ...prevTransactionForms,
+      transactionAmount: parseFloat(totalAmount),
+    }));
+  }, [productForms]);
 
   const [formErrors, setFormErrors] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -139,13 +140,13 @@ export default function SalesForm() {
 
     // Validate restock forms
     if (transactionForms.date === "") {
-      errors.push("Date field cannot be empty");
+      errors.push("Transaction Date field cannot be empty");
     }
     if (transactionForms.time === "") {
-      errors.push("Time field cannot be empty");
+      errors.push("Transaction Time field cannot be empty");
     }
     if (transactionForms.transactionID === "") {
-      errors.push("Restock ID field cannot be empty");
+      errors.push("Transaction ID field cannot be empty");
     }
 
     // Validate product forms
@@ -162,7 +163,9 @@ export default function SalesForm() {
         errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
       }
       if (form.sellingPrice === "") {
-        errors.push(`Cost Price field cannot be empty (Product ${index + 1})`);
+        errors.push(
+          `Selling Price field cannot be empty (Product ${index + 1})`
+        );
       }
     });
 
@@ -214,9 +217,10 @@ export default function SalesForm() {
       }
 
       // Save transaction forms to Firebase
-      await projectFirestore
-        .collection(`users/${user.uid}/sales`)
-        .add(transactionForms);
+      await projectFirestore.collection(`users/${user.uid}/sales`).add({
+        ...transactionForms,
+        transactionAmount: parseFloat(transactionForms.transactionAmount),
+      });
 
       // Get the transaction ID
       const transactionID = transactionForms.transactionID;
@@ -270,6 +274,8 @@ export default function SalesForm() {
         });
 
         form.transactionID = transactionID;
+        form.quantity = parseInt(form.quantity, 10);
+        form.sellingPrice = parseFloat(form.sellingPrice);
         projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
       });
 
