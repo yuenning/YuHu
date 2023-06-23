@@ -18,12 +18,12 @@ body {
 
 /* Landing Page Animation */
 .animation {
-  height: 85vh;
+  height: 78vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000;
-  color: #fff;
+  /*background-color: #000*/
+  color: #000000;
   animation: fadeIn 1.5s ease-in-out;
 }
 
@@ -45,9 +45,30 @@ body {
 }
 
 /* About Us Section */
+.landingSection {
+  position: relative;
+}
+
+.landingBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -1;
+}
+
+.about-us-box {
+  background-color: #000;
+}
+
 .about-us {
   padding: 100px 400px;
-  background-color: #f9f9f9;
+  color: #ffffff;
+  /*background-color: #f9f9f9;*/
   animation: slideInRight 1s ease-in-out;
 }
 
@@ -96,7 +117,7 @@ body {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 100%; 
+  max-width: 100%;
   flex-wrap: wrap;
 }
 
@@ -106,11 +127,11 @@ body {
   align-items: center;
   width: 25%;
   padding: 0 10px;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .feature img {
-  max-width: 100%; 
+  max-width: 100%;
   width: 120px;
 }
 
