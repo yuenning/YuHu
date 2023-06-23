@@ -279,6 +279,8 @@ export default function SalesForm() {
         projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
       });
 
+      setFormErrors(null);
+
       // Reset forms after submission
       setTransactionForms({
         date: "",

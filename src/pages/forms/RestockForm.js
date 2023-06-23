@@ -265,6 +265,7 @@ export default function RestockForm() {
       );
 
       // Reset forms after submission
+      setFormErrors(null);
       setRestockForms({
         date: "",
         time: "",
