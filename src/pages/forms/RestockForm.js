@@ -155,6 +155,9 @@ export default function RestockForm() {
       if (form.quantity === "") {
         errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
       }
+      if (form.batchId === "") {
+        errors.push(`Batch ID field cannot be empty (Product ${index + 1})`);
+      }
       if (form.costPrice === "") {
         errors.push(`Cost Price field cannot be empty (Product ${index + 1})`);
       }
