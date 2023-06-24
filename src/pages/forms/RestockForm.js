@@ -121,7 +121,7 @@ export default function RestockForm() {
     );
     setRestockForms((prevForms) => ({
       ...prevForms,
-      transactionAmount: totalAmount.toFixed(2),
+      transactionAmount: totalAmount,
     }));
   }, [productForms]);
 
@@ -143,6 +143,9 @@ export default function RestockForm() {
     }
 
     // Validate product forms
+    if (!productForms || productForms.length === 0) {
+      return errors; // Return early if productForms is empty or null
+    }
     productForms.forEach((form, index) => {
       if (form.productId === "") {
         errors.push(`Product ID field cannot be empty (Product ${index + 1})`);
@@ -172,134 +175,135 @@ export default function RestockForm() {
   const handleSubmit = async () => {
     const errors = validateForm();
 
-    if (errors.length === 0) {
-      setIsSubmitting(true);
+    if (errors && errors.length > 0) {
+      setFormErrors(errors);
+      return;
+    }
 
-      // Save restock forms to Firebase
-      await projectFirestore.collection(`users/${user.uid}/restocks`).add({
-        ...restockForms,
-        transactionAmount: parseFloat(restockForms.transactionAmount),
-      });
-      console.log(restockForms);
+    setIsSubmitting(true);
 
-      // Get the restock ID
-      const transactionID = restockForms.transactionID;
+    // Save restock forms to Firebase
+    await projectFirestore.collection(`users/${user.uid}/restocks`).add({
+      ...restockForms,
+      transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
+    });
+    console.log(restockForms);
 
-      // Update restock items in the restockitems collection
-      await Promise.all(
-        productForms.map(async (form) => {
-          const {
-            productId,
-            productName,
-            quantity,
-            batchId,
-            expiryDate,
-            costPrice,
-          } = form;
+    // Get the restock ID
+    const transactionID = restockForms.transactionID;
 
-          const restockItemData = {
-            transactionID,
-            productId,
-            productName,
+    // Update restock items in the restockitems collection
+    await Promise.all(
+      productForms.map(async (form) => {
+        const {
+          productId,
+          productName,
+          quantity,
+          batchId,
+          expiryDate,
+          costPrice,
+        } = form;
+
+        const restockItemData = {
+          transactionID,
+          productId,
+          productName,
+          quantity: parseInt(quantity, 10),
+          expiryDate: timestamp.fromDate(new Date(expiryDate)),
+          costPrice: parseFloat(costPrice),
+          ...(batchId && { batchId }),
+        };
+        const expiryDateTimestamp = convertToTimestamp(expiryDate);
+
+        if (expiryDateTimestamp) {
+          restockItemData.expiryDate = expiryDateTimestamp;
+        } else {
+          // Handle the case where expiryDate is invalid or empty
+          console.error("Invalid expiry date:", expiryDate);
+          return;
+        }
+        await projectFirestore
+          .collection(`users/${user.uid}/restockitems`)
+          .add(restockItemData);
+        console.log(restockItemData);
+
+        // Update the product collection
+        const productDocRef = projectFirestore
+          .collection(`users/${user.uid}/products`)
+          .doc(productId);
+
+        const productDoc = await productDocRef.get();
+        if (productDoc.exists) {
+          const productData = productDoc.data();
+          const currentQuantity = productData.totalQuantity || 0;
+          const updatedQuantity =
+            parseInt(currentQuantity, 10) + parseInt(quantity, 10);
+          const batchDetails = productData.batchDetails || [];
+          const currentBatchData = {
             quantity: parseInt(quantity, 10),
             expiryDate: timestamp.fromDate(new Date(expiryDate)),
             costPrice: parseFloat(costPrice),
-            ...(batchId && { batchId }),
           };
-          const expiryDateTimestamp = convertToTimestamp(expiryDate);
-
-          if (expiryDateTimestamp) {
-            restockItemData.expiryDate = expiryDateTimestamp;
-          } else {
-            // Handle the case where expiryDate is invalid or empty
-            console.error("Invalid expiry date:", expiryDate);
-            return;
+          if (batchId) {
+            currentBatchData.batchId = batchId;
           }
+          batchDetails.push(currentBatchData);
+
+          await productDocRef.update({
+            totalQuantity: parseInt(updatedQuantity, 10),
+            batchDetails,
+          });
+        } else {
+          // Product does not exist, create a new entry
           await projectFirestore
-            .collection(`users/${user.uid}/restockitems`)
-            .add(restockItemData);
-          console.log(restockItemData);
-
-          // Update the product collection
-          const productDocRef = projectFirestore
             .collection(`users/${user.uid}/products`)
-            .doc(productId);
-
-          const productDoc = await productDocRef.get();
-          if (productDoc.exists) {
-            const productData = productDoc.data();
-            const currentQuantity = productData.totalQuantity || 0;
-            const updatedQuantity =
-              parseInt(currentQuantity, 10) + parseInt(quantity, 10);
-            const batchDetails = productData.batchDetails || [];
-            const currentBatchData = {
-              quantity: parseInt(quantity, 10),
-              expiryDate: timestamp.fromDate(new Date(expiryDate)),
-              costPrice: parseFloat(costPrice),
-            };
-            if (batchId) {
-              currentBatchData.batchId = batchId;
-            }
-            batchDetails.push(currentBatchData);
-
-            await productDocRef.update({
-              totalQuantity: parseInt(updatedQuantity, 10),
-              batchDetails,
+            .doc(productId)
+            .set({
+              productId,
+              productName,
+              batchDetails: [
+                {
+                  quantity: parseInt(quantity, 10),
+                  expiryDate: timestamp.fromDate(new Date(expiryDate)),
+                  costPrice: parseFloat(costPrice),
+                },
+              ],
+              totalQuantity: parseInt(quantity, 10),
             });
-          } else {
-            // Product does not exist, create a new entry
-            await projectFirestore
-              .collection(`users/${user.uid}/products`)
-              .doc(productId)
-              .set({
-                productId,
-                productName,
-                batchDetails: [
-                  {
-                    quantity: parseInt(quantity, 10),
-                    expiryDate: timestamp.fromDate(new Date(expiryDate)),
-                    costPrice: parseFloat(costPrice),
-                  },
-                ],
-                totalQuantity: parseInt(quantity, 10),
-              });
-          }
-        })
-      );
+        }
+      })
+    );
 
-      // Reset forms after submission
-      setFormErrors(null);
-      setRestockForms({
-        date: "",
-        time: "",
-        transactionID: "",
-        transactionAmount: 0,
-      });
-      setProductForms([
-        {
-          productId: "",
-          productName: "",
-          batchId: "",
-          quantity: "",
-          expiryDate: "",
-          costPrice: "",
-        },
-      ]);
+    // Reset forms after submission
+    setFormErrors(null);
+    setRestockForms({
+      date: "",
+      time: "",
+      transactionID: "",
+      transactionAmount: 0.0,
+    });
+    setProductForms([
+      {
+        productId: "",
+        productName: "",
+        batchId: "",
+        quantity: "",
+        expiryDate: "",
+        costPrice: "",
+      },
+    ]);
 
-      // Display success message
-      alert(
-        `Successfully recorded!\nRestock Transaction ID: ${transactionID}\nTotal Amount: $${restockForms.transactionAmount}`
-      );
+    // Display success message
+    alert(
+      `Successfully recorded!\nRestock Transaction ID: ${transactionID}\nTotal Amount: $${restockForms.transactionAmount}`
+    );
 
-      setIsSubmitting(false);
-    } else {
-      setFormErrors(errors);
-    }
+    setIsSubmitting(false);
   };
 
   return (
     <div>
-      {formErrors.length > 0 && (
+      {formErrors && formErrors.length > 0 && (
         <div style={{ color: "red" }}>
           {formErrors.map((error, index) => (
             <p key={index}>{error}</p>
@@ -352,7 +356,8 @@ export default function RestockForm() {
             {/* Total Transaction Amount */}
             <div style={{ width: "45%" }}>
               <label htmlFor="transactionAmount">
-                Total Transaction Amount: ${restockForms.transactionAmount}
+                Total Transaction Amount: $
+                {parseFloat(restockForms.transactionAmount).toFixed(2)}
               </label>
             </div>
           </div>
