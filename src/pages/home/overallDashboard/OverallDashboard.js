@@ -42,7 +42,8 @@ export default function OverallSalesMetrics() {
               profit: 0,
             };
           }
-          monthlySales[month].revenue += sale.transactionAmount || 0;
+          monthlySales[month].revenue +=
+            parseFloat(sale.transactionAmount) || 0;
         } catch (error) {
           console.log(sale);
           console.log("Error formatting date:", error);
@@ -53,7 +54,8 @@ export default function OverallSalesMetrics() {
         try {
           const month = format(new Date(restock.date), "yyyy-MM");
           if (monthlySales[month]) {
-            monthlySales[month].costs += restock.transactionAmount || 0;
+            monthlySales[month].costs +=
+              parseFloat(restock.transactionAmount) || 0;
           }
         } catch (error) {
           console.log(restock);
@@ -63,21 +65,22 @@ export default function OverallSalesMetrics() {
 
       Object.keys(monthlySales).forEach((month) => {
         const { revenue, costs } = monthlySales[month];
-        monthlySales[month].profit = revenue - costs;
+        monthlySales[month].profit = parseFloat(revenue) - parseFloat(costs);
       });
 
       setMonthlyData(Object.entries(monthlySales));
 
       const calculateTotalRevenue = (sales) => {
         return sales.reduce(
-          (total, sale) => total + (sale.transactionAmount || 0),
+          (total, sale) => total + (parseFloat(sale.transactionAmount) || 0),
           0
         );
       };
 
       const calculateTotalCosts = (restocks) => {
         return restocks.reduce(
-          (total, restock) => total + (restock.transactionAmount || 0),
+          (total, restock) =>
+            total + (parseFloat(restock.transactionAmount) || 0),
           0
         );
       };
@@ -132,7 +135,7 @@ export default function OverallSalesMetrics() {
       <h3>Overall Sales Metrics</h3>
       <div className={styles.metrics}>
         <p>Lifetime Revenue: ${totalRevenue.toFixed(2)}</p>
-        <p>Lifetime Costs: ${totalCosts.toFixed(2)}</p>
+        <p>Lifetime Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
         <p>Lifetime Profit: ${totalProfit.toFixed(2)}</p>
         <p>
           Inventory Turnover: <OverallInventoryTurnover />
