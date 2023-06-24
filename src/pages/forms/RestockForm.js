@@ -434,9 +434,7 @@ export default function RestockForm() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "45%" }}>
-                  <label htmlFor={`batchId${index}`}>
-                    Batch ID (Optional):
-                  </label>
+                  <label htmlFor={`batchId${index}`}>Batch ID:</label>
                   <input
                     type="text"
                     id={`batchId${index}`}
