@@ -222,15 +222,26 @@ export default function RestockForm() {
 
     setIsSubmitting(true);
 
+    // Check if transaction ID is unique
+    const transactionID = restockForms.transactionID;
+    const restockItemsSnapshot = await projectFirestore
+      .collection(`users/${user.uid}/restockitems`)
+      .where("transactionID", "==", transactionID)
+      .limit(1)
+      .get();
+
+    if (!restockItemsSnapshot.empty) {
+      setFormErrors(["Restock ID must be unique"]);
+      setIsSubmitting(false);
+      return;
+    }
+
     // Save restock forms to Firebase
     await projectFirestore.collection(`users/${user.uid}/restocks`).add({
       ...restockForms,
       transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
     });
     console.log(restockForms);
-
-    // Get the restock ID
-    const transactionID = restockForms.transactionID;
 
     // Update restock items in the restockitems collection
     await Promise.all(
