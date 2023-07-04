@@ -82,7 +82,21 @@ export default function NewSalesForm() {
     if (field === "productId") {
       const productId = value;
 
+      // Fetch the product details from the products collection
+      const productSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/products`)
+        .where("productId", "==", productId)
+        .limit(1)
+        .get();
+
+      if (!productSnapshot.empty) {
+        const productData = productSnapshot.docs[0].data();
+        const productName = productData.productName || "";
+        updatedForms[index].productName = productName;
+      }
+
       // Fetch the selling price and transaction ID from salesitems collection
+      updatedForms[index].sellingPrice = "";
       const salesItemsSnapshot = await projectFirestore
         .collection(`users/${user.uid}/salesitems`)
         .where("productId", "==", productId)
@@ -206,6 +220,20 @@ export default function NewSalesForm() {
       setFormErrors(errors);
     } else {
       setIsSubmitting(true);
+
+      // Check if transaction ID is unique
+      const transactionID = transactionForms.transactionID;
+      const salesItemsSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/salesitems`)
+        .where("transactionID", "==", transactionID)
+        .limit(1)
+        .get();
+
+      if (!salesItemsSnapshot.empty) {
+        setFormErrors(["Sales ID must be unique"]);
+        setIsSubmitting(false);
+        return;
+      }
 
       // Check if all products exist and have sufficient quantity
       const productsExist = await Promise.all(

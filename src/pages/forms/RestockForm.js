@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { format, isAfter, parseISO } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
@@ -162,6 +163,12 @@ export default function RestockForm() {
     }));
   }, [productForms]);
 
+  const isDateValid = (dateString) => {
+    const today = new Date();
+    const date = parseISO(dateString);
+    return date && isAfter(date, today);
+  };
+
   const validateForm = () => {
     const errors = [];
 
@@ -189,23 +196,24 @@ export default function RestockForm() {
           `Product Name field cannot be empty (Product ${index + 1})`
         );
       }
-      if (form.quantity === "") {
-        errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
+      if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
+        errors.push(`Valid quantity is required for product ${index + 1}`);
       }
       if (form.batchId === "") {
         errors.push(`Batch ID field cannot be empty (Product ${index + 1})`);
       }
-      if (form.costPrice === "") {
-        errors.push(`Cost Price field cannot be empty (Product ${index + 1})`);
+      if (
+        form.costPrice === "" ||
+        isNaN(form.costPrice) ||
+        form.costPrice <= 0
+      ) {
+        errors.push(`Valid cost price is required for product ${index + 1}`);
       }
       if (form.expiryDate === "") {
         errors.push(`Expiry Date field cannot be empty (Product ${index + 1})`);
       }
-      if (form.quantity < 0) {
-        errors.push(`Quantity cannot be negative (Product ${index + 1})`);
-      }
-      if (form.costPrice < 0) {
-        errors.push(`Cost Price cannot be negative (Product ${index + 1})`);
+      if (!isDateValid(form.expiryDate)) {
+        errors.push(`Expiry Date must be after today (Product ${index + 1})`);
       }
     });
 
