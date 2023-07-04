@@ -167,6 +167,12 @@ export default function RestockForm() {
       if (form.expiryDate === "") {
         errors.push(`Expiry Date field cannot be empty (Product ${index + 1})`);
       }
+      if (form.quantity < 0) {
+        errors.push(`Quantity cannot be negative (Product ${index + 1})`);
+      }
+      if (form.costPrice < 0) {
+        errors.push(`Cost Price cannot be negative (Product ${index + 1})`);
+      }
     });
 
     return errors;
