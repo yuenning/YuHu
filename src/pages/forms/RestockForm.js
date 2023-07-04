@@ -23,7 +23,30 @@ export default function RestockForm() {
       costPrice: "",
     },
   ]);
+  const [productIds, setProductIds] = useState([]);
+  const [formErrors, setFormErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    const fetchProductIds = async () => {
+      const snapshot = await projectFirestore
+        .collection(`users/${user.uid}/restockitems`)
+        .orderBy("productId")
+        .get();
+
+      const ids = snapshot.docs.reduce((uniqueIds, doc) => {
+        const productId = doc.data().productId;
+        if (!uniqueIds.includes(productId)) {
+          uniqueIds.push(productId);
+        }
+        return uniqueIds;
+      }, []);
+
+      setProductIds(ids);
+    };
+
+    fetchProductIds();
+  }, [user.uid]);
   const handleRestockChange = (field, value) => {
     setRestockForms({ ...restockForms, [field]: value });
   };
@@ -36,6 +59,22 @@ export default function RestockForm() {
     };
 
     if (field === "productId") {
+      if (value === "__new__") {
+        // User selected the "Enter a New Product ID" option
+        const newProductId = prompt("Enter the new Product ID:");
+
+        if (newProductId) {
+          updatedForms[index].productId = newProductId;
+          updatedForms[index].productName = ""; // Clear the product name for the new entry
+          setProductIds((prevIds) => [...prevIds, newProductId]);
+        } else {
+          // If the user cancels or does not enter a new Product ID, reset the form
+          updatedForms[index] = {
+            productId: "",
+            productName: "",
+          };
+        }
+      }
       const productId = value;
 
       // Fetch the selling price and transaction ID from restockitems collection
@@ -48,13 +87,11 @@ export default function RestockForm() {
 
       if (!restockItemsSnapshot.empty) {
         const restockItemData = restockItemsSnapshot.docs[0].data();
-        const costPrice = restockItemData.costPrice || "";
-        const productName = restockItemData.productName || "";
+        const { costPrice, productName, transactionID } = restockItemData;
 
-        const transactionId = restockItemData.transactionID;
         const restocksSnapshot = await projectFirestore
           .collection(`users/${user.uid}/restocks`)
-          .where("transactionID", "==", transactionId)
+          .where("transactionID", "==", transactionID)
           .limit(1)
           .get();
 
@@ -77,8 +114,8 @@ export default function RestockForm() {
           }
         }
 
-        updatedForms[index].costPrice = costPrice;
-        updatedForms[index].productName = productName;
+        updatedForms[index].costPrice = costPrice || "";
+        updatedForms[index].productName = productName || "";
       }
     }
 
@@ -124,9 +161,6 @@ export default function RestockForm() {
       transactionAmount: totalAmount,
     }));
   }, [productForms]);
-
-  const [formErrors, setFormErrors] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateForm = () => {
     const errors = [];
@@ -417,14 +451,21 @@ export default function RestockForm() {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productId${index}`}>Product ID:</label>
-                  <input
-                    type="text"
+                  <select
                     id={`productId${index}`}
                     value={form.productId}
                     onChange={(e) =>
                       handleProductChange(index, "productId", e.target.value)
                     }
-                  />
+                  >
+                    <option value="">Select an existing Product ID</option>
+                    {productIds.map((productId) => (
+                      <option key={productId} value={productId}>
+                        {productId}
+                      </option>
+                    ))}
+                    <option value="__new__">Enter a New Product ID</option>
+                  </select>
                 </div>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productName${index}`}>Product Name:</label>

@@ -5,7 +5,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 // Styles
 import { FaTimes } from "react-icons/fa";
 
-export default function SalesForm() {
+export default function NewSalesForm() {
   const { user } = useAuthContext();
   const [transactionForms, setTransactionForms] = useState({
     date: "",
@@ -22,15 +22,24 @@ export default function SalesForm() {
     },
   ]);
   const [productIds, setProductIds] = useState([]);
+  const [formErrors, setFormErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchProductIds = async () => {
       const snapshot = await projectFirestore
-        .collection(`users/${user.uid}/salesitems`)
+        .collection(`users/${user.uid}/products`)
         .orderBy("productId")
         .get();
 
-      const ids = snapshot.docs.map((doc) => doc.data().productId);
+      const ids = snapshot.docs.reduce((uniqueIds, doc) => {
+        const productId = doc.data().productId;
+        if (!uniqueIds.includes(productId)) {
+          uniqueIds.push(productId);
+        }
+        return uniqueIds;
+      }, []);
+
       setProductIds(ids);
     };
 
@@ -38,23 +47,29 @@ export default function SalesForm() {
   }, [user.uid]);
 
   useEffect(() => {
-    // Calculate and update the transaction amount when product forms change
-    let totalAmount = 0;
-    productForms.forEach((form) => {
-      const quantity = parseFloat(form.quantity);
-      const sellingPrice = parseFloat(form.sellingPrice);
-      if (!isNaN(quantity) && !isNaN(sellingPrice)) {
-        totalAmount += quantity * sellingPrice;
-      }
-    });
-    setTransactionForms((prevTransactionForms) => ({
-      ...prevTransactionForms,
-      transactionAmount: totalAmount,
-    }));
+    const calculateTransactionAmount = () => {
+      let totalAmount = 0;
+      productForms.forEach((form) => {
+        const quantity = parseFloat(form.quantity);
+        const sellingPrice = parseFloat(form.sellingPrice);
+        if (!isNaN(quantity) && !isNaN(sellingPrice)) {
+          totalAmount += quantity * sellingPrice;
+        }
+      });
+      setTransactionForms((prevTransactionForms) => ({
+        ...prevTransactionForms,
+        transactionAmount: totalAmount,
+      }));
+    };
+
+    calculateTransactionAmount();
   }, [productForms]);
 
   const handleTransactionChange = (field, value) => {
-    setTransactionForms({ ...transactionForms, [field]: value });
+    setTransactionForms((prevTransactionForms) => ({
+      ...prevTransactionForms,
+      [field]: value,
+    }));
   };
 
   const handleProductChange = async (index, field, value) => {
@@ -147,9 +162,6 @@ export default function SalesForm() {
     }));
   }, [productForms]);
 
-  const [formErrors, setFormErrors] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const validateForm = () => {
     const errors = [];
 
@@ -167,26 +179,20 @@ export default function SalesForm() {
     // Validate product forms
     productForms.forEach((form, index) => {
       if (form.productId === "") {
-        errors.push(`Product ID field cannot be empty (Product ${index + 1})`);
+        errors.push(`Product ${index + 1} ID field cannot be empty`);
       }
       if (form.productName === "") {
-        errors.push(
-          `Product Name field cannot be empty (Product ${index + 1})`
-        );
+        errors.push(`Product ${index + 1} Name field cannot be empty`);
       }
-      if (form.quantity === "") {
-        errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
+      if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
+        errors.push(`Valid quantity is required for product ${index + 1}`);
       }
-      if (form.sellingPrice === "") {
-        errors.push(
-          `Selling Price field cannot be empty (Product ${index + 1})`
-        );
-      }
-      if (form.quantity < 0) {
-        errors.push(`Quantity cannot be negative (Product ${index + 1})`);
-      }
-      if (form.sellingPrice < 0) {
-        errors.push(`Selling Price cannot be negative (Product ${index + 1})`);
+      if (
+        form.sellingPrice === "" ||
+        isNaN(form.sellingPrice) ||
+        form.sellingPrice < 0
+      ) {
+        errors.push(`Valid selling price is required for product ${index + 1}`);
       }
     });
 
@@ -196,7 +202,9 @@ export default function SalesForm() {
   const handleSubmit = async () => {
     const errors = validateForm();
 
-    if (errors.length === 0) {
+    if (errors.length > 0) {
+      setFormErrors(errors);
+    } else {
       setIsSubmitting(true);
 
       // Check if all products exist and have sufficient quantity
