@@ -213,7 +213,7 @@ export default function SalesForm() {
         alert(
           "One or more products do not exist or have insufficient quantity. Submission rejected."
         );
-        return;
+        setIsSubmitting(false);
       }
 
       // Save transaction forms to Firebase
@@ -312,7 +312,7 @@ export default function SalesForm() {
 
   return (
     <div>
-      {formErrors.length > 0 && (
+      {formErrors && formErrors.length > 0 && (
         <div style={{ color: "red" }}>
           {formErrors.map((error, index) => (
             <p key={index}>{error}</p>
