@@ -35,7 +35,7 @@ class InventoryApp extends React.Component {
             style={{ backgroundImage: `url(${WarehouseBackground})` }}
           ></div>
           <div className={styles["landingText"]}>
-            <h1>Welcome to Yuhu!!</h1>
+            <h1>Welcome to Yuhu</h1>
             <p>the yoo-hoo to your inventory boo-hoo</p>
           </div>
         </section>
