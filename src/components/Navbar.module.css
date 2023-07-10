@@ -1,15 +1,11 @@
 .navbar {
-  position: fixed;
-  top: 0;
   width: 100%;
   background: black;
   padding: 20px 10px;
   box-sizing: border-box;
   color: #ffffff;
   z-index: 999;
-  transition: all 300ms ease-in-out;
 }
-
 
 .navbar p {
   width: 100%;
@@ -61,19 +57,9 @@
   transform: scale(1.2);
 }
 
-/* (PREVIOUS CODE THAT CAUSED THE WIDER NAVBAR)
 .navbarContainer {
   display: grid;
   grid-template-columns: 1fr auto;
-  align-items: center;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-*/
-
-.navbarContainer {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   max-width: 1280px;
   margin: 0 auto;
@@ -149,5 +135,4 @@
     top: 2rem;
     right: 2rem;
   }
-  
 }

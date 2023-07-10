@@ -15,6 +15,7 @@ export default function RestockList() {
     useCollection(`users/${user.uid}/restockitems`);
 
   const [restocks, setRestocks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (restockDataError || restockItemsDataError) {
@@ -53,11 +54,38 @@ export default function RestockList() {
     }
   };
 
+  // Filter the restocks based on search query
+  const filteredRestocks = restocks.filter((restock) => {
+    if (searchQuery.trim() === "") {
+      return true; // If search query is empty, show all restocks
+    }
+    const query = searchQuery.toLowerCase();
+    return (
+      restock.transactionID.toLowerCase().includes(query) ||
+      restock.date.toLowerCase().includes(query) ||
+      restock.time.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <>
       <h3>Past Restock Transactions</h3>
+      <input
+        type="text"
+        placeholder="Search by transaction ID, date, or time"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "25%",
+          colour: "black",
+          border: "1px solid black",
+        }}
+      />
       <ul className={styles.transactions}>
-        {restocks.map((restock, itemIndex) => {
+        {filteredRestocks.map((restock, itemIndex) => {
           const { transactionID, date, time, transactionAmount } = restock;
           return (
             <li className={styles.productListItem} key={transactionID}>
