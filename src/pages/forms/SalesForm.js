@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { projectFirestore } from "../../firebase/config";
+import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { parseISO, isAfter } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
@@ -45,25 +46,6 @@ export default function NewSalesForm() {
 
     fetchProductIds();
   }, [user.uid]);
-
-  useEffect(() => {
-    const calculateTransactionAmount = () => {
-      let totalAmount = 0;
-      productForms.forEach((form) => {
-        const quantity = parseFloat(form.quantity);
-        const sellingPrice = parseFloat(form.sellingPrice);
-        if (!isNaN(quantity) && !isNaN(sellingPrice)) {
-          totalAmount += quantity * sellingPrice;
-        }
-      });
-      setTransactionForms((prevTransactionForms) => ({
-        ...prevTransactionForms,
-        transactionAmount: totalAmount,
-      }));
-    };
-
-    calculateTransactionAmount();
-  }, [productForms]);
 
   const handleTransactionChange = (field, value) => {
     setTransactionForms((prevTransactionForms) => ({
@@ -161,6 +143,23 @@ export default function NewSalesForm() {
   };
 
   useEffect(() => {
+    const calculateTransactionAmount = () => {
+      let totalAmount = 0;
+      productForms.forEach((form) => {
+        const quantity = parseFloat(form.quantity);
+        const sellingPrice = parseFloat(form.sellingPrice);
+        if (!isNaN(quantity) && !isNaN(sellingPrice)) {
+          totalAmount += quantity * sellingPrice;
+        }
+      });
+      setTransactionForms((prevTransactionForms) => ({
+        ...prevTransactionForms,
+        transactionAmount: totalAmount,
+      }));
+    };
+
+    calculateTransactionAmount();
+
     // Calculate and update the transaction amount when product forms change
     let totalAmount = 0;
     productForms.forEach((form) => {
@@ -176,45 +175,88 @@ export default function NewSalesForm() {
     }));
   }, [productForms]);
 
-  const validateForm = () => {
+  const validateForm = async () => {
     const errors = [];
 
     // Validate restock forms
+    const transactionDate = parseISO(transactionForms.date);
+    const transactionTime = parseISO(transactionForms.time);
+
     if (transactionForms.date === "") {
       errors.push("Transaction Date field cannot be empty");
+    } else if (isNaN(transactionDate.getTime())) {
+      errors.push("Transaction Date is invalid");
     }
+
     if (transactionForms.time === "") {
       errors.push("Transaction Time field cannot be empty");
+    } else if (isNaN(transactionTime.getTime())) {
+      errors.push("Transaction Time is invalid");
     }
+
     if (transactionForms.transactionID === "") {
       errors.push("Transaction ID field cannot be empty");
     }
 
     // Validate product forms
-    productForms.forEach((form, index) => {
+    for (let index = 0; index < productForms.length; index++) {
+      const form = productForms[index];
+
       if (form.productId === "") {
         errors.push(`Product ${index + 1} ID field cannot be empty`);
       }
       if (form.productName === "") {
         errors.push(`Product ${index + 1} Name field cannot be empty`);
       }
-      if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
+      if (
+        form.quantity === "" ||
+        isNaN(form.quantity) ||
+        parseFloat(form.quantity) <= 0
+      ) {
         errors.push(`Valid quantity is required for product ${index + 1}`);
       }
       if (
         form.sellingPrice === "" ||
         isNaN(form.sellingPrice) ||
-        form.sellingPrice < 0
+        parseFloat(form.sellingPrice) < 0
       ) {
         errors.push(`Valid selling price is required for product ${index + 1}`);
       }
-    });
+
+      const querySnapshot = await projectFirestore
+        .collection(`users/${user.uid}/products`)
+        .where("productId", "==", `${form.productId}`)
+        .get();
+
+      if (querySnapshot.empty) {
+        errors.push(`Product ${index + 1} does not exist`);
+      } else {
+        const productData = querySnapshot.docs[0].data();
+        const batchDetails = productData.batchDetails || [];
+        let totalQuantity = 0;
+
+        for (const batch of batchDetails) {
+          const restockDate = parseISO(batch.restockTransactionDate);
+          const dateTime = timestamp.fromDate(
+            new Date(`${transactionForms.date}T${transactionForms.time}`)
+          );
+
+          if (isAfter(restockDate, dateTime)) {
+            totalQuantity += batch.quantity;
+          }
+        }
+
+        if (parseInt(totalQuantity) < parseInt(form.quantity, 10)) {
+          errors.push(`Product ${index + 1} does not have sufficient quantity`);
+        }
+      }
+    }
 
     return errors;
   };
 
   const handleSubmit = async () => {
-    const errors = validateForm();
+    const errors = await validateForm();
 
     if (errors.length > 0) {
       setFormErrors(errors);
@@ -235,48 +277,14 @@ export default function NewSalesForm() {
         return;
       }
 
-      // Check if all products exist and have sufficient quantity
-      const productsExist = await Promise.all(
-        productForms.map(async (form) => {
-          console.log("Product Forms:", productForms);
-          console.log("Query Parameters:", {
-            collection: `users/${user.uid}/products`,
-            productId: form.productId,
-          });
-
-          const querySnapshot = await projectFirestore
-            .collection(`users/${user.uid}/products`)
-            .where("productId", "==", `${form.productId}`)
-            .get();
-
-          if (querySnapshot.empty) {
-            console.log(form.productId + " does not exist");
-            return false;
-          }
-
-          const productData = querySnapshot.docs[0].data();
-          const totalQuantity = productData.totalQuantity;
-
-          if (parseInt(totalQuantity) < parseInt(form.quantity)) {
-            console.log(form.productId + " does not have sufficient quantity");
-            return false;
-          }
-
-          return true;
-        })
-      );
-
-      if (!productsExist.every((exist) => exist)) {
-        alert(
-          "One or more products do not exist or have insufficient quantity. Submission rejected."
-        );
-        setIsSubmitting(false);
-      }
-
       if (isSubmitting) {
         // Save transaction forms to Firebase
+        const dateTime = timestamp.fromDate(
+          new Date(`${transactionForms.date}T${transactionForms.time}`)
+        );
         await projectFirestore.collection(`users/${user.uid}/sales`).add({
           ...transactionForms,
+          dateTime,
           transactionAmount: parseFloat(transactionForms.transactionAmount),
         });
 
@@ -307,14 +315,14 @@ export default function NewSalesForm() {
           for (const batch of batchDetails) {
             if (remainingQuantity <= 0) {
               break;
-            }
-
-            if (batch.quantity <= remainingQuantity) {
-              remainingQuantity -= batch.quantity;
-              batch.quantity = 0;
-            } else {
-              batch.quantity -= remainingQuantity;
-              remainingQuantity = 0;
+            } else if (isAfter(dateTime, batch.restockTransactionDate)) {
+              if (batch.quantity <= remainingQuantity) {
+                remainingQuantity -= batch.quantity;
+                batch.quantity = 0;
+              } else {
+                batch.quantity -= remainingQuantity;
+                remainingQuantity = 0;
+              }
             }
           }
 
