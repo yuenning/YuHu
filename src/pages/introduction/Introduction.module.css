@@ -18,7 +18,7 @@ body {
 
 /* Landing Page Animation */
 .animation {
-  height: 78vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,10 +66,18 @@ body {
 }
 
 .about-us {
-  padding: 100px 400px;
+  padding: 100px;
   color: #ffffff;
   /*background-color: #f9f9f9;*/
   animation: slideInRight 1s ease-in-out;
+}
+
+@media only screen and (max-width: 768px) {
+  .about-us {
+    padding: 50px;
+    max-width: 600px; /* Set the desired maximum width for the text */
+    margin: 0 auto;
+  }
 }
 
 .about-us h1 {
@@ -130,6 +138,24 @@ body {
   box-sizing: border-box;
 }
 
+@media only screen and (max-width: 768px) {
+
+  .features {
+    padding: 50px;
+    margin: 0 auto;
+  }
+
+  .features-icons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature {
+    width: 100%;
+  }
+
+}
+
 .feature img {
   max-width: 100%;
   width: 120px;
@@ -176,4 +202,5 @@ a.scroll-link {
     transform: translateX(0);
     opacity: 1;
   }
+
 }
