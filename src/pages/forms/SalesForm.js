@@ -279,11 +279,12 @@ export default function NewSalesForm() {
 
       if (isSubmitting) {
         // Save transaction forms to Firebase
+        const dateTime = timestamp.fromDate(
+          new Date(`${transactionForms.date}T${transactionForms.time}`)
+        );
         await projectFirestore.collection(`users/${user.uid}/sales`).add({
           ...transactionForms,
-          dateTime: timestamp.fromDate(
-            new Date(`${transactionForms.date}T${transactionForms.time}`)
-          ),
+          dateTime,
           transactionAmount: parseFloat(transactionForms.transactionAmount),
         });
 
@@ -314,14 +315,14 @@ export default function NewSalesForm() {
           for (const batch of batchDetails) {
             if (remainingQuantity <= 0) {
               break;
-            }
-
-            if (batch.quantity <= remainingQuantity) {
-              remainingQuantity -= batch.quantity;
-              batch.quantity = 0;
-            } else {
-              batch.quantity -= remainingQuantity;
-              remainingQuantity = 0;
+            } else if (isAfter(dateTime, batch.restockTransactionDate)) {
+              if (batch.quantity <= remainingQuantity) {
+                remainingQuantity -= batch.quantity;
+                batch.quantity = 0;
+              } else {
+                batch.quantity -= remainingQuantity;
+                remainingQuantity = 0;
+              }
             }
           }
 
