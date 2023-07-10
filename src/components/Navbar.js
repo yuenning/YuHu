@@ -68,6 +68,33 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+
+    const handleScroll = () => {
+      const currentScroll = window.pageYOffset;
+
+      if (currentScroll <= 0) {
+        navbarRef.current.style.transform = "translateY(0)";
+        navbarRef.current.style.filter = "";
+      } else if (currentScroll > lastScroll) {
+        navbarRef.current.style.transform = "translateY(-100%)";
+        navbarRef.current.style.filter = "";
+      } else {
+        navbarRef.current.style.transform = "translateY(0)";
+        navbarRef.current.style.filter = "drop-shadow(0 -10px 20px rgb(170, 170, 170)";
+      }
+
+      setLastScroll(currentScroll);
+      
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScroll]);
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
