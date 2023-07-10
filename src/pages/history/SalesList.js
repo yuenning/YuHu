@@ -15,6 +15,7 @@ export default function SalesList() {
     useCollection(`users/${user.uid}/salesitems`);
 
   const [sales, setSales] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     if (salesDataError || salesItemsDataError) {
@@ -50,11 +51,38 @@ export default function SalesList() {
     }
   };
 
+  // Filter the sales based on search query
+  const filteredSales = sales.filter((sale) => {
+    if (searchQuery.trim() === "") {
+      return true; // If search query is empty, show all restocks
+    }
+    const query = searchQuery.toLowerCase();
+    return (
+      sale.transactionID.toLowerCase().includes(query) ||
+      sale.date.toLowerCase().includes(query) ||
+      sale.time.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <>
       <h3>Past Sales Transactions</h3>
+      <input
+        type="text"
+        placeholder="Search by transaction ID, date, or time"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          width: "25%",
+          colour: "black",
+          border: "1px solid black",
+        }}
+      />
       <ul className={styles.transactions}>
-        {sales.map((sales, itemIndex) => {
+        {filteredSales.map((sales, itemIndex) => {
           const { transactionID, date, time, transactionAmount } = sales;
           return (
             <li className={styles.productListItem} key={transactionID}>

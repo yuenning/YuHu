@@ -5,7 +5,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 // Styles
 import { FaTimes } from "react-icons/fa";
 
-export default function SalesForm() {
+export default function NewSalesForm() {
   const { user } = useAuthContext();
   const [transactionForms, setTransactionForms] = useState({
     date: "",
@@ -21,25 +21,55 @@ export default function SalesForm() {
       quantity: "",
     },
   ]);
+  const [productIds, setProductIds] = useState([]);
+  const [formErrors, setFormErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    // Calculate and update the transaction amount when product forms change
-    let totalAmount = 0;
-    productForms.forEach((form) => {
-      const quantity = parseFloat(form.quantity);
-      const sellingPrice = parseFloat(form.sellingPrice);
-      if (!isNaN(quantity) && !isNaN(sellingPrice)) {
-        totalAmount += quantity * sellingPrice;
-      }
-    });
-    setTransactionForms((prevTransactionForms) => ({
-      ...prevTransactionForms,
-      transactionAmount: totalAmount,
-    }));
+    const fetchProductIds = async () => {
+      const snapshot = await projectFirestore
+        .collection(`users/${user.uid}/products`)
+        .orderBy("productId")
+        .get();
+
+      const ids = snapshot.docs.reduce((uniqueIds, doc) => {
+        const productId = doc.data().productId;
+        if (!uniqueIds.includes(productId)) {
+          uniqueIds.push(productId);
+        }
+        return uniqueIds;
+      }, []);
+
+      setProductIds(ids);
+    };
+
+    fetchProductIds();
+  }, [user.uid]);
+
+  useEffect(() => {
+    const calculateTransactionAmount = () => {
+      let totalAmount = 0;
+      productForms.forEach((form) => {
+        const quantity = parseFloat(form.quantity);
+        const sellingPrice = parseFloat(form.sellingPrice);
+        if (!isNaN(quantity) && !isNaN(sellingPrice)) {
+          totalAmount += quantity * sellingPrice;
+        }
+      });
+      setTransactionForms((prevTransactionForms) => ({
+        ...prevTransactionForms,
+        transactionAmount: totalAmount,
+      }));
+    };
+
+    calculateTransactionAmount();
   }, [productForms]);
 
   const handleTransactionChange = (field, value) => {
-    setTransactionForms({ ...transactionForms, [field]: value });
+    setTransactionForms((prevTransactionForms) => ({
+      ...prevTransactionForms,
+      [field]: value,
+    }));
   };
 
   const handleProductChange = async (index, field, value) => {
@@ -52,7 +82,21 @@ export default function SalesForm() {
     if (field === "productId") {
       const productId = value;
 
+      // Fetch the product details from the products collection
+      const productSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/products`)
+        .where("productId", "==", productId)
+        .limit(1)
+        .get();
+
+      if (!productSnapshot.empty) {
+        const productData = productSnapshot.docs[0].data();
+        const productName = productData.productName || "";
+        updatedForms[index].productName = productName;
+      }
+
       // Fetch the selling price and transaction ID from salesitems collection
+      updatedForms[index].sellingPrice = "";
       const salesItemsSnapshot = await projectFirestore
         .collection(`users/${user.uid}/salesitems`)
         .where("productId", "==", productId)
@@ -132,9 +176,6 @@ export default function SalesForm() {
     }));
   }, [productForms]);
 
-  const [formErrors, setFormErrors] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const validateForm = () => {
     const errors = [];
 
@@ -152,20 +193,20 @@ export default function SalesForm() {
     // Validate product forms
     productForms.forEach((form, index) => {
       if (form.productId === "") {
-        errors.push(`Product ID field cannot be empty (Product ${index + 1})`);
+        errors.push(`Product ${index + 1} ID field cannot be empty`);
       }
       if (form.productName === "") {
-        errors.push(
-          `Product Name field cannot be empty (Product ${index + 1})`
-        );
+        errors.push(`Product ${index + 1} Name field cannot be empty`);
       }
-      if (form.quantity === "") {
-        errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
+      if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
+        errors.push(`Valid quantity is required for product ${index + 1}`);
       }
-      if (form.sellingPrice === "") {
-        errors.push(
-          `Selling Price field cannot be empty (Product ${index + 1})`
-        );
+      if (
+        form.sellingPrice === "" ||
+        isNaN(form.sellingPrice) ||
+        form.sellingPrice < 0
+      ) {
+        errors.push(`Valid selling price is required for product ${index + 1}`);
       }
     });
 
@@ -175,8 +216,24 @@ export default function SalesForm() {
   const handleSubmit = async () => {
     const errors = validateForm();
 
-    if (errors.length === 0) {
+    if (errors.length > 0) {
+      setFormErrors(errors);
+    } else {
       setIsSubmitting(true);
+
+      // Check if transaction ID is unique
+      const transactionID = transactionForms.transactionID;
+      const salesItemsSnapshot = await projectFirestore
+        .collection(`users/${user.uid}/salesitems`)
+        .where("transactionID", "==", transactionID)
+        .limit(1)
+        .get();
+
+      if (!salesItemsSnapshot.empty) {
+        setFormErrors(["Sales ID must be unique"]);
+        setIsSubmitting(false);
+        return;
+      }
 
       // Check if all products exist and have sufficient quantity
       const productsExist = await Promise.all(
@@ -216,97 +273,99 @@ export default function SalesForm() {
         setIsSubmitting(false);
       }
 
-      // Save transaction forms to Firebase
-      await projectFirestore.collection(`users/${user.uid}/sales`).add({
-        ...transactionForms,
-        transactionAmount: parseFloat(transactionForms.transactionAmount),
-      });
-
-      // Get the transaction ID
-      const transactionID = transactionForms.transactionID;
-
-      // Update the products collection
-      productForms.forEach(async (form) => {
-        const { productId, quantity } = form;
-
-        const querySnapshot = await projectFirestore
-          .collection(`users/${user.uid}/products`)
-          .where("productId", "==", `${productId}`)
-          .get();
-
-        const productDocRef = querySnapshot.docs[0].ref;
-
-        const productData = querySnapshot.docs[0].data();
-        const batchDetails = productData.batchDetails || [];
-
-        // Sort the batchDetails array based on expiryDate in ascending order
-        batchDetails.sort(
-          (a, b) => new Date(b.expiryDate) - new Date(a.expiryDate)
-        );
-
-        let remainingQuantity = quantity;
-
-        for (const batch of batchDetails) {
-          if (remainingQuantity <= 0) {
-            break;
-          }
-
-          if (batch.quantity <= remainingQuantity) {
-            remainingQuantity -= batch.quantity;
-            batch.quantity = 0;
-          } else {
-            batch.quantity -= remainingQuantity;
-            remainingQuantity = 0;
-          }
-        }
-
-        // Remove batches with quantity 0
-        const updatedBatchDetails = batchDetails.filter(
-          (batch) => batch.quantity > 0
-        );
-
-        await productDocRef.update({
-          batchDetails: updatedBatchDetails,
-          totalQuantity: updatedBatchDetails.reduce(
-            (sum, batch) => parseInt(sum) + parseInt(batch.quantity),
-            0
-          ),
+      if (isSubmitting) {
+        // Save transaction forms to Firebase
+        await projectFirestore.collection(`users/${user.uid}/sales`).add({
+          ...transactionForms,
+          transactionAmount: parseFloat(transactionForms.transactionAmount),
         });
 
-        form.transactionID = transactionID;
-        form.quantity = parseInt(form.quantity, 10);
-        form.sellingPrice = parseFloat(form.sellingPrice);
-        projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
-      });
+        // Get the transaction ID
+        const transactionID = transactionForms.transactionID;
 
-      setFormErrors(null);
+        // Update the products collection
+        productForms.forEach(async (form) => {
+          const { productId, quantity } = form;
 
-      // Reset forms after submission
-      setTransactionForms({
-        date: "",
-        time: "",
-        transactionID: "",
-        transactionAmount: 0,
-      });
-      setProductForms([
-        {
-          productId: "",
-          productName: "",
-          sellingPrice: "",
-          quantity: "",
-        },
-      ]);
+          const querySnapshot = await projectFirestore
+            .collection(`users/${user.uid}/products`)
+            .where("productId", "==", `${productId}`)
+            .get();
 
-      // Display success message
-      const totalAmount = parseFloat(transactionForms.transactionAmount);
-      if (!isNaN(totalAmount)) {
-        alert(
-          `Successfully recorded!\nSales Transaction ID: ${transactionID}\nTotal Amount: ${totalAmount}`
-        );
+          const productDocRef = querySnapshot.docs[0].ref;
+
+          const productData = querySnapshot.docs[0].data();
+          const batchDetails = productData.batchDetails || [];
+
+          // Sort the batchDetails array based on expiryDate in ascending order
+          batchDetails.sort(
+            (a, b) => new Date(b.expiryDate) - new Date(a.expiryDate)
+          );
+
+          let remainingQuantity = quantity;
+
+          for (const batch of batchDetails) {
+            if (remainingQuantity <= 0) {
+              break;
+            }
+
+            if (batch.quantity <= remainingQuantity) {
+              remainingQuantity -= batch.quantity;
+              batch.quantity = 0;
+            } else {
+              batch.quantity -= remainingQuantity;
+              remainingQuantity = 0;
+            }
+          }
+
+          // Remove batches with quantity 0
+          const updatedBatchDetails = batchDetails.filter(
+            (batch) => batch.quantity > 0
+          );
+
+          await productDocRef.update({
+            batchDetails: updatedBatchDetails,
+            totalQuantity: updatedBatchDetails.reduce(
+              (sum, batch) => parseInt(sum) + parseInt(batch.quantity),
+              0
+            ),
+          });
+
+          form.transactionID = transactionID;
+          form.quantity = parseInt(form.quantity, 10);
+          form.sellingPrice = parseFloat(form.sellingPrice);
+          projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
+        });
+
+        setFormErrors(null);
+
+        // Reset forms after submission
+        setTransactionForms({
+          date: "",
+          time: "",
+          transactionID: "",
+          transactionAmount: 0,
+        });
+        setProductForms([
+          {
+            productId: "",
+            productName: "",
+            sellingPrice: "",
+            quantity: "",
+          },
+        ]);
+
+        // Display success message
+        const totalAmount = parseFloat(transactionForms.transactionAmount);
+        if (!isNaN(totalAmount)) {
+          alert(
+            `Successfully recorded!\nSales Transaction ID: ${transactionID}\nTotal Amount: ${totalAmount}`
+          );
+        }
+        setIsSubmitting(false);
+      } else {
+        setFormErrors(errors);
       }
-      setIsSubmitting(false);
-    } else {
-      setFormErrors(errors);
     }
   };
 
@@ -421,14 +480,20 @@ export default function SalesForm() {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productId${index}`}>Product ID:</label>
-                  <input
-                    type="text"
+                  <select
                     id={`productId${index}`}
                     value={form.productId}
                     onChange={(e) =>
                       handleProductChange(index, "productId", e.target.value)
                     }
-                  />
+                  >
+                    <option value="">Select Product ID</option>
+                    {productIds.map((id) => (
+                      <option key={id} value={id}>
+                        {id}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productName${index}`}>Product Name:</label>
@@ -494,6 +559,7 @@ export default function SalesForm() {
         </button>
 
         {/* Submit Button */}
+
         <button
           style={{
             display: "block",

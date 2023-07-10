@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { format, isAfter, parseISO } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
@@ -23,7 +24,30 @@ export default function RestockForm() {
       costPrice: "",
     },
   ]);
+  const [productIds, setProductIds] = useState([]);
+  const [formErrors, setFormErrors] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    const fetchProductIds = async () => {
+      const snapshot = await projectFirestore
+        .collection(`users/${user.uid}/restockitems`)
+        .orderBy("productId")
+        .get();
+
+      const ids = snapshot.docs.reduce((uniqueIds, doc) => {
+        const productId = doc.data().productId;
+        if (!uniqueIds.includes(productId)) {
+          uniqueIds.push(productId);
+        }
+        return uniqueIds;
+      }, []);
+
+      setProductIds(ids);
+    };
+
+    fetchProductIds();
+  }, [user.uid]);
   const handleRestockChange = (field, value) => {
     setRestockForms({ ...restockForms, [field]: value });
   };
@@ -36,6 +60,22 @@ export default function RestockForm() {
     };
 
     if (field === "productId") {
+      if (value === "__new__") {
+        // User selected the "Enter a New Product ID" option
+        const newProductId = prompt("Enter the new Product ID:");
+
+        if (newProductId) {
+          updatedForms[index].productId = newProductId;
+          updatedForms[index].productName = ""; // Clear the product name for the new entry
+          setProductIds((prevIds) => [...prevIds, newProductId]);
+        } else {
+          // If the user cancels or does not enter a new Product ID, reset the form
+          updatedForms[index] = {
+            productId: "",
+            productName: "",
+          };
+        }
+      }
       const productId = value;
 
       // Fetch the selling price and transaction ID from restockitems collection
@@ -48,13 +88,11 @@ export default function RestockForm() {
 
       if (!restockItemsSnapshot.empty) {
         const restockItemData = restockItemsSnapshot.docs[0].data();
-        const costPrice = restockItemData.costPrice || "";
-        const productName = restockItemData.productName || "";
+        const { costPrice, productName, transactionID } = restockItemData;
 
-        const transactionId = restockItemData.transactionID;
         const restocksSnapshot = await projectFirestore
           .collection(`users/${user.uid}/restocks`)
-          .where("transactionID", "==", transactionId)
+          .where("transactionID", "==", transactionID)
           .limit(1)
           .get();
 
@@ -77,8 +115,8 @@ export default function RestockForm() {
           }
         }
 
-        updatedForms[index].costPrice = costPrice;
-        updatedForms[index].productName = productName;
+        updatedForms[index].costPrice = costPrice || "";
+        updatedForms[index].productName = productName || "";
       }
     }
 
@@ -125,8 +163,11 @@ export default function RestockForm() {
     }));
   }, [productForms]);
 
-  const [formErrors, setFormErrors] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isDateValid = (dateString) => {
+    const today = new Date();
+    const date = parseISO(dateString);
+    return date && isAfter(date, today);
+  };
 
   const validateForm = () => {
     const errors = [];
@@ -155,17 +196,24 @@ export default function RestockForm() {
           `Product Name field cannot be empty (Product ${index + 1})`
         );
       }
-      if (form.quantity === "") {
-        errors.push(`Quantity field cannot be empty (Product ${index + 1})`);
+      if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
+        errors.push(`Valid quantity is required for product ${index + 1}`);
       }
       if (form.batchId === "") {
         errors.push(`Batch ID field cannot be empty (Product ${index + 1})`);
       }
-      if (form.costPrice === "") {
-        errors.push(`Cost Price field cannot be empty (Product ${index + 1})`);
+      if (
+        form.costPrice === "" ||
+        isNaN(form.costPrice) ||
+        form.costPrice <= 0
+      ) {
+        errors.push(`Valid cost price is required for product ${index + 1}`);
       }
       if (form.expiryDate === "") {
         errors.push(`Expiry Date field cannot be empty (Product ${index + 1})`);
+      }
+      if (!isDateValid(form.expiryDate)) {
+        errors.push(`Expiry Date must be after today (Product ${index + 1})`);
       }
     });
 
@@ -182,15 +230,26 @@ export default function RestockForm() {
 
     setIsSubmitting(true);
 
+    // Check if transaction ID is unique
+    const transactionID = restockForms.transactionID;
+    const restockItemsSnapshot = await projectFirestore
+      .collection(`users/${user.uid}/restockitems`)
+      .where("transactionID", "==", transactionID)
+      .limit(1)
+      .get();
+
+    if (!restockItemsSnapshot.empty) {
+      setFormErrors(["Restock ID must be unique"]);
+      setIsSubmitting(false);
+      return;
+    }
+
     // Save restock forms to Firebase
     await projectFirestore.collection(`users/${user.uid}/restocks`).add({
       ...restockForms,
       transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
     });
     console.log(restockForms);
-
-    // Get the restock ID
-    const transactionID = restockForms.transactionID;
 
     // Update restock items in the restockitems collection
     await Promise.all(
@@ -411,14 +470,21 @@ export default function RestockForm() {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productId${index}`}>Product ID:</label>
-                  <input
-                    type="text"
+                  <select
                     id={`productId${index}`}
                     value={form.productId}
                     onChange={(e) =>
                       handleProductChange(index, "productId", e.target.value)
                     }
-                  />
+                  >
+                    <option value="">Select an existing Product ID</option>
+                    {productIds.map((productId) => (
+                      <option key={productId} value={productId}>
+                        {productId}
+                      </option>
+                    ))}
+                    <option value="__new__">Enter a New Product ID</option>
+                  </select>
                 </div>
                 <div style={{ width: "45%" }}>
                   <label htmlFor={`productName${index}`}>Product Name:</label>
@@ -434,9 +500,7 @@ export default function RestockForm() {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "45%" }}>
-                  <label htmlFor={`batchId${index}`}>
-                    Batch ID (Optional):
-                  </label>
+                  <label htmlFor={`batchId${index}`}>Batch ID:</label>
                   <input
                     type="text"
                     id={`batchId${index}`}
