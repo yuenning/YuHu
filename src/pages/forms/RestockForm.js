@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { projectFirestore, timestamp } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { isAfter, parseISO } from "date-fns";
+import { format, isAfter, parseISO } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
@@ -247,9 +247,6 @@ export default function RestockForm() {
     // Save restock forms to Firebase
     await projectFirestore.collection(`users/${user.uid}/restocks`).add({
       ...restockForms,
-      dateTime: timestamp.fromDate(
-        new Date(`${restockForms.date}T${restockForms.time}`)
-      ),
       transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
     });
     console.log(restockForms);
@@ -305,9 +302,6 @@ export default function RestockForm() {
             quantity: parseInt(quantity, 10),
             expiryDate: timestamp.fromDate(new Date(expiryDate)),
             costPrice: parseFloat(costPrice),
-            restockTransactionDate: timestamp.fromDate(
-              new Date(`${restockForms.date}T${restockForms.time}`)
-            ),
           };
           if (batchId) {
             currentBatchData.batchId = batchId;
@@ -331,10 +325,6 @@ export default function RestockForm() {
                   quantity: parseInt(quantity, 10),
                   expiryDate: timestamp.fromDate(new Date(expiryDate)),
                   costPrice: parseFloat(costPrice),
-                  restockTransactionDate: timestamp.fromDate(
-                    new Date(restockForms.date)
-                  ),
-                  restockTransactionTime: restockForms.time,
                 },
               ],
               totalQuantity: parseInt(quantity, 10),
