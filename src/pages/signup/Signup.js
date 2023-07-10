@@ -11,7 +11,7 @@ export default function Signup() {
   const { signup, isPending, error } = useSignup();
   const [formError, setFormError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate form inputs
@@ -24,16 +24,32 @@ export default function Signup() {
       return;
     }
 
+    /*
+    // Check if company already exists in our database
+    const userDetailsSnapshot = await projectFirestore
+      .collection(`users`)
+      .where("displayName", "==", displayName)
+      .limit(1)
+      .get();
+
+    if (!userDetailsSnapshot.empty) {
+      setFormError(["Company details already exist. Please login instead!"]);
+      return;
+    }
+  */
+
     // Proceed with signup
     signup(email, password, displayName);
     if (
       error ===
       "Firebase: The email address is already in use by another account. (auth/email-already-in-use)."
     ) {
-      setFormError("The email address is already in use by another account.");
+      setFormError(
+        "The email address is already in use. Please login instead."
+      );
     } else if (error) {
       setFormError(
-        "Sign up was not successful. Please verify your details and try again or contact our support staff."
+        "Sign up was unsuccessful. Please verify your details and try again or contact our support staff."
       );
     }
   };
