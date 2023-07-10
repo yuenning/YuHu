@@ -86,7 +86,6 @@ class InventoryApp extends React.Component {
           </div>
         </section>
 
-        {/* Additional sections and content can be added here */}
       </div>
     );
   }

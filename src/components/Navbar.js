@@ -7,6 +7,7 @@ import logo from "./NavbarLogo.png";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
+  
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const location = useLocation();
