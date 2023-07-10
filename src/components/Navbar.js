@@ -13,8 +13,6 @@ export default function Navbar() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isIconClicked, setIsIconClicked] = useState(true);
   const [isIconFirstClicked, setIsIconFirstClicked] = useState(true);
-  const [lastScroll, setLastScroll] = useState(0);
-  const navbarRef = useRef(null);
 
   const toggleNavbar = () => {
     setIsNavbarOpen(!isNavbarOpen);
@@ -70,33 +68,8 @@ export default function Navbar() {
     };
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.pageYOffset;
-
-      if (currentScroll <= 0) {
-        navbarRef.current.style.transform = "translateY(0)";
-        navbarRef.current.style.filter = "";
-      } else if (currentScroll > lastScroll) {
-        navbarRef.current.style.transform = "translateY(-100%)";
-        navbarRef.current.style.filter = "";
-      } else {
-        navbarRef.current.style.transform = "translateY(0)";
-        navbarRef.current.style.filter = "drop-shadow(0 -10px 20px rgb(170, 170, 170)";
-      }
-
-      setLastScroll(currentScroll);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [lastScroll]);
-
   return (
-    <nav ref={navbarRef} className={styles.navbar}>
+    <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
         <div className={styles.title}>
           <Link to="/">
