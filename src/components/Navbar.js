@@ -7,13 +7,14 @@ import logo from "./NavbarLogo.png";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
-  
   const { logout } = useLogout();
   const { user } = useAuthContext();
   const location = useLocation();
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isIconClicked, setIsIconClicked] = useState(true);
   const [isIconFirstClicked, setIsIconFirstClicked] = useState(true);
+  const navbarRef = useRef(null);
+  let lastScroll = 0;
 
   const toggleNavbar = () => {
     setIsNavbarOpen(!isNavbarOpen);
@@ -43,8 +44,6 @@ export default function Navbar() {
 
   const shouldRenderNavigation = location.pathname === "/introduction";
 
-  const navRef = useRef();
-
   const handleNavOptionClick = () => {
     if (window.innerWidth <= 768) {
       setIsNavbarOpen(false);
@@ -70,7 +69,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-
     const handleScroll = () => {
       const currentScroll = window.pageYOffset;
 
@@ -82,11 +80,10 @@ export default function Navbar() {
         navbarRef.current.style.filter = "";
       } else {
         navbarRef.current.style.transform = "translateY(0)";
-        navbarRef.current.style.filter = "drop-shadow(0 -10px 20px rgb(170, 170, 170)";
+        navbarRef.current.style.filter = "drop-shadow(0 -10px 20px rgb(170, 170, 170))";
       }
 
-      setLastScroll(currentScroll);
-      
+      lastScroll = currentScroll;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -94,80 +91,45 @@ export default function Navbar() {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScroll]);
+  }, []);
 
   return (
-    <nav className={styles.navbar}>
+    <nav ref={navbarRef} className={styles.navbar}>
       <div className={styles.navbarContainer}>
         <div className={styles.title}>
           <Link to="/">
             <img src={logo} alt="Logo" className={styles.logo} />
           </Link>
         </div>
-        <div
-          ref={navRef}
-          className={`${styles.links} ${
-            isNavbarOpen ? styles.responsiveNav : ""
-          } ${isIconClicked && !isIconFirstClicked ? styles.iconClicked : ""}`}
-        >
+        <div className={`${styles.links} ${isNavbarOpen ? styles.responsiveNav : ""} ${isIconClicked && !isIconFirstClicked ? styles.iconClicked : ""}`}>
           {shouldRenderNavigation && (
             <>
-              <button
-                className={styles["scroll-link"]}
-                onClick={() => smoothScrollTo("home")}
-              >
-                <Link to="/" onClick={handleNavOptionClick}>
-                  Home
-                </Link>
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo("home")}>
+                <Link to="/" onClick={handleNavOptionClick}>Home</Link>
               </button>
-              <button
-                className={styles["scroll-link"]}
-                onClick={() => smoothScrollTo("about")}
-              >
-                <Link to="/" onClick={handleNavOptionClick}>
-                  About Us
-                </Link>
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo("about")}>
+                <Link to="/" onClick={handleNavOptionClick}>About Us</Link>
               </button>
-              <button
-                className={styles["scroll-link"]}
-                onClick={() => smoothScrollTo("features")}
-              >
-                <Link to="/" onClick={handleNavOptionClick}>
-                  Features
-                </Link>
+              <button className={styles["scroll-link"]} onClick={() => smoothScrollTo("features")}>
+                <Link to="/" onClick={handleNavOptionClick}>Features</Link>
               </button>
             </>
           )}
           {!user && (
             <>
-              <Link to="/login" onClick={handleNavOptionClick}>
-                Login
-              </Link>
-              <Link to="/signup" onClick={handleNavOptionClick}>
-                Sign Up
-              </Link>
+              <Link to="/login" onClick={handleNavOptionClick}>Login</Link>
+              <Link to="/signup" onClick={handleNavOptionClick}>Sign Up</Link>
             </>
           )}
           {user && (
             <>
-              <Link to="/inventory" onClick={handleNavOptionClick}>
-                Inventory
-              </Link>
-              <Link to="/history" onClick={handleNavOptionClick}>
-                History
-              </Link>
-              <Link to="/forms" onClick={handleNavOptionClick}>
-                Forms
-              </Link>
-              <button className="btn" onClick={logout}>
-                Logout
-              </button>
+              <Link to="/inventory" onClick={handleNavOptionClick}>Inventory</Link>
+              <Link to="/history" onClick={handleNavOptionClick}>History</Link>
+              <Link to="/forms" onClick={handleNavOptionClick}>Forms</Link>
+              <button className="btn" onClick={logout}>Logout</button>
             </>
           )}
-          <button
-            className={`${styles["nav-btn"]} ${styles["nav-close-btn"]}`}
-            onClick={handleToggleNavbarClick}
-          >
+          <button className={`${styles["nav-btn"]} ${styles["nav-close-btn"]}`} onClick={handleToggleNavbarClick}>
             <FaTimes />
           </button>
         </div>
