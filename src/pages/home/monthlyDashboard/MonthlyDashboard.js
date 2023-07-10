@@ -61,7 +61,7 @@ export default function MonthlySalesMetrics() {
       const calculateTotalProfit = (sales, restocks) => {
         const salesAmount = calculateTotalRevenue(sales);
         const restocksCost = calculateTotalCosts(restocks);
-        return salesAmount - restocksCost;
+        return parseFloat(salesAmount) - parseFloat(restocksCost);
       };
 
       const revenue = calculateTotalRevenue(currentMonthSales);
@@ -148,7 +148,7 @@ export default function MonthlySalesMetrics() {
         <h3>Monthly Sales Metrics</h3>
         <div className={styles.metrics}>
           <p>Current Month Revenue: ${totalRevenue.toFixed(2)}</p>
-          <p>Current Month Costs: ${totalCosts.toFixed(2)}</p>
+          <p>Current Month Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
           <p>Current Month Profit: ${totalProfit.toFixed(2)}</p>
           <p>
             Inventory Turnover: <MonthlyInventoryTurnover />

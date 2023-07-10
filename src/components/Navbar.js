@@ -13,8 +13,6 @@ export default function Navbar() {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isIconClicked, setIsIconClicked] = useState(true);
   const [isIconFirstClicked, setIsIconFirstClicked] = useState(true);
-  const [lastScroll, setLastScroll] = useState(0);
-  const navbarRef = useRef(null);
 
   const toggleNavbar = () => {
     setIsNavbarOpen(!isNavbarOpen);
@@ -98,7 +96,7 @@ export default function Navbar() {
   }, [lastScroll]);
 
   return (
-    <nav ref={navbarRef} className={styles.navbar}>
+    <nav className={styles.navbar}>
       <div className={styles.navbarContainer}>
         <div className={styles.title}>
           <Link to="/">
