@@ -71,6 +71,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+
     const handleScroll = () => {
       const currentScroll = window.pageYOffset;
 
@@ -86,6 +87,7 @@ export default function Navbar() {
       }
 
       setLastScroll(currentScroll);
+      
     };
 
     window.addEventListener("scroll", handleScroll);
