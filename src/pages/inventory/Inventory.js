@@ -67,93 +67,106 @@ export default function Inventory() {
           }}
         />
         <ul className={styles.transactions}>
-          {products.map((product, productIndex) => (
-            <li className={styles.productListItem} key={product.productId}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width: "100%",
-                }}
-              >
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product, productIndex) => (
+              <li className={styles.productListItem} key={product.productId}>
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    flexDirection: "column",
+                    alignItems: "center",
                     width: "100%",
                   }}
                 >
-                  <p>Product ID: {product.productId}</p>
-                  <p>Product Name: {product.productName}</p>
-                  <p>Total Quantity: {product.totalQuantity}</p>
-                </div>
-                {expandedProductIndex === productIndex &&
-                  product.batchDetails.map((batch, batchIndex) => (
-                    <div style={{ width: "100%", margin: "20px 0" }}>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                        key={batchIndex}
-                      >
-                        <p style={{ flex: "1" }}>{`Batch ${batchIndex + 1}`}</p>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "100%",
+                    }}
+                  >
+                    <p>Product ID: {product.productId}</p>
+                    <p>Product Name: {product.productName}</p>
+                    <p>Total Quantity: {product.totalQuantity}</p>
+                  </div>
+                  {expandedProductIndex === productIndex &&
+                    product.batchDetails.map((batch, batchIndex) => (
+                      <div style={{ width: "100%", margin: "20px 0" }}>
                         <div
                           style={{
                             display: "flex",
-                            flexDirection: "column",
-                            flex: "1",
+                            justifyContent: "space-between",
+                            width: "100%",
                           }}
+                          key={batchIndex}
                         >
-                          <p>
-                            {batch.batchId ? `Batch ID: ${batch.batchId}` : ""}
-                          </p>
-                          <p>
-                            Expiry Date:{" "}
-                            {batch.expiryDate.toDate().toLocaleDateString()}
-                          </p>
-                        </div>
-                        <div
-                          style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            flex: "1",
-                          }}
-                        >
-                          <p style={{ textAlign: "right" }}>
-                            Quantity: {batch.quantity}
-                          </p>
-                          <p style={{ textAlign: "right" }}>
-                            Cost Price: ${batch.costPrice}
-                          </p>
+                          <p style={{ flex: "1" }}>{`Batch ${
+                            batchIndex + 1
+                          }`}</p>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              flex: "1",
+                            }}
+                          >
+                            <p>
+                              {batch.batchId
+                                ? `Batch ID: ${batch.batchId}`
+                                : ""}
+                            </p>
+                            <p>
+                              Expiry Date:{" "}
+                              {batch.expiryDate.toDate().toLocaleDateString()}
+                            </p>
+                          </div>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              flex: "1",
+                            }}
+                          >
+                            <p style={{ textAlign: "right" }}>
+                              Quantity: {batch.quantity}
+                            </p>
+                            <p style={{ textAlign: "right" }}>
+                              Cost Price: ${batch.costPrice}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                <button
-                  style={{
-                    display: "block",
-                    width: "315px",
-                    padding: "10px 10px 0",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    fontSize: "100%",
-                  }}
-                  className={styles.showMoreButton}
-                  onClick={() => handleToggleBatch(productIndex)}
-                >
-                  {expandedProductIndex === productIndex ? (
-                    <u>Hide Details</u>
-                  ) : (
-                    <u>+ Show More</u>
-                  )}
-                </button>
-              </div>
-            </li>
-          ))}
+                    ))}
+                  <button
+                    style={{
+                      display: "block",
+                      width: "315px",
+                      padding: "10px 10px 0",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      fontSize: "100%",
+                    }}
+                    className={styles.showMoreButton}
+                    onClick={() => handleToggleBatch(productIndex)}
+                  >
+                    {expandedProductIndex === productIndex ? (
+                      <u>Hide Details</u>
+                    ) : (
+                      <u>+ Show More</u>
+                    )}
+                  </button>
+                </div>
+              </li>
+            ))
+          ) : (
+            <>
+              <br></br>
+              <p style={{ color: "black" }}>
+                There are no products in your inventory.
+              </p>
+            </>
+          )}
         </ul>
       </div>
     </>
