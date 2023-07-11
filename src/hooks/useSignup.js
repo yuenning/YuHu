@@ -11,14 +11,11 @@ export const useSignup = () => {
   const createUserDocument = async (user) => {
     try {
       // Create user document
-      await projectFirestore
-        .collection("users")
-        .doc(`${user.displayName} - ${user.uid}`)
-        .set({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-        });
+      await projectFirestore.collection("users").doc(`${user.uid}`).set({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+      });
     } catch (err) {
       console.error("Error creating user document: ", err);
     }
