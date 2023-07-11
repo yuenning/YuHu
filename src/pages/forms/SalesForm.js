@@ -315,7 +315,9 @@ export default function NewSalesForm() {
           for (const batch of batchDetails) {
             if (remainingQuantity <= 0) {
               break;
-            } else if (isAfter(dateTime, batch.restockTransactionDate)) {
+            } else if (
+              isAfter(dateTime, parseISO(batch.restockTransactionDate))
+            ) {
               if (batch.quantity <= remainingQuantity) {
                 remainingQuantity -= batch.quantity;
                 batch.quantity = 0;
