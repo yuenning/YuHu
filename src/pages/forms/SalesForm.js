@@ -181,6 +181,7 @@ export default function NewSalesForm() {
     // Validate restock forms
     const transactionDate = parseISO(transactionForms.date);
     const transactionTime = parseISO(transactionForms.time);
+    console.log(transactionForms.time);
 
     if (transactionForms.date === "") {
       errors.push("Transaction Date field cannot be empty");
@@ -241,7 +242,7 @@ export default function NewSalesForm() {
             new Date(`${transactionForms.date}T${transactionForms.time}`)
           );
 
-          if (isAfter(restockDate, dateTime)) {
+          if (isAfter(dateTime, restockDate)) {
             totalQuantity += batch.quantity;
           }
         }
@@ -278,18 +279,21 @@ export default function NewSalesForm() {
       }
 
       if (isSubmitting) {
+        // Get the transaction ID
+        const transactionID = transactionForms.transactionID;
+
         // Save transaction forms to Firebase
         const dateTime = timestamp.fromDate(
           new Date(`${transactionForms.date}T${transactionForms.time}`)
         );
-        await projectFirestore.collection(`users/${user.uid}/sales`).add({
-          ...transactionForms,
-          dateTime,
-          transactionAmount: parseFloat(transactionForms.transactionAmount),
-        });
-
-        // Get the transaction ID
-        const transactionID = transactionForms.transactionID;
+        await projectFirestore
+          .collection(`users/${user.uid}/sales`)
+          .doc(transactionID)
+          .set({
+            ...transactionForms,
+            dateTime,
+            transactionAmount: parseFloat(transactionForms.transactionAmount),
+          });
 
         // Update the products collection
         productForms.forEach(async (form) => {
@@ -315,7 +319,9 @@ export default function NewSalesForm() {
           for (const batch of batchDetails) {
             if (remainingQuantity <= 0) {
               break;
-            } else if (isAfter(dateTime, batch.restockTransactionDate)) {
+            } else if (
+              isAfter(dateTime, parseISO(batch.restockTransactionDate))
+            ) {
               if (batch.quantity <= remainingQuantity) {
                 remainingQuantity -= batch.quantity;
                 batch.quantity = 0;
@@ -342,7 +348,10 @@ export default function NewSalesForm() {
           form.transactionID = transactionID;
           form.quantity = parseInt(form.quantity, 10);
           form.sellingPrice = parseFloat(form.sellingPrice);
-          projectFirestore.collection(`users/${user.uid}/salesitems`).add(form);
+          projectFirestore
+            .collection(`users/${user.uid}/salesitems`)
+            .doc(`${transactionID} -- ${form.productId}`)
+            .set(form);
         });
 
         setFormErrors(null);

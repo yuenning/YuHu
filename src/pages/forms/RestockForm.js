@@ -245,13 +245,18 @@ export default function RestockForm() {
     }
 
     // Save restock forms to Firebase
-    await projectFirestore.collection(`users/${user.uid}/restocks`).add({
-      ...restockForms,
-      dateTime: timestamp.fromDate(
-        new Date(`${restockForms.date}T${restockForms.time}`)
-      ),
-      transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
-    });
+    await projectFirestore
+      .collection(`users/${user.uid}/restocks`)
+      .doc(transactionID)
+      .set({
+        ...restockForms,
+        dateTime: timestamp.fromDate(
+          new Date(`${restockForms.date}T${restockForms.time}`)
+        ),
+        transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(
+          2
+        ),
+      });
     console.log(restockForms);
 
     // Update restock items in the restockitems collection
@@ -286,7 +291,8 @@ export default function RestockForm() {
         }
         await projectFirestore
           .collection(`users/${user.uid}/restockitems`)
-          .add(restockItemData);
+          .doc(`${transactionID} -- ${restockItemData.productId}`)
+          .set(restockItemData);
         console.log(restockItemData);
 
         // Update the product collection

@@ -11,50 +11,11 @@ export const useSignup = () => {
   const createUserDocument = async (user) => {
     try {
       // Create user document
-      await projectFirestore.collection("users").doc(user.uid).set({
+      await projectFirestore.collection("users").doc(`${user.uid}`).set({
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
       });
-
-      // Create 'products' subcollection for user
-      await projectFirestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("products")
-        .doc("product");
-
-      // Create 'sales' subcollection for user
-      await projectFirestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("sales")
-        .doc("sale");
-
-      // Create 'saleItems' subcollection for user
-      await projectFirestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("sales")
-        .doc("sale")
-        .collection("saleItems")
-        .doc("saleItem");
-
-      // Create 'restocks' subcollection for user
-      await projectFirestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("restocks")
-        .doc("restock");
-
-      // Create 'restockItems' subcollection for user
-      await projectFirestore
-        .collection("users")
-        .doc(user.uid)
-        .collection("restocks")
-        .doc("restock")
-        .collection("restockItems")
-        .doc("restockItem");
     } catch (err) {
       console.error("Error creating user document: ", err);
     }
