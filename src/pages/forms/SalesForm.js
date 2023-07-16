@@ -88,8 +88,8 @@ export default function NewSalesForm() {
 
       if (!salesItemsSnapshot.empty) {
         const salesItemData = salesItemsSnapshot.docs[0].data();
-        const sellingPrice = salesItemData.sellingPrice || "";
-        const productName = salesItemData.productName || "";
+        const sellingPrice = salesItemData?.sellingPrice || "";
+        const productName = salesItemData?.productName || "";
 
         const transactionID = salesItemData.transactionID;
         const salesSnapshot = await projectFirestore
@@ -154,7 +154,7 @@ export default function NewSalesForm() {
       });
       setTransactionForms((prevTransactionForms) => ({
         ...prevTransactionForms,
-        transactionAmount: totalAmount,
+        transactionAmount: totalAmount.toFixed(2),
       }));
     };
 
@@ -171,28 +171,29 @@ export default function NewSalesForm() {
     });
     setTransactionForms((prevTransactionForms) => ({
       ...prevTransactionForms,
-      transactionAmount: parseFloat(totalAmount),
+      transactionAmount: parseFloat(totalAmount).toFixed(2),
     }));
   }, [productForms]);
 
   const validateForm = async () => {
     const errors = [];
 
-    // Validate restock forms
-    const transactionDate = parseISO(transactionForms.date);
-    const transactionTime = parseISO(transactionForms.time);
-    console.log(transactionForms.time);
+    const dateTime = new Date(
+      `${transactionForms.date}T${transactionForms.time}`
+    );
 
+    // Validate transaction form
     if (transactionForms.date === "") {
       errors.push("Transaction Date field cannot be empty");
-    } else if (isNaN(transactionDate.getTime())) {
-      errors.push("Transaction Date is invalid");
     }
 
     if (transactionForms.time === "") {
       errors.push("Transaction Time field cannot be empty");
-    } else if (isNaN(transactionTime.getTime())) {
-      errors.push("Transaction Time is invalid");
+    }
+
+    console.log(dateTime);
+    if (isNaN(dateTime)) {
+      errors.push("Transaction Date and Time cannot be invalid");
     }
 
     if (transactionForms.transactionID === "") {
@@ -234,16 +235,16 @@ export default function NewSalesForm() {
       } else {
         const productData = querySnapshot.docs[0].data();
         const batchDetails = productData.batchDetails || [];
+        console.log(batchDetails);
         let totalQuantity = 0;
 
         for (const batch of batchDetails) {
-          const restockDate = parseISO(batch.restockTransactionDate);
-          const dateTime = timestamp.fromDate(
-            new Date(`${transactionForms.date}T${transactionForms.time}`)
-          );
+          const restockDateTime = batch.restockDateTime.toDate();
+          console.log(batch.restockDateTime);
 
-          if (isAfter(dateTime, restockDate)) {
+          if (isAfter(dateTime, restockDateTime)) {
             totalQuantity += batch.quantity;
+            console.log(totalQuantity);
           }
         }
 
@@ -292,7 +293,9 @@ export default function NewSalesForm() {
           .set({
             ...transactionForms,
             dateTime,
-            transactionAmount: parseFloat(transactionForms.transactionAmount),
+            transactionAmount: parseFloat(
+              transactionForms.transactionAmount
+            ).toFixed(2),
           });
 
         // Update the products collection
@@ -513,6 +516,10 @@ export default function NewSalesForm() {
                   </select>
                 </div>
                 <div style={{ width: "45%" }}>
+                  <label htmlFor={`productName${index}`}>
+                    Product Name: {form.productName}
+                  </label>
+                  {/*
                   <label htmlFor={`productName${index}`}>Product Name:</label>
                   <input
                     type="text"
@@ -522,6 +529,7 @@ export default function NewSalesForm() {
                       handleProductChange(index, "productName", e.target.value)
                     }
                   />
+                  */}
                 </div>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>

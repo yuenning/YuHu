@@ -164,9 +164,15 @@ export default function RestockForm() {
   }, [productForms]);
 
   const isDateValid = (dateString) => {
-    const today = new Date();
+    const dateTime = new Date(`${restockForms.date}T${restockForms.time}`);
     const date = parseISO(dateString);
-    return date && isAfter(date, today);
+    return (
+      date &&
+      ((date.getFullYear() === dateTime.getFullYear() &&
+        date.getMonth() === dateTime.getMonth() &&
+        date.getDate() === dateTime.getDate()) ||
+        isAfter(date, dateTime))
+    );
   };
 
   const validateForm = () => {
@@ -189,18 +195,18 @@ export default function RestockForm() {
     }
     productForms.forEach((form, index) => {
       if (form.productId === "") {
-        errors.push(`Product ID field cannot be empty (Product ${index + 1})`);
+        errors.push(`Product ${index + 1}'s Product ID field cannot be empty`);
       }
       if (form.productName === "") {
         errors.push(
-          `Product Name field cannot be empty (Product ${index + 1})`
+          `Product ${index + 1}'s Product Name field cannot be empty`
         );
       }
       if (form.quantity === "" || isNaN(form.quantity) || form.quantity <= 0) {
         errors.push(`Valid quantity is required for product ${index + 1}`);
       }
       if (form.batchId === "") {
-        errors.push(`Batch ID field cannot be empty (Product ${index + 1})`);
+        errors.push(`Product ${index + 1}'s Batch ID field cannot be empty`);
       }
       if (
         form.costPrice === "" ||
@@ -209,11 +215,13 @@ export default function RestockForm() {
       ) {
         errors.push(`Valid cost price is required for product ${index + 1}`);
       }
-      if (form.expiryDate === "") {
-        errors.push(`Expiry Date field cannot be empty (Product ${index + 1})`);
+      if (form.expiryDate === "" || isNaN(parseISO(form.expiryDate))) {
+        errors.push(`Product ${index + 1}'s Expiry Date field is invalid`);
       }
       if (!isDateValid(form.expiryDate)) {
-        errors.push(`Expiry Date must be after today (Product ${index + 1})`);
+        errors.push(
+          `Product ${index + 1}'s Expiry Date must be after transaction date`
+        );
       }
     });
 
@@ -244,19 +252,23 @@ export default function RestockForm() {
       return;
     }
 
-    // Save restock forms to Firebase
+    // Combine the transaction date and time into a single DateTime value
+    const dateTime = new Date(`${restockForms.date}T${restockForms.time}`);
+
+    // Save transaction form to Firebase
+    const transactionData = {
+      ...restockForms,
+      dateTime: timestamp.fromDate(dateTime),
+      transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
+    };
+    delete transactionData.date;
+    delete transactionData.time;
+
     await projectFirestore
       .collection(`users/${user.uid}/restocks`)
       .doc(transactionID)
-      .set({
-        ...restockForms,
-        dateTime: timestamp.fromDate(
-          new Date(`${restockForms.date}T${restockForms.time}`)
-        ),
-        transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(
-          2
-        ),
-      });
+      .set(transactionData);
+
     console.log(restockForms);
 
     // Update restock items in the restockitems collection
@@ -271,7 +283,7 @@ export default function RestockForm() {
           costPrice,
         } = form;
 
-        const restockItemData = {
+        const productData = {
           transactionID,
           productId,
           productName,
@@ -283,17 +295,19 @@ export default function RestockForm() {
         const expiryDateTimestamp = convertToTimestamp(expiryDate);
 
         if (expiryDateTimestamp) {
-          restockItemData.expiryDate = expiryDateTimestamp;
+          productData.expiryDate = expiryDateTimestamp;
         } else {
           // Handle the case where expiryDate is invalid or empty
           console.error("Invalid expiry date:", expiryDate);
           return;
         }
+
+        // Update the restockitems collection
         await projectFirestore
           .collection(`users/${user.uid}/restockitems`)
-          .doc(`${transactionID} -- ${restockItemData.productId}`)
-          .set(restockItemData);
-        console.log(restockItemData);
+          .doc(`${transactionID} -- ${productData.productId}`)
+          .set(productData);
+        console.log(productData);
 
         // Update the product collection
         const productDocRef = projectFirestore
@@ -311,9 +325,7 @@ export default function RestockForm() {
             quantity: parseInt(quantity, 10),
             expiryDate: timestamp.fromDate(new Date(expiryDate)),
             costPrice: parseFloat(costPrice),
-            restockTransactionDate: timestamp.fromDate(
-              new Date(`${restockForms.date}T${restockForms.time}`)
-            ),
+            restockDateTime: timestamp.fromDate(dateTime),
           };
           if (batchId) {
             currentBatchData.batchId = batchId;
@@ -337,10 +349,7 @@ export default function RestockForm() {
                   quantity: parseInt(quantity, 10),
                   expiryDate: timestamp.fromDate(new Date(expiryDate)),
                   costPrice: parseFloat(costPrice),
-                  restockTransactionDate: timestamp.fromDate(
-                    new Date(restockForms.date)
-                  ),
-                  restockTransactionTime: restockForms.time,
+                  restockDateTime: timestamp.fromDate(dateTime),
                 },
               ],
               totalQuantity: parseInt(quantity, 10),
