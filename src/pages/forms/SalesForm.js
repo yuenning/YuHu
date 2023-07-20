@@ -6,7 +6,7 @@ import { parseISO, isAfter } from "date-fns";
 // Styles
 import { FaTimes } from "react-icons/fa";
 
-export default function NewSalesForm() {
+export default function SalesForm() {
   const { user } = useAuthContext();
   const [transactionForms, setTransactionForms] = useState({
     date: "",

@@ -241,7 +241,7 @@ export default function RestockForm() {
     // Check if transaction ID is unique
     const transactionID = restockForms.transactionID;
     const restockItemsSnapshot = await projectFirestore
-      .collection(`users/${user.uid}/restockitems`)
+      .collection(`users/${user.uid}/restocks`)
       .where("transactionID", "==", transactionID)
       .limit(1)
       .get();
@@ -255,23 +255,8 @@ export default function RestockForm() {
     // Combine the transaction date and time into a single DateTime value
     const dateTime = new Date(`${restockForms.date}T${restockForms.time}`);
 
-    // Save transaction form to Firebase
-    const transactionData = {
-      ...restockForms,
-      dateTime: timestamp.fromDate(dateTime),
-      transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
-    };
-    delete transactionData.date;
-    delete transactionData.time;
-
-    await projectFirestore
-      .collection(`users/${user.uid}/restocks`)
-      .doc(transactionID)
-      .set(transactionData);
-
-    console.log(restockForms);
-
     // Update restock items in the restockitems collection
+    let productDetails = [];
     await Promise.all(
       productForms.map(async (form) => {
         const {
@@ -284,12 +269,11 @@ export default function RestockForm() {
         } = form;
 
         const productData = {
-          transactionID,
           productId,
           productName,
           quantity: parseInt(quantity, 10),
           expiryDate: timestamp.fromDate(new Date(expiryDate)),
-          costPrice: parseFloat(costPrice),
+          costPrice: parseFloat(costPrice).toFixed(2),
           ...(batchId && { batchId }),
         };
         const expiryDateTimestamp = convertToTimestamp(expiryDate);
@@ -303,11 +287,7 @@ export default function RestockForm() {
         }
 
         // Update the restockitems collection
-        await projectFirestore
-          .collection(`users/${user.uid}/restockitems`)
-          .doc(`${transactionID} -- ${productData.productId}`)
-          .set(productData);
-        console.log(productData);
+        productDetails.push(productData);
 
         // Update the product collection
         const productDocRef = projectFirestore
@@ -357,6 +337,20 @@ export default function RestockForm() {
         }
       })
     );
+    // Save transaction form to Firebase
+    const transactionData = {
+      ...restockForms,
+      dateTime: timestamp.fromDate(dateTime),
+      transactionAmount: parseFloat(restockForms.transactionAmount).toFixed(2),
+    };
+    delete transactionData.date;
+    delete transactionData.time;
+    console.log(restockForms);
+
+    await projectFirestore
+      .collection(`users/${user.uid}/restocks`)
+      .doc(transactionID)
+      .set({ ...transactionData, productDetails });
 
     // Reset forms after submission
     setFormErrors(null);
