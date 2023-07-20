@@ -76,9 +76,10 @@ export default function SalesList() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: "25%",
+          width: "50%",
           colour: "black",
           border: "1px solid black",
+          borderRadius: "5px",
         }}
       />
       <ul className={styles.transactions}>

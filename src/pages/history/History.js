@@ -21,6 +21,9 @@ export default function Home() {
 
     return (
       <div className={styles.container}>
+        <br></br>
+        <br></br>
+        <br></br>
         <div className={styles.toggleButton}>
           <div
             className={`${styles.toggleOption} ${
