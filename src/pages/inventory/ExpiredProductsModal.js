@@ -61,6 +61,20 @@ export default function ExpiredProductsModal({ products, onClose }) {
             0
           ),
         });
+
+        // Create or add to the expired products document
+        const dateOfDeletion = new Date();
+        await projectFirestore
+          .collection(`users/${user.uid}/expiredclearance`)
+          .doc(`${productId} (${batchId})`)
+          .set({
+            productId,
+            productName: productData.productName,
+            batchId,
+            expiryDate: selectedBatch.expiryDate,
+            quantity: selectedBatch.quantity,
+            dateOfDeletion,
+          });
       }
 
       // Close the modal
