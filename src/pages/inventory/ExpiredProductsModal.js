@@ -73,26 +73,43 @@ export default function ExpiredProductsModal({ products, onClose }) {
   return (
     <div
       style={{
+        display: "flex",
+        flexDirection: "column",
         position: "fixed",
+        justifyContent: "center",
+        alignItems: "center",
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        padding: "20px",
+        padding: "30px",
         background: "#fff",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
         borderRadius: "8px",
+        width: "50%",
+        maxHeight: "80%",
+        overflowY: "auto", // Add scroll if content overflows
       }}
     >
       <h2>Expired Products</h2>
+      <br></br>
       <ul>
         {products.map((product) => (
           <li key={product.productId}>
-            <h3>Product ID: {product.productId}</h3>
-            <p>Product Name: {product.productName}</p>
-            <p>Total Quantity: {product.totalQuantity}</p>
+            <h3>
+              Product ID: {product.productId} | Product Name:{" "}
+              {product.productName}
+            </h3>
+
             <ul>
               {product.batchDetails.map((batch) => (
-                <li key={batch.batchId}>
+                <li
+                  key={batch.batchId}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "10px",
+                  }}
+                >
                   {/* Add checkbox for batch selection */}
                   <input
                     type="checkbox"
@@ -109,15 +126,17 @@ export default function ExpiredProductsModal({ products, onClose }) {
                       )
                     }
                   />
-                  <p>{`Batch ${batch.batchId}`}</p>
-                  {batch.expiryDate && (
-                    <p>
-                      Expiry Date:{" "}
-                      {batch.expiryDate.toDate().toLocaleDateString()}
-                    </p>
-                  )}
-                  <p>Quantity: {batch.quantity}</p>
-                  <p>Cost Price: ${batch.costPrice}</p>
+                  <div style={{ marginLeft: "10px" }}>
+                    <p>{`Batch ${batch.batchId}`} </p>
+                    {batch.expiryDate && (
+                      <p>
+                        Expiry Date:{" "}
+                        {batch.expiryDate.toDate().toLocaleDateString()}
+                      </p>
+                    )}
+                    <p>Quantity: {batch.quantity} </p>
+                    <p>Cost Price: ${batch.costPrice}</p>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -127,10 +146,37 @@ export default function ExpiredProductsModal({ products, onClose }) {
       <div
         style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
       >
-        <button style={{ marginRight: "10px" }} onClick={handleConfirmModal}>
+        <button
+          style={{
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            marginRight: "10px",
+            backgroundColor: "#000000",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "100%",
+          }}
+          onClick={handleConfirmModal}
+        >
           Confirm
         </button>
-        <button onClick={onClose}>Cancel</button>
+        <button
+          style={{
+            display: "block",
+            width: "100%",
+            padding: "10px",
+            backgroundColor: "#000000",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            fontSize: "100%",
+          }}
+          onClick={onClose}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );
