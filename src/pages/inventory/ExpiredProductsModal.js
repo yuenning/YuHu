@@ -11,12 +11,18 @@ export default function ExpiredProductsModal({ products, onClose }) {
     onClose(); // Call the onClose prop to close the modal
   };
 
-  const handleBatchSelection = (productId, batchId, selected) => {
+  const handleBatchSelection = (
+    productId,
+    batchId,
+    quantity,
+    expiryDate,
+    selected
+  ) => {
     if (selected) {
       // Batch is selected, add it to the selectedBatches state
       setSelectedBatches((prevSelected) => [
         ...prevSelected,
-        { productId, batchId },
+        { productId, batchId, expiryDate, quantity },
       ]);
     } else {
       // Batch is deselected, remove it from the selectedBatches state
@@ -35,6 +41,8 @@ export default function ExpiredProductsModal({ products, onClose }) {
       for (const selectedBatch of selectedBatches) {
         const productId = selectedBatch.productId;
         const batchId = selectedBatch.batchId;
+        const expiryDate = selectedBatch.expiryDate;
+        const quantity = selectedBatch.quantity;
 
         // Get the reference to the product document in Firestore
         const productRef = projectFirestore
@@ -66,13 +74,13 @@ export default function ExpiredProductsModal({ products, onClose }) {
         const dateOfDeletion = new Date();
         await projectFirestore
           .collection(`users/${user.uid}/expiredclearance`)
-          .doc(`${productId} (${batchId})`)
+          .doc(`${productId} -- ${batchId}`)
           .set({
             productId,
             productName: productData.productName,
             batchId,
-            expiryDate: selectedBatch.expiryDate,
-            quantity: selectedBatch.quantity,
+            expiryDate, // Use the expiryDate from the argument
+            quantity, // Use the quantity from the argument
             dateOfDeletion,
           });
       }
@@ -124,7 +132,6 @@ export default function ExpiredProductsModal({ products, onClose }) {
                     marginBottom: "10px",
                   }}
                 >
-                  {/* Add checkbox for batch selection */}
                   <input
                     type="checkbox"
                     checked={selectedBatches.some(
@@ -133,11 +140,11 @@ export default function ExpiredProductsModal({ products, onClose }) {
                         b.batchId === batch.batchId
                     )}
                     onChange={(e) =>
-                      handleBatchSelection(
-                        product.productId,
-                        batch.batchId,
-                        e.target.checked
-                      )
+                      handleBatchSelection(product.productId, batch.batchId, {
+                        selected: e.target.checked,
+                        expiryDate: batch.expiryDate,
+                        quantity: batch.quantity,
+                      })
                     }
                   />
                   <div style={{ marginLeft: "10px" }}>

@@ -118,7 +118,7 @@ export default function RestockForm() {
         updatedForms[index].costPrice = costPrice || "";
         updatedForms[index].productName = productName || "";
       }
-    } else if (field === "batchId") {
+    } /* else if (field === "batchId") {
       const batchIdSnapshot = await projectFirestore
         .collection(`users/${user.uid}/restockitems`)
         .where("productId", "==", updatedForms[index].productId)
@@ -131,7 +131,7 @@ export default function RestockForm() {
       } else {
         setFormErrors([]);
       }
-    }
+    } */
     setProductForms(updatedForms);
   };
 
@@ -241,6 +241,8 @@ export default function RestockForm() {
   };
 
   const handleSubmit = async () => {
+    setFormErrors([]);
+
     const errors = validateForm();
 
     if (errors && errors.length > 0) {
@@ -262,6 +264,18 @@ export default function RestockForm() {
       setFormErrors(["Restock ID must be unique"]);
       setIsSubmitting(false);
       return;
+    }
+
+    // Check if Batch IDs are unique
+    const batchIds = new Set();
+    for (const form of productForms) {
+      const { productId, batchId } = form;
+      if (batchIds.has(`${productId}-${batchId}`)) {
+        setFormErrors([`Batch ID must be unique for ${productId}`]);
+        setIsSubmitting(false);
+        return;
+      }
+      batchIds.add(`${productId}-${batchId}`);
     }
 
     // Combine the transaction date and time into a single DateTime value
