@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { projectFirestore } from "../../firebase/config";
 
 // styles
 import styles from "./History.module.css";
