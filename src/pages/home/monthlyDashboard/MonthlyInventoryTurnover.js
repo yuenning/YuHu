@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 
-export default function MonthlyInventoryTurnover() {
+export default function MonthlyInventoryTurnover({ startDate, endDate }) {
   const { user } = useAuthContext();
   const { documents: products, error: productsError } = useCollection(
     `users/${user.uid}/products`
@@ -22,10 +22,15 @@ export default function MonthlyInventoryTurnover() {
 
   useEffect(() => {
     if (products && restockItems && salesItems && sales) {
-      const currentMonthSalesItems = filterSalesItemsByMonth(salesItems, sales);
+      const selectedMonthSalesItems = filterSalesItemsByDate(
+        salesItems,
+        sales,
+        startDate,
+        endDate
+      );
       const totalCOGS = calculateTotalCOGS(
         restockItems,
-        currentMonthSalesItems
+        selectedMonthSalesItems
       );
       const averageInventory = calculateAverageMonthlyInventory(products);
 
@@ -38,19 +43,16 @@ export default function MonthlyInventoryTurnover() {
 
       setIsLoading(false);
     }
-  }, [products, restockItems, salesItems, sales]);
+  }, [products, restockItems, salesItems, sales, startDate, endDate]);
 
-  function filterSalesItemsByMonth(salesItems, sales) {
-    const currentMonth = new Date().getMonth(); // Get the current month (0-indexed)
-    const currentMonthSales = sales.filter((sale) => {
-      const transactionDate = new Date(sale.date); // Convert the date string to a JavaScript Date object
-      const transactionMonth = transactionDate.getMonth(); // Get the month of the transaction
-      return transactionMonth === currentMonth;
+  function filterSalesItemsByDate(salesItems, sales, startDate, endDate) {
+    const selectedSales = sales.filter((sale) => {
+      const transactionDate = new Date(sale.date);
+      return transactionDate >= startDate && transactionDate <= endDate;
     });
+
     return salesItems.filter((item) =>
-      currentMonthSales.some(
-        (sale) => sale.transactionID === item.transactionID
-      )
+      selectedSales.some((sale) => sale.transactionID === item.transactionID)
     );
   }
 

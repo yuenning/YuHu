@@ -20,6 +20,7 @@ import MonthlyProductAnalysis from "./MonthlyProductsAnalysis";
 // styles
 import styles from "../Home.module.css";
 
+// Add a new component for the Line Chart
 const LineChart = ({ chartData }) => {
   const data = {
     labels: chartData.map((data) => data.date),
@@ -51,7 +52,7 @@ const LineChart = ({ chartData }) => {
   return <Line data={data} />;
 };
 
-export default function MonthlySalesMetrics() {
+export default function CustomDashboard() {
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalCosts, setTotalCosts] = useState(0);
@@ -149,76 +150,43 @@ export default function MonthlySalesMetrics() {
   return (
     <>
       <div className={styles.metricsContainer}>
-        <h2>Custom Sales Metrics</h2>
-        <br />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginRight: "50px",
-            }}
-          >
-            <label style={{ marginRight: "10px" }}>Start Date:</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="yyyy-MM-dd"
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-              }}
-            />
-          </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label style={{ marginRight: "10px" }}>End Date:</label>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              dateFormat="yyyy-MM-dd"
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-              }}
-            />
-          </div>
+        <div className={styles.datePickerContainer}>
+          <label>Start Date: </label>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            dateFormat="yyyy-MM-dd"
+          />
+          <br />
+          <label>End Date: </label>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            dateFormat="yyyy-MM-dd"
+          />
         </div>
-
         <br />
+        <h3>Monthly Sales Metrics</h3>
         <div className={styles.metrics}>
-          <p>Total Revenue: ${totalRevenue}</p>
-          <p>Total Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
-          <p>Total Profit: ${totalProfit.toFixed(2)}</p>
+          <p>Current Month Revenue: ${totalRevenue}</p>
+          <p>Current Month Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
+          <p>Current Month Profit: ${totalProfit.toFixed(2)}</p>
           <p>
-            Inventory Turnover:{" "}
-            <MonthlyInventoryTurnover startDate={startDate} endDate={endDate} />
+            Inventory Turnover: <MonthlyInventoryTurnover />
           </p>
         </div>
       </div>
-      <div className={styles.chartContainer}>
-        <div className={styles.centered}>
-          <LineChart chartData={dailyData} />
-        </div>
-      </div>
       <div className={styles.metricsContainer}>
-        <MonthlyProductAnalysis startDate={startDate} endDate={endDate} />
+        {/* Render the LineChart component and pass the dailyData */}
+        <LineChart chartData={dailyData} />
+        <MonthlyProductAnalysis />
       </div>
     </>
   );

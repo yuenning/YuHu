@@ -55,6 +55,13 @@
   margin-bottom: 20px;
 }
 
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
 .metrics {
   display: flex;
   justify-content: center;
@@ -80,4 +87,29 @@
 
 .centered {
   width: 50%;
+}
+
+.toggleButton {
+  display: flex;
+
+  height: 60px;
+  width: 250px;
+  border-radius: 40px;
+  background-color: #ccc;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.toggleOption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  height: 100%;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.active {
+  background-color: black;
 }

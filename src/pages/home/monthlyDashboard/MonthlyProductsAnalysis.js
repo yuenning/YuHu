@@ -7,7 +7,7 @@ import { startOfMonth, endOfMonth } from "date-fns";
 import "chart.js/auto";
 import { Pie } from "react-chartjs-2";
 
-export default function MonthlyProductAnalysis() {
+export default function MonthlyProductAnalysis({ startDate, endDate }) {
   const { user } = useAuthContext();
   const { documents: salesItems, error: salesItemsError } = useCollection(
     `users/${user.uid}/salesitems`
@@ -29,7 +29,7 @@ export default function MonthlyProductAnalysis() {
         const sale = sales.find((sale) => sale.transactionID === transactionID);
         if (sale) {
           const saleDate = new Date(sale.dateTime.toDate());
-          if (saleDate >= currentMonthStart && saleDate <= currentMonthEnd) {
+          if (saleDate >= startDate && saleDate <= endDate) {
             if (!acc[productId]) {
               acc[productId] = { productId, productName, totalQuantity: 0 };
             }
@@ -47,7 +47,7 @@ export default function MonthlyProductAnalysis() {
       setTopSellingProducts(top5Products);
       setIsLoading(false);
     }
-  }, [salesItems, sales]);
+  }, [salesItems, sales, startDate, endDate]);
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -106,8 +106,11 @@ export default function MonthlyProductAnalysis() {
     >
       <div style={{ width: "25%" }}>
         <h3 style={{ textAlign: "center" }}>
-          Top 5 Best Selling Products This Month
+          Top 5 Best Selling Products Between{" "}
+          {startDate.toISOString().split("T")[0]} and{" "}
+          {endDate.toISOString().split("T")[0]}
         </h3>
+        <br />
         {topSellingProducts.length > 0 ? (
           <Pie data={chartData} options={chartOptions} />
         ) : (
