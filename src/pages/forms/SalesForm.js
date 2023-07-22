@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { projectFirestore, timestamp } from "../../firebase/config";
+import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { parseISO, isAfter } from "date-fns";
+import { isAfter } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";

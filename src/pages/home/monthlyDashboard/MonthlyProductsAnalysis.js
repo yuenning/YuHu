@@ -28,7 +28,7 @@ export default function MonthlyProductAnalysis() {
         const { productId, productName, quantity, transactionID } = item;
         const sale = sales.find((sale) => sale.transactionID === transactionID);
         if (sale) {
-          const saleDate = new Date(sale.date);
+          const saleDate = new Date(sale.dateTime.toDate());
           if (saleDate >= currentMonthStart && saleDate <= currentMonthEnd) {
             if (!acc[productId]) {
               acc[productId] = { productId, productName, totalQuantity: 0 };
