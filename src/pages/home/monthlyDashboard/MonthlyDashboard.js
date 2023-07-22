@@ -56,6 +56,11 @@ export default function MonthlySalesMetrics() {
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalCosts, setTotalCosts] = useState(0);
 
+  const [startDate, setStartDate] = useState(startOfMonth(new Date()));
+  const [endDate, setEndDate] = useState(endOfMonth(new Date()));
+
+  const [dailyData, setDailyData] = useState([]);
+
   const { user } = useAuthContext();
   const { documents: restocks, error: restocksError } = useCollection(
     `users/${user?.uid}/restocks`
@@ -84,11 +89,6 @@ export default function MonthlySalesMetrics() {
     const restocksCost = calculateTotalCosts(restocks);
     return parseFloat(salesAmount) - parseFloat(restocksCost);
   };
-
-  const [startDate, setStartDate] = useState(startOfMonth(new Date()));
-  const [endDate, setEndDate] = useState(endOfMonth(new Date()));
-
-  const [dailyData, setDailyData] = useState([]);
 
   useEffect(() => {
     if (restocksError || salesError) {
@@ -134,12 +134,22 @@ export default function MonthlySalesMetrics() {
       });
       setDailyData(dailyData);
 
-      const revenue = calculateTotalRevenue(currentMonthSales);
+      let revenue = 0.0;
+      let profit = 0.0;
+      let costs = 0.0;
+      dailyData.forEach((data) => {
+        revenue += parseFloat(data.revenue);
+        profit += parseFloat(data.profit);
+        costs += parseFloat(data.costs);
+      });
+
+      /*const revenue = calculateTotalRevenue(currentMonthSales);
       const profit = calculateTotalProfit(
         currentMonthSales,
         currentMonthRestocks
       );
       const costs = calculateTotalCosts(currentMonthRestocks);
+      */
       setTotalRevenue(revenue);
       setTotalProfit(profit);
       setTotalCosts(costs);
@@ -162,50 +172,53 @@ export default function MonthlySalesMetrics() {
             style={{
               display: "flex",
               alignItems: "center",
-              marginRight: "50px",
+              marginRight: "10px",
             }}
           >
-            <label style={{ marginRight: "10px" }}>Start Date:</label>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              dateFormat="yyyy-MM-dd"
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-              }}
-            />
+            <div className={styles.datePicker}>
+              <label style={{ marginRight: "10px" }}>Start Date:</label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                dateFormat="yyyy-MM-dd"
+                style={{
+                  padding: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                }}
+              />
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <label style={{ marginRight: "10px" }}>End Date:</label>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              dateFormat="yyyy-MM-dd"
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                fontSize: "14px",
-              }}
-            />
+          <div className={styles.datePicker}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <label style={{ marginRight: "10px" }}>End Date:</label>
+              <DatePicker
+                selected={endDate}
+                onChange={(date) => setEndDate(date)}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate}
+                dateFormat="yyyy-MM-dd"
+                style={{
+                  padding: "8px",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "14px",
+                }}
+              />
+            </div>
           </div>
         </div>
 
-        <br />
         <div className={styles.metrics}>
           <p>Total Revenue: ${totalRevenue}</p>
-          <p>Total Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
-          <p>Total Profit: ${totalProfit.toFixed(2)}</p>
+          <p>Total Costs: ${totalCosts}</p>
+          <p>Total Profit: ${totalProfit}</p>
           <p>
             Inventory Turnover:{" "}
             <MonthlyInventoryTurnover startDate={startDate} endDate={endDate} />
