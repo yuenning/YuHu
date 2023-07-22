@@ -242,7 +242,6 @@ export default function RestockForm() {
 
   const handleSubmit = async () => {
     setFormErrors([]);
-
     const errors = validateForm();
 
     if (errors && errors.length > 0) {

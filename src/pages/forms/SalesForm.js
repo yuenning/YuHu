@@ -191,7 +191,6 @@ export default function SalesForm() {
       errors.push("Transaction Time field cannot be empty");
     }
 
-    console.log(dateTime);
     if (isNaN(dateTime)) {
       errors.push("Transaction Date and Time cannot be invalid");
     }
@@ -235,13 +234,10 @@ export default function SalesForm() {
       } else {
         const productData = querySnapshot.docs[0].data();
         const batchDetails = productData.batchDetails || [];
-        console.log(batchDetails);
         let totalQuantity = 0;
 
         for (const batch of batchDetails) {
           const restockDateTime = batch.restockDateTime.toDate();
-          console.log(batch.restockDateTime);
-
           if (isAfter(dateTime, restockDateTime)) {
             totalQuantity += batch.quantity;
             console.log(totalQuantity);
@@ -253,14 +249,16 @@ export default function SalesForm() {
         }
       }
     }
-
     return errors;
   };
 
   const handleSubmit = async () => {
-    const errors = await validateForm();
+    console.log(transactionForms);
+    setFormErrors([]);
+    const errors = validateForm();
 
     if (errors.length > 0) {
+      console.log(errors);
       setFormErrors(errors);
     } else {
       setIsSubmitting(true);
@@ -287,16 +285,19 @@ export default function SalesForm() {
         const dateTime = timestamp.fromDate(
           new Date(`${transactionForms.date}T${transactionForms.time}`)
         );
+        const transactionData = {
+          ...transactionForms,
+          dateTime: timestamp.fromDate(dateTime),
+          transactionAmount: parseFloat(
+            transactionForms.transactionAmount
+          ).toFixed(2),
+        };
+        delete transactionData.date;
+        delete transactionData.time;
         await projectFirestore
           .collection(`users/${user.uid}/sales`)
           .doc(transactionID)
-          .set({
-            ...transactionForms,
-            dateTime,
-            transactionAmount: parseFloat(
-              transactionForms.transactionAmount
-            ).toFixed(2),
-          });
+          .set(transactionData);
 
         // Update the products collection
         productForms.forEach(async (form) => {
@@ -357,6 +358,7 @@ export default function SalesForm() {
             .set(form);
         });
 
+        setIsSubmitting(false);
         setFormErrors(null);
 
         // Reset forms after submission
@@ -584,7 +586,6 @@ export default function SalesForm() {
         </button>
 
         {/* Submit Button */}
-
         <button
           style={{
             display: "block",
@@ -598,7 +599,6 @@ export default function SalesForm() {
           }}
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitting}
         >
           Submit
         </button>

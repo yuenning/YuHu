@@ -20,6 +20,9 @@ export default function Home() {
 
   return (
     <>
+      <br></br>
+      <br></br>
+      <br></br>
       <div className={styles.home}>
         <h1>Welcome back, {user.displayName}</h1>
       </div>

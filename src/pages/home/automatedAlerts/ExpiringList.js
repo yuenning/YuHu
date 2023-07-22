@@ -74,9 +74,9 @@ export default function ExpiringList() {
     <div className={styles.carousel}>
       <h3>Expiring Products</h3>
       {nearExpiryBatches.length > 0 ? (
-        <div>
+        <div className={styles.carouselContainer}>
           {nearExpiryBatches.map((product) => (
-            <ul key={product.productId} className={styles.carouselContainer}>
+            <ul key={product.productId}>
               {product.batchDetails.map((batch, batchIndex) => (
                 <div key={batchIndex} className={styles.carouselItem}>
                   <strong>
