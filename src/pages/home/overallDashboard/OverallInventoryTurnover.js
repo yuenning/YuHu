@@ -68,15 +68,11 @@ export default function OverallInventoryTurnover() {
   }
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return "Loading...";
   }
 
   if (productsError || restockItemsError || salesItemsError) {
-    return (
-      <p>
-        Error occurred: {productsError || restockItemsError || salesItemsError}
-      </p>
-    );
+    return "Error";
   }
 
   return inventoryTurnover.toFixed(2);
