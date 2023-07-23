@@ -102,7 +102,7 @@ export default function SalesPrediction() {
 
   return (
     <div className={styles.metricsContainer}>
-      <h3>Sales Prediction</h3>
+      <h3>Sales Prediction For The Next 3 Months</h3>
       <div className={styles.chartContainer}>
         <div className={styles.centered}>
           <Line data={chartData} />

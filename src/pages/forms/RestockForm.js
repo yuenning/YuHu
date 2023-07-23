@@ -351,10 +351,8 @@ export default function RestockForm() {
             expiryDate: timestamp.fromDate(new Date(expiryDate)),
             costPrice: parseFloat(costPrice),
             restockDateTime: timestamp.fromDate(dateTime),
+            ...(batchId && { batchId }),
           };
-          if (batchId) {
-            currentBatchData.batchId = batchId;
-          }
           batchDetails.push(currentBatchData);
 
           await productDocRef.update({
