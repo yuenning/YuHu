@@ -34,7 +34,7 @@ export default function OverallSalesMetrics() {
       const monthlySales = {};
       sales.forEach((sale) => {
         try {
-          const month = format(new Date(sale.date), "yyyy-MM");
+          const month = format(new Date(sale.dateTime.toDate()), "yyyy-MM");
           if (!monthlySales[month]) {
             monthlySales[month] = {
               revenue: 0,
@@ -45,20 +45,20 @@ export default function OverallSalesMetrics() {
           monthlySales[month].revenue +=
             parseFloat(sale.transactionAmount) || 0;
         } catch (error) {
-          console.log(sale);
+          console.log("Error formatting date in sale:", sale);
           console.log("Error formatting date:", error);
         }
       });
 
       restocks.forEach((restock) => {
         try {
-          const month = format(new Date(restock.date), "yyyy-MM");
+          const month = format(new Date(restock.dateTime.toDate()), "yyyy-MM");
           if (monthlySales[month]) {
             monthlySales[month].costs +=
               parseFloat(restock.transactionAmount) || 0;
           }
         } catch (error) {
-          console.log(restock);
+          console.log("Error formatting date in restock:", restock);
           console.log("Error formatting date:", error);
         }
       });

@@ -10,27 +10,16 @@ export default function RestockList() {
   const { documents: restockData, error: restockDataError } = useCollection(
     `users/${user.uid}/restocks`
   );
-
-  const { documents: restockItemsData, error: restockItemsDataError } =
-    useCollection(`users/${user.uid}/restockitems`);
-
   const [restocks, setRestocks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (restockDataError || restockItemsDataError) {
+    if (restockDataError) {
       console.log("Error retrieving restock data:", restockDataError);
-      console.log(
-        "Error retrieving restock items data:",
-        restockItemsDataError
-      );
     } else {
       const sortedRestocks = restockData
         ?.map((restock) => ({
           ...restock,
-          restockItems: restockItemsData.filter(
-            (item) => item.transactionID === restock.transactionID
-          ),
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date + " " + a.time);
@@ -40,7 +29,7 @@ export default function RestockList() {
 
       setRestocks(sortedRestocks || []);
     }
-  }, [restockData, restockDataError, restockItemsData, restockItemsDataError]);
+  }, [restockData, restockDataError]);
 
   // Add state variable for tracking expanded restock item
   const [expandedItemIndex, setExpandedItemIndex] = useState(null);
@@ -79,15 +68,16 @@ export default function RestockList() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: "25%",
+          width: "50%",
           colour: "black",
           border: "1px solid black",
+          borderRadius: "5px",
         }}
       />
       <ul className={styles.transactions}>
         {filteredRestocks.length > 0 ? (
           filteredRestocks.map((restock, itemIndex) => {
-            const { transactionID, date, time, transactionAmount } = restock;
+            const { transactionID, dateTime, transactionAmount } = restock;
             return (
               <li className={styles.productListItem} key={transactionID}>
                 <div
@@ -106,15 +96,22 @@ export default function RestockList() {
                     }}
                   >
                     <p>Transaction ID: {transactionID}</p>
-                    <p>Date: {date}</p>
-                    <p>Time: {time}</p>
+                    <p>Date: {dateTime.toDate().toLocaleDateString()}</p>
+                    <p>
+                      Time:{" "}
+                      {dateTime.toDate().toLocaleString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
                     <p>Transaction Amount: ${transactionAmount}</p>
                   </div>
                   {/* Additional details for expanded restock item */}
                   <div style={{ width: "100%" }}>
                     {expandedItemIndex === itemIndex && (
                       <div className={styles.details}>
-                        {restock.restockItems.map((item, index) => (
+                        {restock.productDetails.map((item, index) => (
                           <div
                             style={{
                               display: "flex",

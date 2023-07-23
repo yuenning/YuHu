@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 import { startOfMonth, addMonths } from "date-fns";
@@ -16,9 +16,10 @@ export default function SalesPrediction() {
     `users/${user?.uid}/sales`
   );
 
-  useEffect(() => {
+  // Memoize the computation of predicted sales data using useMemo
+  const memoizedPredictedData = useMemo(() => {
     if (salesError) {
-      console.log("Error retrieving data");
+      return [];
     } else {
       const currentMonthStart = startOfMonth(new Date());
       const nextThreeMonths = Array.from({ length: 3 }, (_, i) =>
@@ -27,7 +28,7 @@ export default function SalesPrediction() {
 
       if (sales && sales.length > 0) {
         const salesData = sales.map((sale) => [
-          new Date(sale.date).getTime(),
+          sale.dateTime.toDate().getTime(),
           parseFloat(sale.transactionAmount) || 0,
         ]);
 
@@ -75,8 +76,16 @@ export default function SalesPrediction() {
         // Handle case when there are no sales data
         setPredictedData([]);
       }
+
+      // Return an empty array if there's an error or while the sales data is being fetched
+      return [];
     }
   }, [sales, salesError]);
+
+  // Update state only when there's a change in the predicted data
+  useEffect(() => {
+    setPredictedData(memoizedPredictedData);
+  }, [memoizedPredictedData]);
 
   const chartData = {
     labels: predictedData.map((data) => data.date.toLocaleDateString()),

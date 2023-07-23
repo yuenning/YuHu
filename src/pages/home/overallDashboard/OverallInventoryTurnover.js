@@ -51,26 +51,28 @@ export default function OverallInventoryTurnover() {
   function calculateAverageInventory(products) {
     const totalInventoryValue = products.reduce((acc, item) => {
       const { totalQuantity, batchDetails } = item;
-      const latestBatch = batchDetails[batchDetails.length - 1];
-      const { costPrice } = latestBatch;
-      return acc + totalQuantity * costPrice;
+      if (batchDetails && batchDetails.length > 0) {
+        // Check if batchDetails is not empty before accessing its elements
+        const latestBatch = batchDetails[batchDetails.length - 1];
+        if (latestBatch && latestBatch.costPrice) {
+          // Ensure latestBatch and costPrice exist before accessing costPrice
+          const { costPrice } = latestBatch;
+          return acc + totalQuantity * costPrice;
+        }
+      }
+      return acc;
     }, 0);
 
     const averageInventory = totalInventoryValue / products.length;
-
     return averageInventory;
   }
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return "Loading...";
   }
 
   if (productsError || restockItemsError || salesItemsError) {
-    return (
-      <p>
-        Error occurred: {productsError || restockItemsError || salesItemsError}
-      </p>
-    );
+    return "Error";
   }
 
   return inventoryTurnover.toFixed(2);

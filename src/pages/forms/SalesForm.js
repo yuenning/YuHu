@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { projectFirestore, timestamp } from "../../firebase/config";
+import { projectFirestore } from "../../firebase/config";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { parseISO, isAfter } from "date-fns";
+import { isAfter } from "date-fns";
 
 // Styles
 import { FaTimes } from "react-icons/fa";
 
-export default function NewSalesForm() {
+export default function SalesForm() {
   const { user } = useAuthContext();
   const [transactionForms, setTransactionForms] = useState({
     date: "",
@@ -23,7 +23,7 @@ export default function NewSalesForm() {
     },
   ]);
   const [productIds, setProductIds] = useState([]);
-  const [formErrors, setFormErrors] = useState([]);
+  const [formErrors, setFormErrors] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -176,130 +176,143 @@ export default function NewSalesForm() {
   }, [productForms]);
 
   const validateForm = async () => {
-    const errors = [];
+    try {
+      console.log("Validating Form");
+      const errors = [];
 
-    const dateTime = new Date(
-      `${transactionForms.date}T${transactionForms.time}`
-    );
+      const dateTime = new Date(
+        `${transactionForms.date}T${transactionForms.time}`
+      );
 
-    // Validate transaction form
-    if (transactionForms.date === "") {
-      errors.push("Transaction Date field cannot be empty");
-    }
-
-    if (transactionForms.time === "") {
-      errors.push("Transaction Time field cannot be empty");
-    }
-
-    console.log(dateTime);
-    if (isNaN(dateTime)) {
-      errors.push("Transaction Date and Time cannot be invalid");
-    }
-
-    if (transactionForms.transactionID === "") {
-      errors.push("Transaction ID field cannot be empty");
-    }
-
-    // Validate product forms
-    for (let index = 0; index < productForms.length; index++) {
-      const form = productForms[index];
-
-      if (form.productId === "") {
-        errors.push(`Product ${index + 1} ID field cannot be empty`);
-      }
-      if (form.productName === "") {
-        errors.push(`Product ${index + 1} Name field cannot be empty`);
-      }
-      if (
-        form.quantity === "" ||
-        isNaN(form.quantity) ||
-        parseFloat(form.quantity) <= 0
-      ) {
-        errors.push(`Valid quantity is required for product ${index + 1}`);
-      }
-      if (
-        form.sellingPrice === "" ||
-        isNaN(form.sellingPrice) ||
-        parseFloat(form.sellingPrice) < 0
-      ) {
-        errors.push(`Valid selling price is required for product ${index + 1}`);
+      // Validate transaction form
+      if (transactionForms.date === "") {
+        errors.push("Transaction Date field cannot be empty");
       }
 
-      const querySnapshot = await projectFirestore
-        .collection(`users/${user.uid}/products`)
-        .where("productId", "==", `${form.productId}`)
-        .get();
+      if (transactionForms.time === "") {
+        errors.push("Transaction Time field cannot be empty");
+      }
 
-      if (querySnapshot.empty) {
-        errors.push(`Product ${index + 1} does not exist`);
-      } else {
-        const productData = querySnapshot.docs[0].data();
-        const batchDetails = productData.batchDetails || [];
-        console.log(batchDetails);
-        let totalQuantity = 0;
+      if (isNaN(dateTime)) {
+        errors.push("Transaction Date and Time cannot be invalid");
+      }
 
-        for (const batch of batchDetails) {
-          const restockDateTime = batch.restockDateTime.toDate();
-          console.log(batch.restockDateTime);
+      if (transactionForms.transactionID === "") {
+        errors.push("Transaction ID field cannot be empty");
+      }
 
-          if (isAfter(dateTime, restockDateTime)) {
-            totalQuantity += batch.quantity;
-            console.log(totalQuantity);
+      // Validate product forms
+      for (let index = 0; index < productForms.length; index++) {
+        const form = productForms[index];
+
+        if (form.productId === "") {
+          errors.push(`Product ${index + 1} ID field cannot be empty`);
+        }
+        if (form.productName === "") {
+          errors.push(`Product ${index + 1} Name field cannot be empty`);
+        }
+        if (
+          form.quantity === "" ||
+          isNaN(form.quantity) ||
+          parseFloat(form.quantity) <= 0
+        ) {
+          errors.push(`Valid quantity is required for product ${index + 1}`);
+        }
+        if (
+          form.sellingPrice === "" ||
+          isNaN(form.sellingPrice) ||
+          parseFloat(form.sellingPrice) < 0
+        ) {
+          errors.push(
+            `Valid selling price is required for product ${index + 1}`
+          );
+        }
+
+        const querySnapshot = await projectFirestore
+          .collection(`users/${user.uid}/products`)
+          .where("productId", "==", `${form.productId}`)
+          .get();
+
+        if (querySnapshot.empty) {
+          errors.push(`Product ${index + 1} does not exist`);
+        } else {
+          console.log("Checking Product Quantity");
+          const productData = querySnapshot.docs[0].data();
+          const batchDetails = productData.batchDetails || [];
+          console.log(batchDetails);
+          let totalQuantity = 0;
+
+          for (const batch of batchDetails) {
+            const restockDateTime = batch.restockDateTime.toDate();
+            if (isAfter(dateTime, restockDateTime)) {
+              totalQuantity += batch.quantity;
+              console.log(totalQuantity);
+            }
+          }
+
+          if (parseInt(totalQuantity) < parseInt(form.quantity, 10)) {
+            errors.push(
+              `Product ${index + 1} does not have sufficient quantity`
+            );
           }
         }
-
-        if (parseInt(totalQuantity) < parseInt(form.quantity, 10)) {
-          errors.push(`Product ${index + 1} does not have sufficient quantity`);
-        }
       }
+      return errors;
+    } catch (error) {
+      console.error("Error while validating form:", error);
+      return [
+        "An error occurred while validating the form. Please try again later.",
+      ];
     }
-
-    return errors;
   };
 
   const handleSubmit = async () => {
-    const errors = await validateForm();
+    try {
+      console.log(transactionForms);
+      const errors = await validateForm();
 
-    if (errors.length > 0) {
-      setFormErrors(errors);
-    } else {
-      setIsSubmitting(true);
+      if (errors.length > 0) {
+        console.log(errors);
+        setFormErrors(errors);
+      } else {
+        setIsSubmitting(true);
 
-      // Check if transaction ID is unique
-      const transactionID = transactionForms.transactionID;
-      const salesItemsSnapshot = await projectFirestore
-        .collection(`users/${user.uid}/salesitems`)
-        .where("transactionID", "==", transactionID)
-        .limit(1)
-        .get();
-
-      if (!salesItemsSnapshot.empty) {
-        setFormErrors(["Sales ID must be unique"]);
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (isSubmitting) {
-        // Get the transaction ID
+        // Check if transaction ID is unique
         const transactionID = transactionForms.transactionID;
+        const salesItemsSnapshot = await projectFirestore
+          .collection(`users/${user.uid}/salesitems`)
+          .where("transactionID", "==", transactionID)
+          .limit(1)
+          .get();
 
-        // Save transaction forms to Firebase
-        const dateTime = timestamp.fromDate(
-          new Date(`${transactionForms.date}T${transactionForms.time}`)
+        if (!salesItemsSnapshot.empty) {
+          setFormErrors(["Sales ID must be unique"]);
+          setIsSubmitting(false);
+          return;
+        }
+
+        console.log("Submitting");
+        // Get the transaction ID
+        const dateTime = new Date(
+          `${transactionForms.date}T${transactionForms.time}`
         );
+        const transactionData = {
+          ...transactionForms,
+          dateTime: dateTime,
+          transactionAmount: parseFloat(
+            transactionForms.transactionAmount
+          ).toFixed(2),
+        };
+        delete transactionData.date;
+        delete transactionData.time;
         await projectFirestore
           .collection(`users/${user.uid}/sales`)
           .doc(transactionID)
-          .set({
-            ...transactionForms,
-            dateTime,
-            transactionAmount: parseFloat(
-              transactionForms.transactionAmount
-            ).toFixed(2),
-          });
+          .set(transactionData);
+        console.log(transactionData);
 
         // Update the products collection
-        productForms.forEach(async (form) => {
+        for (const form of productForms) {
           const { productId, quantity } = form;
 
           const querySnapshot = await projectFirestore
@@ -308,7 +321,6 @@ export default function NewSalesForm() {
             .get();
 
           const productDocRef = querySnapshot.docs[0].ref;
-
           const productData = querySnapshot.docs[0].data();
           const batchDetails = productData.batchDetails || [];
 
@@ -320,11 +332,10 @@ export default function NewSalesForm() {
           let remainingQuantity = quantity;
 
           for (const batch of batchDetails) {
+            console.log(isAfter(dateTime, batch.restockDateTime.toDate()));
             if (remainingQuantity <= 0) {
               break;
-            } else if (
-              isAfter(dateTime, parseISO(batch.restockTransactionDate))
-            ) {
+            } else if (isAfter(dateTime, batch.restockDateTime.toDate())) {
               if (batch.quantity <= remainingQuantity) {
                 remainingQuantity -= batch.quantity;
                 batch.quantity = 0;
@@ -351,11 +362,12 @@ export default function NewSalesForm() {
           form.transactionID = transactionID;
           form.quantity = parseInt(form.quantity, 10);
           form.sellingPrice = parseFloat(form.sellingPrice);
-          projectFirestore
+          await projectFirestore
             .collection(`users/${user.uid}/salesitems`)
             .doc(`${transactionID} -- ${form.productId}`)
             .set(form);
-        });
+        }
+        console.log("done");
 
         setFormErrors(null);
 
@@ -383,9 +395,13 @@ export default function NewSalesForm() {
           );
         }
         setIsSubmitting(false);
-      } else {
-        setFormErrors(errors);
       }
+    } catch (error) {
+      console.error("Error while handling form submission:", error);
+      setFormErrors([
+        "An error occurred while submitting the form. Please try again later.",
+      ]);
+      setIsSubmitting(false);
     }
   };
 
@@ -584,7 +600,6 @@ export default function NewSalesForm() {
         </button>
 
         {/* Submit Button */}
-
         <button
           style={{
             display: "block",

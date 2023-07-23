@@ -68,17 +68,18 @@ export default function ExpiringList() {
     return <p>Error: {productsError}</p>;
   }
 
-  // ...
-
   return (
     <div className={styles.carousel}>
       <h3>Expiring Products</h3>
       {nearExpiryBatches.length > 0 ? (
-        <div>
-          {nearExpiryBatches.map((product) => (
-            <ul key={product.productId} className={styles.carouselContainer}>
-              {product.batchDetails.map((batch, batchIndex) => (
-                <div key={batchIndex} className={styles.carouselItem}>
+        <div className={styles.carouselContainer}>
+          <ul>
+            {nearExpiryBatches.map((product) =>
+              product.batchDetails.map((batch, batchIndex) => (
+                <li
+                  key={`${product.productId}-${batchIndex}`}
+                  className={styles.carouselItem}
+                >
                   <strong>
                     {product.productId} | {product.productName}
                   </strong>
@@ -92,10 +93,10 @@ export default function ExpiringList() {
                     Expiry Date:{" "}
                     {batch.expiryDate.toDate().toLocaleDateString()}
                   </p>
-                </div>
-              ))}
-            </ul>
-          ))}
+                </li>
+              ))
+            )}
+          </ul>
         </div>
       ) : (
         <p>No batches near expiry.</p>
