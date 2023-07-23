@@ -56,6 +56,10 @@ export default function Signup() {
 
   return (
     <form onSubmit={handleSubmit} className={styles["signup-form"]}>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       <h2>Sign Up Now!</h2>
       {formError && (
         <div>
