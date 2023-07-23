@@ -70,6 +70,13 @@ export default function OverallSalesMetrics() {
 
       setMonthlyData(Object.entries(monthlySales));
 
+      // Sort monthlyData in chronological order based on the month
+      setMonthlyData((prevData) =>
+        prevData.sort(([monthA], [monthB]) => {
+          return new Date(monthA) - new Date(monthB);
+        })
+      );
+
       const calculateTotalRevenue = (sales) => {
         return sales.reduce(
           (total, sale) => total + (parseFloat(sale.transactionAmount) || 0),

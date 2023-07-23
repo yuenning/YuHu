@@ -14,9 +14,7 @@ export default function ExpiredProductsModal({ products, onClose }) {
   const handleBatchSelection = (
     productId,
     batchId,
-    quantity,
-    expiryDate,
-    selected
+    { selected, expiryDate, quantity } // Destructure the object parameter here
   ) => {
     if (selected) {
       // Batch is selected, add it to the selectedBatches state

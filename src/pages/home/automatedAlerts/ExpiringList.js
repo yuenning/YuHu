@@ -70,7 +70,7 @@ export default function ExpiringList() {
 
   return (
     <div className={styles.carousel}>
-      <h3>Expiring Products</h3>
+      <h3>Expiring/Expired Products</h3>
       {nearExpiryBatches.length > 0 ? (
         <div className={styles.carouselContainer}>
           <ul>
