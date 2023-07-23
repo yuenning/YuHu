@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useCollection } from "../../../hooks/useCollection";
 import { useAuthContext } from "../../../hooks/useAuthContext";
-import { startOfMonth, endOfMonth } from "date-fns";
 
 // components for the pie chart
 import "chart.js/auto";
@@ -21,9 +20,6 @@ export default function MonthlyProductAnalysis({ startDate, endDate }) {
 
   useEffect(() => {
     if (salesItems && sales) {
-      const currentMonthStart = startOfMonth(new Date());
-      const currentMonthEnd = endOfMonth(new Date());
-
       const salesByProduct = salesItems.reduce((acc, item) => {
         const { productId, productName, quantity, transactionID } = item;
         const sale = sales.find((sale) => sale.transactionID === transactionID);
