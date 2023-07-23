@@ -94,6 +94,7 @@ export default function Inventory() {
       <br></br>
       <br></br>
       <br></br>
+      <br></br>
       <div className={styles.container}>
         <h3>Products List</h3>
         <div style={{ display: "flex", alignItems: "center" }}>

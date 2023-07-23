@@ -10,16 +10,26 @@ export default function RestockList() {
   const { documents: restockData, error: restockDataError } = useCollection(
     `users/${user.uid}/restocks`
   );
+  const { documents: restockItemsData, error: restockItemsDataError } =
+    useCollection(`users/${user.uid}/restockitems`);
+
   const [restocks, setRestocks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (restockDataError) {
+    if (restockDataError || restockItemsDataError) {
       console.log("Error retrieving restock data:", restockDataError);
+      console.log(
+        "Error retrieving restock items data:",
+        restockItemsDataError
+      );
     } else {
       const sortedRestocks = restockData
         ?.map((restock) => ({
           ...restock,
+          restockItems: restockItemsData.filter(
+            (item) => item.transactionID === restock.transactionID
+          ),
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date + " " + a.time);
@@ -29,7 +39,7 @@ export default function RestockList() {
 
       setRestocks(sortedRestocks || []);
     }
-  }, [restockData, restockDataError]);
+  }, [restockData, restockItemsData, restockDataError, restockItemsDataError]);
 
   // Add state variable for tracking expanded restock item
   const [expandedItemIndex, setExpandedItemIndex] = useState(null);
@@ -42,6 +52,10 @@ export default function RestockList() {
       setExpandedItemIndex(itemIndex);
     }
   };
+
+  if (!restocks) {
+    return <p>Loading...</p>;
+  }
 
   // Filter the restocks based on search query
   const filteredRestocks = restocks.filter((restock) => {
@@ -111,7 +125,7 @@ export default function RestockList() {
                   <div style={{ width: "100%" }}>
                     {expandedItemIndex === itemIndex && (
                       <div className={styles.details}>
-                        {restock.productDetails.map((item, index) => (
+                        {restock.restockItems.map((item, index) => (
                           <div
                             style={{
                               display: "flex",
@@ -148,7 +162,8 @@ export default function RestockList() {
                                 Quantity: {item.quantity}
                               </p>
                               <p style={{ textAlign: "right" }}>
-                                Cost Price: ${item.costPrice}
+                                Cost Price: $
+                                {parseFloat(item.costPrice).toFixed(2)}
                               </p>
                             </div>
                           </div>

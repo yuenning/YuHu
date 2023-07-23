@@ -85,7 +85,7 @@ export default function SalesList() {
       <ul className={styles.transactions}>
         {filteredSales.length > 0 ? (
           filteredSales.map((sales, itemIndex) => {
-            const { transactionID, date, time, transactionAmount } = sales;
+            const { transactionID, dateTime, transactionAmount } = sales;
             return (
               <li className={styles.productListItem} key={transactionID}>
                 <div
@@ -104,8 +104,15 @@ export default function SalesList() {
                     }}
                   >
                     <p>Transaction ID: {transactionID}</p>
-                    <p>Date: {date}</p>
-                    <p>Time: {time}</p>
+                    <p>Date: {dateTime.toDate().toLocaleDateString()}</p>
+                    <p>
+                      Time:{" "}
+                      {dateTime.toDate().toLocaleString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </p>
                     <p>Transaction Amount: ${transactionAmount}</p>
                   </div>
                   {/* Additional details for expanded sales item */}

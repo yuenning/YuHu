@@ -314,7 +314,7 @@ export default function RestockForm() {
           productName,
           quantity: parseInt(quantity, 10),
           expiryDate: timestamp.fromDate(new Date(expiryDate)),
-          costPrice: parseFloat(costPrice),
+          costPrice: parseFloat(costPrice).toFixed(2),
           ...(batchId && { batchId }),
         };
         const expiryDateTimestamp = convertToTimestamp(expiryDate);
@@ -349,12 +349,10 @@ export default function RestockForm() {
           const currentBatchData = {
             quantity: parseInt(quantity, 10),
             expiryDate: timestamp.fromDate(new Date(expiryDate)),
-            costPrice: parseFloat(costPrice),
+            costPrice: parseFloat(costPrice).toFixed(2),
             restockDateTime: timestamp.fromDate(dateTime),
+            ...(batchId && { batchId }),
           };
-          if (batchId) {
-            currentBatchData.batchId = batchId;
-          }
           batchDetails.push(currentBatchData);
 
           await productDocRef.update({

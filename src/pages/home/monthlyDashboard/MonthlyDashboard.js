@@ -84,12 +84,6 @@ export default function MonthlySalesMetrics() {
     ).toFixed(2);
   };
 
-  const calculateTotalProfit = (sales, restocks) => {
-    const salesAmount = calculateTotalRevenue(sales);
-    const restocksCost = calculateTotalCosts(restocks);
-    return parseFloat(salesAmount) - parseFloat(restocksCost);
-  };
-
   useEffect(() => {
     if (restocksError || salesError) {
       console.log("Error retrieving data");
@@ -143,13 +137,6 @@ export default function MonthlySalesMetrics() {
         costs += parseFloat(data.costs);
       });
 
-      /*const revenue = calculateTotalRevenue(currentMonthSales);
-      const profit = calculateTotalProfit(
-        currentMonthSales,
-        currentMonthRestocks
-      );
-      const costs = calculateTotalCosts(currentMonthRestocks);
-      */
       setTotalRevenue(revenue);
       setTotalProfit(profit);
       setTotalCosts(costs);
@@ -216,9 +203,9 @@ export default function MonthlySalesMetrics() {
         </div>
 
         <div className={styles.metrics}>
-          <p>Total Revenue: ${totalRevenue}</p>
-          <p>Total Costs: ${totalCosts}</p>
-          <p>Total Profit: ${totalProfit}</p>
+          <p>Total Revenue: ${totalRevenue.toFixed(2)}</p>
+          <p>Total Costs: ${totalCosts.toFixed(2)}</p>
+          <p>Total Profit: ${totalProfit.toFixed(2)}</p>
           <p>
             Inventory Turnover:{" "}
             <MonthlyInventoryTurnover startDate={startDate} endDate={endDate} />

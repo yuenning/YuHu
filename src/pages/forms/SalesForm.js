@@ -361,7 +361,7 @@ export default function SalesForm() {
 
           form.transactionID = transactionID;
           form.quantity = parseInt(form.quantity, 10);
-          form.sellingPrice = parseFloat(form.sellingPrice);
+          form.sellingPrice = parseFloat(form.sellingPrice).toFixed(2);
           await projectFirestore
             .collection(`users/${user.uid}/salesitems`)
             .doc(`${transactionID} -- ${form.productId}`)
