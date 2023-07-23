@@ -203,9 +203,9 @@ export default function MonthlySalesMetrics() {
         </div>
 
         <div className={styles.metrics}>
-          <p>Total Revenue: ${totalRevenue}</p>
-          <p>Total Costs: ${totalCosts}</p>
-          <p>Total Profit: ${totalProfit}</p>
+          <p>Total Revenue: ${totalRevenue.toFixed(2)}</p>
+          <p>Total Costs: ${totalCosts.toFixed(2)}</p>
+          <p>Total Profit: ${totalProfit.toFixed(2)}</p>
           <p>
             Inventory Turnover:{" "}
             <MonthlyInventoryTurnover startDate={startDate} endDate={endDate} />

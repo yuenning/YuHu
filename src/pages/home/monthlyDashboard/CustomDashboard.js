@@ -176,7 +176,7 @@ export default function CustomDashboard() {
         <h3>Monthly Sales Metrics</h3>
         <div className={styles.metrics}>
           <p>Current Month Revenue: ${parseFloat(totalRevenue).toFixed(2)}</p>
-          <p>Current Month Costs: ${parseFloat(totalCosts)}</p>
+          <p>Current Month Costs: ${parseFloat(totalCosts).toFixed(2)}</p>
           <p>Current Month Profit: ${totalProfit.toFixed(2)}</p>
           <p>
             Inventory Turnover: <MonthlyInventoryTurnover />
