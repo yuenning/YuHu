@@ -63,10 +63,16 @@ export default function RestockList() {
       return true; // If search query is empty, show all restocks
     }
     const query = searchQuery.toLowerCase();
+    const date = restock.dateTime.toDate().toLocaleDateString();
+    const time = restock.dateTime.toDate().toLocaleString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
     return (
       restock.transactionID.toLowerCase().includes(query) ||
-      restock.date.toLowerCase().includes(query) ||
-      restock.time.toLowerCase().includes(query)
+      date.toLowerCase().includes(query) ||
+      time.toLowerCase().includes(query)
     );
   });
 

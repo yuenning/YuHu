@@ -57,10 +57,16 @@ export default function SalesList() {
       return true; // If search query is empty, show all restocks
     }
     const query = searchQuery.toLowerCase();
+    const date = sale.dateTime.toDate().toLocaleDateString();
+    const time = sale.dateTime.toDate().toLocaleString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
     return (
       sale.transactionID.toLowerCase().includes(query) ||
-      sale.date.toLowerCase().includes(query) ||
-      sale.time.toLowerCase().includes(query)
+      date.toLowerCase().includes(query) ||
+      time.toLowerCase().includes(query)
     );
   });
 
