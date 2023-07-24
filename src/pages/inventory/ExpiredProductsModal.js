@@ -1,29 +1,27 @@
 import React, { useState } from "react";
-import { projectFirestore } from "../../firebase/config"; // Import projectFirestore
-import { useAuthContext } from "../../hooks/useAuthContext"; // Import useAuthContext
+import { projectFirestore } from "../../firebase/config";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function ExpiredProductsModal({ products, onClose }) {
   const { user } = useAuthContext();
   const [selectedBatches, setSelectedBatches] = useState([]);
+  const [processing, setProcessing] = useState(false);
 
-  // Define the handleCloseModal function
   const handleCloseModal = () => {
-    onClose(); // Call the onClose prop to close the modal
+    onClose();
   };
 
   const handleBatchSelection = (
     productId,
     batchId,
-    { selected, expiryDate, quantity } // Destructure the object parameter here
+    { selected, expiryDate, quantity }
   ) => {
     if (selected) {
-      // Batch is selected, add it to the selectedBatches state
       setSelectedBatches((prevSelected) => [
         ...prevSelected,
         { productId, batchId, expiryDate, quantity },
       ]);
     } else {
-      // Batch is deselected, remove it from the selectedBatches state
       setSelectedBatches((prevSelected) =>
         prevSelected.filter(
           (batch) =>
@@ -35,31 +33,27 @@ export default function ExpiredProductsModal({ products, onClose }) {
 
   const handleConfirmModal = async () => {
     try {
-      // Loop through each selected batch and remove it from the corresponding product
+      setProcessing(true);
+
       for (const selectedBatch of selectedBatches) {
         const productId = selectedBatch.productId;
         const batchId = selectedBatch.batchId;
         const expiryDate = selectedBatch.expiryDate;
         const quantity = selectedBatch.quantity;
 
-        // Get the reference to the product document in Firestore
         const productRef = projectFirestore
           .collection(`users/${user.uid}/products`)
           .doc(productId);
 
-        // Get the current product data
         const productDoc = await productRef.get();
         const productData = productDoc.data();
 
-        // Find the index of the batch with the matching batchId
         const batchIndex = productData.batchDetails.findIndex(
           (batch) => batch.batchId === batchId
         );
 
-        // Remove the selected batch from the product's batchDetails
         productData.batchDetails.splice(batchIndex, 1);
 
-        // Update the product document in Firestore with the updated batch details
         await productRef.update({
           batchDetails: productData.batchDetails,
           totalQuantity: productData.batchDetails.reduce(
@@ -68,7 +62,6 @@ export default function ExpiredProductsModal({ products, onClose }) {
           ),
         });
 
-        // Create or add to the expired products document
         const dateOfDeletion = new Date();
         await projectFirestore
           .collection(`users/${user.uid}/expiredclearance`)
@@ -77,16 +70,17 @@ export default function ExpiredProductsModal({ products, onClose }) {
             productId,
             productName: productData.productName,
             batchId,
-            expiryDate, // Use the expiryDate from the argument
-            quantity, // Use the quantity from the argument
+            expiryDate,
+            quantity,
             dateOfDeletion,
           });
       }
 
-      // Close the modal
       handleCloseModal();
     } catch (error) {
       console.error("Error removing selected batches:", error);
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -107,7 +101,7 @@ export default function ExpiredProductsModal({ products, onClose }) {
         borderRadius: "8px",
         width: "50%",
         maxHeight: "80%",
-        overflowY: "auto", // Add scroll if content overflows
+        overflowY: "auto",
       }}
     >
       <h2>Expired Products</h2>
@@ -178,8 +172,9 @@ export default function ExpiredProductsModal({ products, onClose }) {
             fontSize: "100%",
           }}
           onClick={handleConfirmModal}
+          disabled={processing}
         >
-          Confirm
+          {processing ? "Processing..." : "Confirm"}
         </button>
         <button
           style={{
@@ -193,6 +188,7 @@ export default function ExpiredProductsModal({ products, onClose }) {
             fontSize: "100%",
           }}
           onClick={onClose}
+          disabled={processing}
         >
           Cancel
         </button>
