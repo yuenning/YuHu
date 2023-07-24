@@ -31,10 +31,13 @@ export default function Inventory() {
   }, [productData, productDataError]);
 
   const handleToggleBatch = (productIndex) => {
-    if (expandedProductIndex === productIndex) {
-      setExpandedProductIndex(null);
-    } else {
-      setExpandedProductIndex(productIndex);
+    const product = filteredProducts[productIndex];
+    if (product.totalQuantity > 0) {
+      if (expandedProductIndex === productIndex) {
+        setExpandedProductIndex(null);
+      } else {
+        setExpandedProductIndex(productIndex);
+      }
     }
   };
 
@@ -204,18 +207,23 @@ export default function Inventory() {
                       display: "block",
                       width: "315px",
                       padding: "10px 10px 0",
-                      color: "white",
+                      color: product.totalQuantity > 0 ? "white" : "red",
                       border: "none",
                       borderRadius: "5px",
                       fontSize: "100%",
+                      backgroundColor: "#000000",
                     }}
                     className={styles.showMoreButton}
                     onClick={() => handleToggleBatch(productIndex)}
                   >
-                    {expandedProductIndex === productIndex ? (
-                      <u>Hide Details</u>
+                    {product.totalQuantity > 0 ? (
+                      expandedProductIndex === productIndex ? (
+                        <u>Hide Details</u>
+                      ) : (
+                        <u>+ Show More</u>
+                      )
                     ) : (
-                      <u>+ Show More</u>
+                      "Out of Stock"
                     )}
                   </button>
                 </div>
